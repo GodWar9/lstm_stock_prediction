@@ -18,8 +18,8 @@ fn main() -> anyhow::Result<()> {
         Commands::Config(args) => {
             handlers::config::handle_config(&args.command, &cli.config)?;
         }
-        Commands::Data(_) => {
-            println!("Executing data command...");
+        Commands::Data(args) => {
+            handlers::data::handle_data(&args.command, &cli.config)?;
         }
         Commands::Features(_) => {
             println!("Executing features command...");
