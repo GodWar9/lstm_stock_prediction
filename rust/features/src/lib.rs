@@ -2,6 +2,8 @@
 
 pub mod traits;
 pub mod window;
+pub mod moving_avg;
 
 pub use traits::*;
 pub use window::*;
+pub use moving_avg::*;
