@@ -137,16 +137,13 @@ impl UsEquityCalendar {
 
     /// Rough UTC offset for US Eastern Time (simplifying Daylight Saving for session boundaries: UTC-4 for summer, UTC-5 for winter).
     fn eastern_offset_hours(date: NaiveDate) -> i64 {
-        // DST in US: starts 2nd Sunday in March, ends 1st Sunday in November
         let month = date.month();
         if month > 3 && month < 11 {
             -4 // EDT
         } else if month == 3 {
-            // Check second Sunday
             let second_sunday = (8..=14).find(|d| NaiveDate::from_ymd_opt(date.year(), 3, *d).map(|d| d.weekday() == Weekday::Sun).unwrap_or(false)).unwrap_or(8);
             if date.day() >= second_sunday { -4 } else { -5 }
         } else if month == 11 {
-            // Check first Sunday
             let first_sunday = (1..=7).find(|d| NaiveDate::from_ymd_opt(date.year(), 11, *d).map(|d| d.weekday() == Weekday::Sun).unwrap_or(false)).unwrap_or(1);
             if date.day() < first_sunday { -4 } else { -5 }
         } else {
@@ -186,7 +183,6 @@ impl TradingCalendar for UsEquityCalendar {
         let open_dt = NaiveDateTime::new(date, open_time);
         let close_dt = NaiveDateTime::new(date, close_time);
 
-        // Convert Eastern to UTC: UTC = Local - Offset (offset is -4 or -5, so - offset is +4 or +5)
         let open_utc = Utc.from_utc_datetime(&(open_dt - Duration::hours(offset)));
         let close_utc = Utc.from_utc_datetime(&(close_dt - Duration::hours(offset)));
 
@@ -239,4 +235,115 @@ fn easter_date(year: i32) -> Option<NaiveDate> {
     let day = ((h + l - 7 * m + 114) % 31) + 1;
 
     NaiveDate::from_ymd_opt(year, month as u32, day as u32)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_weekend_rejection() {
+        let cal = UsEquityCalendar::default();
+        // 2024-06-08 is Saturday, 2024-06-09 is Sunday
+        let sat = NaiveDate::from_ymd_opt(2024, 6, 8).unwrap();
+        let sun = NaiveDate::from_ymd_opt(2024, 6, 9).unwrap();
+        assert!(!cal.is_trading_day(sat));
+        assert!(!cal.is_trading_day(sun));
+        assert!(cal.session(sat).is_none());
+        assert!(cal.session(sun).is_none());
+    }
+
+    #[test]
+    fn test_standard_us_holidays() {
+        let cal = UsEquityCalendar::default();
+
+        // 2024 MLK Day: Jan 15, 2024 (Monday)
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 1, 15).unwrap()));
+        assert!(!cal.is_trading_day(NaiveDate::from_ymd_opt(2024, 1, 15).unwrap()));
+
+        // 2024 Presidents' Day: Feb 19, 2024 (Monday)
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 2, 19).unwrap()));
+
+        // 2024 Good Friday: Mar 29, 2024
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 3, 29).unwrap()));
+
+        // 2024 Memorial Day: May 27, 2024 (Monday)
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 5, 27).unwrap()));
+
+        // 2024 Juneteenth: Jun 19, 2024 (Wednesday)
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 6, 19).unwrap()));
+
+        // 2024 Independence Day: Jul 4, 2024 (Thursday)
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 7, 4).unwrap()));
+
+        // 2024 Labor Day: Sep 2, 2024 (Monday)
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 9, 2).unwrap()));
+
+        // 2024 Thanksgiving: Nov 28, 2024 (Thursday)
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 11, 28).unwrap()));
+
+        // 2024 Christmas Day: Dec 25, 2024 (Wednesday)
+        assert!(cal.is_holiday(NaiveDate::from_ymd_opt(2024, 12, 25).unwrap()));
+    }
+
+    #[test]
+    fn test_early_close() {
+        let cal = UsEquityCalendar::default();
+        // 2024 Black Friday: Nov 29, 2024
+        let black_friday = NaiveDate::from_ymd_opt(2024, 11, 29).unwrap();
+        assert!(cal.is_trading_day(black_friday));
+        assert!(cal.is_early_close(black_friday));
+
+        let sess = cal.session(black_friday).unwrap();
+        assert!(sess.is_early_close);
+    }
+
+    #[test]
+    fn test_next_and_prev_trading_day() {
+        let cal = UsEquityCalendar::default();
+        // Friday before Memorial Day: 2024-05-24
+        let fri = NaiveDate::from_ymd_opt(2024, 5, 24).unwrap();
+        // Monday 2024-05-27 is Memorial Day, so next trading day is Tuesday 2024-05-28
+        let next = cal.next_trading_day(fri);
+        assert_eq!(next, NaiveDate::from_ymd_opt(2024, 5, 28).unwrap());
+
+        // Previous trading day from Tuesday 2024-05-28 should be Friday 2024-05-24
+        let prev = cal.prev_trading_day(next);
+        assert_eq!(prev, fri);
+    }
+
+    #[test]
+    fn test_is_market_open_utc() {
+        let cal = UsEquityCalendar::default();
+        // 2024-06-10 is a normal Monday in EDT (offset -4 hours).
+        // 09:30 EDT = 13:30 UTC
+        // 16:00 EDT = 20:00 UTC
+        let d = NaiveDate::from_ymd_opt(2024, 6, 10).unwrap();
+        let sess = cal.session(d).expect("must have session");
+
+        let open_utc = sess.open_utc;
+        let close_utc = sess.close_utc;
+
+        assert_eq!(open_utc.time(), NaiveTime::from_hms_opt(13, 30, 0).unwrap());
+        assert_eq!(close_utc.time(), NaiveTime::from_hms_opt(20, 0, 0).unwrap());
+
+        // During session
+        let mid_day = open_utc + Duration::hours(2);
+        assert!(cal.is_market_open(mid_day));
+
+        // Before open
+        let before_open = open_utc - Duration::minutes(1);
+        assert!(!cal.is_market_open(before_open));
+
+        // After close
+        let after_close = close_utc + Duration::minutes(1);
+        assert!(!cal.is_market_open(after_close));
+    }
+
+    #[test]
+    fn test_custom_holidays() {
+        let national_day_of_mourning = NaiveDate::from_ymd_opt(2018, 12, 5).unwrap(); // George H.W. Bush mourning
+        let cal = UsEquityCalendar::default().with_custom_holiday(national_day_of_mourning);
+        assert!(!cal.is_trading_day(national_day_of_mourning));
+    }
 }
