@@ -8,6 +8,7 @@ pub mod macd;
 pub mod bollinger;
 pub mod atr;
 pub mod volatility;
+pub mod graph;
 
 pub use traits::*;
 pub use window::*;
@@ -17,3 +18,4 @@ pub use macd::*;
 pub use bollinger::*;
 pub use atr::*;
 pub use volatility::*;
+pub use graph::*;
