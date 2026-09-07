@@ -1,6 +1,7 @@
 //! quantctl: Quantitative Research & Trading Platform CLI
 
 mod commands;
+mod handlers;
 mod telemetry;
 
 use clap::Parser;
@@ -13,9 +14,9 @@ fn main() -> anyhow::Result<()> {
 
     info!(version = env!("CARGO_PKG_VERSION"), "quantctl initialized");
 
-    match cli.command {
-        Commands::Config(_) => {
-            println!("Executing config command...");
+    match &cli.command {
+        Commands::Config(args) => {
+            handlers::config::handle_config(&args.command, &cli.config)?;
         }
         Commands::Data(_) => {
             println!("Executing data command...");

@@ -17,4 +17,5 @@ quant_simulation.workspace = true
 clap.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
+serde_yaml.workspace = true
 anyhow.workspace = true
