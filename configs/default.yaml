@@ -1,0 +1,53 @@
+env: development
+
+data:
+  symbols:
+    - AAPL
+  start_date: "2015-01-01"
+  end_date: "2024-01-01"
+  provider: yfinance
+  exchange: NYSE
+  dataset_version: ds_2024_v1
+
+features:
+  feature_set: baseline_v1
+  feature_set_version: 1
+  lookback: 60
+  target_horizon: 1
+  target_transformation: log_return
+
+training:
+  model_id: lstm_v1
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.3
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  batch_size: 64
+  epochs: 50
+  random_seed: 42
+  purge_gap: 5
+  embargo_gap: 60
+
+inference:
+  model_version: lstm_v1
+  intra_op_threads: 2
+  inter_op_threads: 1
+  batch_size: 64
+
+portfolio:
+  max_gross_exposure: 1.0
+  max_net_exposure: 0.5
+  max_position_pct: 0.2
+  volatility_target: 0.15
+  long_short_mode: LongOnly
+
+execution:
+  fixed_commission: 0.001
+  half_spread_bps: 2.0
+  slippage_factor: 0.1
+  participation_cap: 0.05
+
+backtest:
+  initial_cash: 100000.0
+  risk_free_rate: 0.04
