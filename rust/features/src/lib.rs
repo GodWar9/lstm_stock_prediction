@@ -11,6 +11,7 @@ pub mod volatility;
 pub mod graph;
 pub mod store;
 pub mod export;
+pub mod targets;
 
 pub use traits::*;
 pub use window::*;
@@ -23,3 +24,4 @@ pub use volatility::*;
 pub use graph::*;
 pub use store::*;
 pub use export::*;
+pub use targets::*;
