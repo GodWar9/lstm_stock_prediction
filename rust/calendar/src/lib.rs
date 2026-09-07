@@ -7,6 +7,9 @@ use chrono::{DateTime, NaiveDate, NaiveTime, Utc};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+pub mod us_equity;
+pub use us_equity::UsEquityCalendar;
+
 /// Calendar-specific errors.
 #[derive(Debug, Error, PartialEq, Eq)]
 pub enum CalendarError {
