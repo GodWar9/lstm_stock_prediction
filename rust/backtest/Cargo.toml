@@ -1,0 +1,16 @@
+[package]
+name = "quant_backtest"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+quant_instruments.workspace = true
+quant_data.workspace = true
+quant_signals.workspace = true
+quant_portfolio.workspace = true
+quant_risk.workspace = true
+quant_execution.workspace = true
+chrono.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true

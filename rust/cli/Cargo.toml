@@ -1,0 +1,20 @@
+[package]
+name = "quantctl"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "quantctl"
+path = "src/main.rs"
+
+[dependencies]
+quant_config.workspace = true
+quant_data.workspace = true
+quant_features.workspace = true
+quant_inference.workspace = true
+quant_backtest.workspace = true
+quant_simulation.workspace = true
+clap.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+anyhow.workspace = true

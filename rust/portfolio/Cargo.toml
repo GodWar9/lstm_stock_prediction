@@ -1,0 +1,11 @@
+[package]
+name = "quant_portfolio"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+quant_instruments.workspace = true
+quant_signals.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true

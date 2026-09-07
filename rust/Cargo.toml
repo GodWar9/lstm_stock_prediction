@@ -1,0 +1,55 @@
+[workspace]
+resolver = "2"
+members = [
+    "instruments",
+    "calendar",
+    "config",
+    "data",
+    "features",
+    "inference",
+    "signals",
+    "portfolio",
+    "risk",
+    "execution",
+    "backtest",
+    "simulation",
+    "cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Quant Engineering Team"]
+license = "MIT OR Apache-2.0"
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+clap = { version = "4.4", features = ["derive", "env"] }
+proptest = "1.4"
+ndarray = { version = "0.15", features = ["serde"] }
+arrow2 = { version = "0.17", features = ["io_ipc", "io_parquet"] }
+parking_lot = "0.12"
+ringbuf = "0.4"
+tempfile = "3.10"
+uuid = { version = "1.7", features = ["v4", "serde"] }
+
+# Workspace crates
+quant_instruments = { path = "instruments" }
+quant_calendar = { path = "calendar" }
+quant_config = { path = "config" }
+quant_data = { path = "data" }
+quant_features = { path = "features" }
+quant_inference = { path = "inference" }
+quant_signals = { path = "signals" }
+quant_portfolio = { path = "portfolio" }
+quant_risk = { path = "risk" }
+quant_execution = { path = "execution" }
+quant_backtest = { path = "backtest" }
+quant_simulation = { path = "simulation" }

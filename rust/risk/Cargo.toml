@@ -1,0 +1,12 @@
+[package]
+name = "quant_risk"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+quant_instruments.workspace = true
+quant_portfolio.workspace = true
+ndarray.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true

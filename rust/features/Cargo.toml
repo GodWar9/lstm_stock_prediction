@@ -1,0 +1,13 @@
+[package]
+name = "quant_features"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+quant_data.workspace = true
+quant_instruments.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+arrow2.workspace = true
+ringbuf.workspace = true

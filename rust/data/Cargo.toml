@@ -1,0 +1,12 @@
+[package]
+name = "quant_data"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+quant_calendar.workspace = true
+quant_instruments.workspace = true
+chrono.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true

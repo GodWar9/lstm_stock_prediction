@@ -1,0 +1,11 @@
+[package]
+name = "quant_simulation"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+quant_backtest.workspace = true
+quant_risk.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
