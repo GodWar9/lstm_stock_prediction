@@ -87,3 +87,20 @@ fn test_cli_features_build() {
     assert!(stdout.contains("Successfully built feature set 'test_v1'"));
 }
 
+#[test]
+fn test_cli_train() {
+    let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .args(["train", "--config", "../../configs/default.yaml"])
+        .output()
+        .expect("Failed to execute quantctl train");
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    if !output.status.success() {
+        eprintln!("test_cli_train FAILED:\nSTDOUT:\n{}\nSTDERR:\n{}", stdout, stderr);
+    }
+    assert!(output.status.success(), "Status not success");
+    assert!(stdout.contains("Training completed successfully"));
+}
+
+

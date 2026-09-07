@@ -24,8 +24,8 @@ fn main() -> anyhow::Result<()> {
         Commands::Features(args) => {
             handlers::features::handle_features(&args.command, &cli.config)?;
         }
-        Commands::Train(_) => {
-            println!("Executing train command...");
+        Commands::Train(args) => {
+            handlers::train::handle_train(args, &cli.config)?;
         }
         Commands::ExportModel(_) => {
             println!("Executing export-model command...");
