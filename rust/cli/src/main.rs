@@ -1,12 +1,17 @@
 //! quantctl: Quantitative Research & Trading Platform CLI
 
 mod commands;
+mod telemetry;
 
 use clap::Parser;
 use commands::{Cli, Commands};
+use tracing::info;
 
 fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
+    telemetry::init_telemetry(&cli.log_format, cli.verbose)?;
+
+    info!(version = env!("CARGO_PKG_VERSION"), "quantctl initialized");
 
     match cli.command {
         Commands::Config(_) => {
