@@ -21,8 +21,8 @@ fn main() -> anyhow::Result<()> {
         Commands::Data(args) => {
             handlers::data::handle_data(&args.command, &cli.config)?;
         }
-        Commands::Features(_) => {
-            println!("Executing features command...");
+        Commands::Features(args) => {
+            handlers::features::handle_features(&args.command, &cli.config)?;
         }
         Commands::Train(_) => {
             println!("Executing train command...");

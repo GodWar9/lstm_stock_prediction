@@ -74,3 +74,16 @@ fn test_cli_invalid_config_path() {
 
     assert!(!output.status.success());
 }
+
+#[test]
+fn test_cli_features_build() {
+    let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .args(["features", "build", "--config", "../../configs/default.yaml", "--feature-set", "test_v1"])
+        .output()
+        .expect("Failed to execute quantctl features build");
+
+    assert!(output.status.success());
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("Successfully built feature set 'test_v1'"));
+}
+

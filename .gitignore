@@ -16,6 +16,7 @@ dist/
 *.egg-info/
 
 # Artifacts and data
+data/
 datasets/*.arrow
 datasets/*.parquet
 models/*/*.onnx
