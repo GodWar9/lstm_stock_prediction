@@ -7,6 +7,9 @@
 use std::fmt;
 use serde::{Deserialize, Serialize};
 
+pub mod equity;
+pub use equity::Equity;
+
 /// Unique identifier for an instrument within the system.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct InstrumentId(pub u32);
