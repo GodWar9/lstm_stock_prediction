@@ -46,7 +46,7 @@ fn main() -> anyhow::Result<()> {
             println!("Executing benchmark command...");
         }
         Commands::Env => {
-            println!("quantctl version {}", env!("CARGO_PKG_VERSION"));
+            handlers::env::handle_env(&cli.config);
         }
     }
 
