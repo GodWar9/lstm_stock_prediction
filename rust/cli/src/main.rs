@@ -33,14 +33,14 @@ fn main() -> anyhow::Result<()> {
         Commands::Predict(args) => {
             handlers::predict::handle_predict(args, &cli.config)?;
         }
-        Commands::Backtest(_) => {
-            println!("Executing backtest command...");
+        Commands::Backtest(args) => {
+            handlers::backtest::handle_backtest(&args.command, &cli.config)?;
         }
-        Commands::Simulate(_) => {
-            println!("Executing simulate command...");
+        Commands::Simulate(args) => {
+            handlers::simulate::handle_simulate(args, &cli.config)?;
         }
-        Commands::Report(_) => {
-            println!("Executing report command...");
+        Commands::Report(args) => {
+            handlers::report::handle_report(args, &cli.config)?;
         }
         Commands::Benchmark(_) => {
             println!("Executing benchmark command...");

@@ -122,5 +122,70 @@ fn test_cli_predict() {
     assert!(stdout.contains("Signal Direction:"));
 }
 
+#[test]
+fn test_cli_backtest_and_simulate_and_report() {
+    // 1. Backtest Run
+    let backtest_output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .args([
+            "backtest",
+            "run",
+            "--model",
+            "lstm_v1",
+            "--split",
+            "test",
+            "--allow-reuse",
+            "--config",
+            "../../configs/default.yaml",
+        ])
+        .output()
+        .expect("Failed to execute quantctl backtest run");
 
+    assert!(backtest_output.status.success());
+    let bt_stdout = String::from_utf8_lossy(&backtest_output.stdout);
+    assert!(bt_stdout.contains("QUANTCTL BACKTEST REPORT"));
+    assert!(bt_stdout.contains("Sharpe Ratio:"));
 
+    // Find generated report file (either relative to rust/cli or workspace)
+    let report_candidates = [
+        std::path::PathBuf::from("reports/backtest_lstm_v1_test.json"),
+        std::path::PathBuf::from("../../reports/backtest_lstm_v1_test.json"),
+    ];
+    let report_path = report_candidates.iter().find(|p| p.exists()).cloned()
+        .unwrap_or_else(|| report_candidates[0].clone());
+
+    // 2. Simulate Run
+    let sim_output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .args([
+            "simulate",
+            "--report",
+            report_path.to_str().unwrap(),
+            "--paths",
+            "100",
+            "--config",
+            "../../configs/default.yaml",
+        ])
+        .output()
+        .expect("Failed to execute quantctl simulate");
+
+    assert!(sim_output.status.success());
+    let sim_stdout = String::from_utf8_lossy(&sim_output.stdout);
+    assert!(sim_stdout.contains("QUANTCTL MONTE CARLO SIMULATION"));
+    assert!(sim_stdout.contains("Simulated Paths:    100"));
+
+    // 3. Report Run
+    let rep_output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .args([
+            "report",
+            "--backtest",
+            report_path.to_str().unwrap(),
+            "--config",
+            "../../configs/default.yaml",
+        ])
+        .output()
+        .expect("Failed to execute quantctl report");
+
+    assert!(rep_output.status.success());
+    let rep_stdout = String::from_utf8_lossy(&rep_output.stdout);
+    assert!(rep_stdout.contains("QUANTITATIVE STRATEGY AUDIT REPORT"));
+    assert!(rep_stdout.contains("Cumulative Return:"));
+}

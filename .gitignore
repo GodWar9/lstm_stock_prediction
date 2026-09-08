@@ -21,6 +21,8 @@ datasets/*.arrow
 datasets/*.parquet
 models/*/*.onnx
 models/*/*.pt
+reports/
+**/reports/
 benchmarks/results/*.json
 
 # IDE and OS
