@@ -7,5 +7,11 @@ edition.workspace = true
 quant_instruments.workspace = true
 quant_signals.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 thiserror.workspace = true
 anyhow.workspace = true
+
+[dev-dependencies]
+quant_risk.workspace = true
+quant_execution.workspace = true
+quant_data.workspace = true

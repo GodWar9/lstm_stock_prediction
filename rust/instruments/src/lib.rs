@@ -8,7 +8,10 @@ use std::fmt;
 use serde::{Deserialize, Serialize};
 
 pub mod equity;
+pub mod derivative;
+
 pub use equity::Equity;
+pub use derivative::{Future, OptionType, Option_};
 
 /// Unique identifier for an instrument within the system.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
