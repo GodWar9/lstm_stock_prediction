@@ -5,8 +5,12 @@ edition.workspace = true
 
 [dependencies]
 quant_instruments.workspace = true
+quant_data.workspace = true
+quant_features.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 anyhow.workspace = true
 ndarray.workspace = true
+tract-onnx = "0.21"
+

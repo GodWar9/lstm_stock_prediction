@@ -103,4 +103,24 @@ fn test_cli_train() {
     assert!(stdout.contains("Training completed successfully"));
 }
 
+#[test]
+fn test_cli_predict() {
+    let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .args(["predict", "--model", "lstm_v1", "--symbol", "AAPL", "--config", "../../configs/default.yaml"])
+        .output()
+        .expect("Failed to execute quantctl predict");
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    if !output.status.success() {
+        eprintln!("test_cli_predict FAILED:\nSTDOUT:\n{}\nSTDERR:\n{}", stdout, stderr);
+    }
+    assert!(output.status.success());
+    assert!(stdout.contains("QUANTCTL MODEL PREDICTION & SIGNAL"));
+    assert!(stdout.contains("Symbol:             AAPL"));
+    assert!(stdout.contains("Model:              lstm_v1"));
+    assert!(stdout.contains("Signal Direction:"));
+}
+
+
 

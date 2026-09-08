@@ -20,7 +20,7 @@ if hasattr(sys.stdout, "reconfigure"):
 import yaml
 from python.ml.dataset import FeatureScaler, PurgedWalkForwardSplitter, TimeSeriesTorchDataset, create_sliding_windows
 from python.ml.evaluate import compute_metrics
-from python.ml.export_onnx import export_to_onnx
+from python.ml.export_onnx import export_artifact_package, export_to_onnx
 from python.ml.loss import DirectionalAsymmetricLoss
 from python.ml.models.lstm import LSTMForecaster
 from python.ml.trainer import ModelTrainer
@@ -102,15 +102,27 @@ def main():
     metrics = compute_metrics(preds, y_te if len(y_te) > 0 else np.zeros((1,)))
     print(f"[Python ML] OOS Metrics: IC={metrics['ic']:.4f}, DirAcc={metrics['directional_accuracy']:.2%}")
 
-    # Export ONNX artifact
+    # Export complete model artifact package
     onnx_out_dir = f"models/{model_id}"
-    os.makedirs(onnx_out_dir, exist_ok=True)
+    export_artifact_package(
+        model=model,
+        scaler=scaler,
+        output_dir=onnx_out_dir,
+        model_id=model_id,
+        model_version=1,
+        lookback=lookback,
+        architecture={"hidden_size": hidden_dim, "num_layers": num_layers, "dropout": dropout},
+        hyperparameters={"lr": lr, "batch_size": batch_size, "weight_decay": 1e-4},
+        evaluation_metrics=metrics,
+        training_log=history,
+        random_seed=seed,
+    )
     onnx_path = os.path.join(onnx_out_dir, "model.onnx")
-    export_to_onnx(model, n_features, lookback, onnx_path, model_id=model_id)
 
     report = {
         "status": "SUCCESS",
         "model_id": model_id,
+        "artifact_dir": onnx_out_dir,
         "onnx_artifact": onnx_path,
         "metrics": metrics,
         "epochs_completed": len(history["train_loss"]),

@@ -1,0 +1,58 @@
+{
+  "model_id": "lstm_v1",
+  "model_version": 1,
+  "training_dataset_version": "ds_2024_v1",
+  "feature_set_version": 1,
+  "feature_schema": [
+    "log_return",
+    "rolling_vol_10",
+    "rsi_14",
+    "macd_diff",
+    "bollinger_width",
+    "atr_14",
+    "adx_14",
+    "obv_zscore",
+    "volume_ratio"
+  ],
+  "target_definition": {
+    "horizon": 1,
+    "transformation": "log_return"
+  },
+  "lookback": 60,
+  "architecture": {
+    "hidden_size": 128,
+    "num_layers": 2,
+    "dropout": 0.3
+  },
+  "hyperparameters": {
+    "lr": 0.001,
+    "batch_size": 64,
+    "weight_decay": 0.0001
+  },
+  "training_period": [
+    "2023-01-01",
+    "2023-10-01"
+  ],
+  "validation_period": [
+    "2023-10-02",
+    "2023-11-15"
+  ],
+  "test_period": [
+    "2023-11-16",
+    "2023-12-31"
+  ],
+  "random_seed": 42,
+  "framework_version": "torch==2.14.0+cpu",
+  "onnx_opset": 17,
+  "evaluation_metrics": {
+    "ic": 0.0,
+    "rank_ic": 0.0,
+    "directional_accuracy": 0.5,
+    "annualized_sharpe": 0.0,
+    "max_drawdown": 0.0,
+    "mean_return": 0.0,
+    "volatility": 0.0
+  },
+  "git_commit": "HEAD",
+  "created_at": "2026-09-07T18:17:17.938236+00:00"
+}

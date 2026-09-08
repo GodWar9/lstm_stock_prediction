@@ -27,11 +27,11 @@ fn main() -> anyhow::Result<()> {
         Commands::Train(args) => {
             handlers::train::handle_train(args, &cli.config)?;
         }
-        Commands::ExportModel(_) => {
-            println!("Executing export-model command...");
+        Commands::ExportModel(args) => {
+            handlers::export_model::handle_export_model(args, &cli.config)?;
         }
-        Commands::Predict(_) => {
-            println!("Executing predict command...");
+        Commands::Predict(args) => {
+            handlers::predict::handle_predict(args, &cli.config)?;
         }
         Commands::Backtest(_) => {
             println!("Executing backtest command...");
