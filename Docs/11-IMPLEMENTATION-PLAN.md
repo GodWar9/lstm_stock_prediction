@@ -20,8 +20,8 @@ small, coherent, and tied to a behavior or verification change.
 | 1 | Foundation, configuration, CI, smoke tests | Complete |
 | 2 | Versioned market-data ingestion | In progress |
 | 3 | Point-in-time and leakage validation | In progress |
-| 4 | Rust feature store and Arrow dataset builder | In progress |
-| 5 | Python training contract and reproducibility | Planned |
+| 4 | Rust feature store and Arrow dataset builder | Complete |
+| 5 | Python training contract and reproducibility | In progress |
 | 6 | Versioned artifacts and Rust inference parity | Planned |
 | 7 | Real prediction and model-backed signals | Planned |
 | 8 | Portfolio, risk, execution, and deterministic backtesting | Planned |
@@ -39,8 +39,9 @@ The first implementation slice provides:
 - persisted dataset reload and validation through `quantctl data validate`
 - explicit synthetic provider behavior rather than silent fallback
 
-The next slice will connect persisted bars to the existing Rust feature graph
-and produce a versioned Arrow IPC training dataset.
+The current slice produces a versioned Arrow IPC training dataset by joining
+feature rows with forward targets. The next slice will make Python consume this
+file directly and validate its schema before training.
 
 ## Commit Standard
 
