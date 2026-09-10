@@ -17,10 +17,10 @@ small, coherent, and tied to a behavior or verification change.
 
 | Phase | Scope | Status |
 |---|---|---|
-| 1 | Foundation, configuration, CI, smoke tests | In progress |
+| 1 | Foundation, configuration, CI, smoke tests | Complete |
 | 2 | Versioned market-data ingestion | In progress |
 | 3 | Point-in-time and leakage validation | In progress |
-| 4 | Rust feature store and Arrow dataset builder | Planned |
+| 4 | Rust feature store and Arrow dataset builder | In progress |
 | 5 | Python training contract and reproducibility | Planned |
 | 6 | Versioned artifacts and Rust inference parity | Planned |
 | 7 | Real prediction and model-backed signals | Planned |
