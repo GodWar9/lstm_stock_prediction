@@ -8,8 +8,9 @@ use quant_data::adapters::mock::SyntheticDataProvider;
 use quant_data::MarketDataProvider;
 use quant_features::{
     export::{FeatureArrowExporter, FeatureDatasetManifest},
+    targets::TargetGenerator,
     Atr, BollingerBands, Ema, FeatureGraph, FeatureStore, LogReturn, Macd, RollingVolatility, Rsi,
-    Sma,
+    Sma, TrainingDatasetManifest,
 };
 use std::path::Path;
 use tracing::info;
@@ -82,9 +83,33 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
                     )
                     .with_context(|| format!("Failed to persist feature dataset for {}", symbol))?;
 
+                    let targets =
+                        TargetGenerator::new(app_config.features.target_horizon as usize, 0.001)
+                            .context("Invalid target horizon configuration")?
+                            .compute_targets(&bars)
+                            .context("Failed to compute forward targets")?;
+                    let training_path = FeatureArrowExporter::write_training_ipc(
+                        Path::new("datasets/training"),
+                        &TrainingDatasetManifest {
+                            dataset_version: app_config.data.dataset_version.clone(),
+                            feature_set: feature_set.clone(),
+                            feature_set_version: app_config.features.feature_set_version,
+                            symbol: symbol.clone(),
+                            row_count: 0,
+                            feature_columns: Vec::new(),
+                            target_horizon: app_config.features.target_horizon as usize,
+                        },
+                        &rows,
+                        &targets,
+                    )
+                    .with_context(|| {
+                        format!("Failed to persist training dataset for {}", symbol)
+                    })?;
+
                     info!(
                         symbol = %symbol,
                         output_file = ?out_path,
+                        training_file = ?training_path,
                         rows = row_count,
                         "Successfully exported feature dataset to Parquet"
                     );
