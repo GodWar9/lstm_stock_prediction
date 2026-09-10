@@ -8,8 +8,10 @@ quant_calendar.workspace = true
 quant_instruments.workspace = true
 chrono.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 thiserror.workspace = true
 anyhow.workspace = true
 
 [dev-dependencies]
 proptest.workspace = true
+tempfile.workspace = true
