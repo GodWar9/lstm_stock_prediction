@@ -40,8 +40,9 @@ The first implementation slice provides:
 - explicit synthetic provider behavior rather than silent fallback
 
 The current slice produces a versioned Arrow IPC training dataset by joining
-feature rows with forward targets. The next slice will make Python consume this
-file directly and validate its schema before training.
+feature rows with forward targets. Python now has a schema- and manifest-aware
+reader for this contract. The next slice will replace synthetic training
+arrays with this reader and enforce dataset-driven feature dimensions.
 
 ## Commit Standard
 
