@@ -13,6 +13,10 @@ market data -> PIT validation -> Rust features -> Arrow dataset
 Each phase must leave the repository runnable and tested. Commits should be
 small, coherent, and tied to a behavior or verification change.
 
+The detailed record of completed changes, verification, commit IDs, and
+remaining work is maintained in
+[12-IMPLEMENTATION-CHANGELOG.md](./12-IMPLEMENTATION-CHANGELOG.md).
+
 ## Phases
 
 | Phase | Scope | Status |
