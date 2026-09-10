@@ -28,7 +28,12 @@ fn test_cli_help() {
 #[test]
 fn test_cli_config_validate() {
     let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args(["config", "validate", "--config", "../../configs/default.yaml"])
+        .args([
+            "config",
+            "validate",
+            "--config",
+            "../../configs/default.yaml",
+        ])
         .output()
         .expect("Failed to execute quantctl config validate");
 
@@ -78,7 +83,14 @@ fn test_cli_invalid_config_path() {
 #[test]
 fn test_cli_features_build() {
     let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args(["features", "build", "--config", "../../configs/default.yaml", "--feature-set", "test_v1"])
+        .args([
+            "features",
+            "build",
+            "--config",
+            "../../configs/default.yaml",
+            "--feature-set",
+            "test_v1",
+        ])
         .output()
         .expect("Failed to execute quantctl features build");
 
@@ -90,14 +102,22 @@ fn test_cli_features_build() {
 #[test]
 fn test_cli_train() {
     let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args(["train", "--config", "../../configs/default.yaml"])
+        .args([
+            "train",
+            "--config",
+            "../../configs/default.yaml",
+            "--synthetic",
+        ])
         .output()
         .expect("Failed to execute quantctl train");
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
     if !output.status.success() {
-        eprintln!("test_cli_train FAILED:\nSTDOUT:\n{}\nSTDERR:\n{}", stdout, stderr);
+        eprintln!(
+            "test_cli_train FAILED:\nSTDOUT:\n{}\nSTDERR:\n{}",
+            stdout, stderr
+        );
     }
     assert!(output.status.success(), "Status not success");
     assert!(stdout.contains("Training completed successfully"));
@@ -106,14 +126,25 @@ fn test_cli_train() {
 #[test]
 fn test_cli_predict() {
     let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args(["predict", "--model", "lstm_v1", "--symbol", "AAPL", "--config", "../../configs/default.yaml"])
+        .args([
+            "predict",
+            "--model",
+            "lstm_v1",
+            "--symbol",
+            "AAPL",
+            "--config",
+            "../../configs/default.yaml",
+        ])
         .output()
         .expect("Failed to execute quantctl predict");
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
     if !output.status.success() {
-        eprintln!("test_cli_predict FAILED:\nSTDOUT:\n{}\nSTDERR:\n{}", stdout, stderr);
+        eprintln!(
+            "test_cli_predict FAILED:\nSTDOUT:\n{}\nSTDERR:\n{}",
+            stdout, stderr
+        );
     }
     assert!(output.status.success());
     assert!(stdout.contains("QUANTCTL MODEL PREDICTION & SIGNAL"));
@@ -150,7 +181,10 @@ fn test_cli_backtest_and_simulate_and_report() {
         std::path::PathBuf::from("reports/backtest_lstm_v1_test.json"),
         std::path::PathBuf::from("../../reports/backtest_lstm_v1_test.json"),
     ];
-    let report_path = report_candidates.iter().find(|p| p.exists()).cloned()
+    let report_path = report_candidates
+        .iter()
+        .find(|p| p.exists())
+        .cloned()
         .unwrap_or_else(|| report_candidates[0].clone());
 
     // 2. Simulate Run

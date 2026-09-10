@@ -112,6 +112,18 @@ pub struct TrainArgs {
     /// Optional override path for training config
     #[arg(long)]
     pub train_config: Option<PathBuf>,
+
+    /// Optional Rust-generated Arrow training dataset
+    #[arg(long)]
+    pub dataset: Option<PathBuf>,
+
+    /// Optional manifest for the Arrow training dataset
+    #[arg(long)]
+    pub manifest: Option<PathBuf>,
+
+    /// Use deterministic synthetic data for development smoke tests
+    #[arg(long)]
+    pub synthetic: bool,
 }
 
 #[derive(Args, Debug)]

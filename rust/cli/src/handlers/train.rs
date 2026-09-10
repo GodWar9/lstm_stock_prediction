@@ -7,10 +7,7 @@ use std::process::Command;
 use tracing::{error, info};
 
 pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
-    let config_file = args
-        .train_config
-        .as_deref()
-        .unwrap_or(global_config_path);
+    let config_file = args.train_config.as_deref().unwrap_or(global_config_path);
 
     // Resolve script path relative to current execution context
     let candidates = [
@@ -43,18 +40,28 @@ pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
         "Launching PyTorch training orchestrator subprocess"
     );
 
-    let abs_config = std::fs::canonicalize(config_file).unwrap_or_else(|_| config_file.to_path_buf());
+    let abs_config =
+        std::fs::canonicalize(config_file).unwrap_or_else(|_| config_file.to_path_buf());
 
     let mut cmd = Command::new("python");
-    cmd.arg(&script_path)
-        .arg("--config")
-        .arg(&abs_config);
+    cmd.arg(&script_path).arg("--config").arg(&abs_config);
+    if let Some(dataset) = &args.dataset {
+        cmd.arg("--dataset").arg(dataset);
+    }
+    if let Some(manifest) = &args.manifest {
+        cmd.arg("--manifest").arg(manifest);
+    }
+    if args.synthetic {
+        cmd.arg("--synthetic");
+    }
 
     if work_dir.exists() && work_dir != Path::new("") {
         cmd.current_dir(&work_dir);
     }
 
-    let output = cmd.output().with_context(|| "Failed to execute python training orchestrator")?;
+    let output = cmd
+        .output()
+        .with_context(|| "Failed to execute python training orchestrator")?;
 
     if output.status.success() {
         let stdout = String::from_utf8_lossy(&output.stdout);
@@ -66,7 +73,10 @@ pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
         let stderr = String::from_utf8_lossy(&output.stderr);
         let stdout = String::from_utf8_lossy(&output.stdout);
         error!(stderr = %stderr, stdout = %stdout, "Python training orchestrator failed");
-        eprintln!("Python training error:\nSTDOUT:\n{}\nSTDERR:\n{}", stdout, stderr);
+        eprintln!(
+            "Python training error:\nSTDOUT:\n{}\nSTDERR:\n{}",
+            stdout, stderr
+        );
         Err(anyhow::anyhow!(
             "Training failed with exit status {:?}",
             output.status.code()

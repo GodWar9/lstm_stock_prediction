@@ -217,6 +217,7 @@ The implementation work added the following commits:
 | `95667c2` | Record the Arrow training milestone |
 | `e38382a` | Validate Rust Arrow datasets in Python |
 | `5df7685` | Record the Python dataset contract |
+| `4857ae5` | Load versioned Arrow datasets in the training orchestrator |
 
 These commits are intentionally separated by coherent behavior boundaries:
 storage, export, CLI wiring, tests, and documentation.
@@ -250,8 +251,7 @@ successfully and validated the exported ONNX artifact.
 
 The next implementation milestones are:
 
-1. Wire Rust `quantctl train` to pass dataset and manifest paths.
-2. Add formal dataset-driven walk-forward training.
+1. Add formal dataset-driven walk-forward training.
 3. Use real FeatureStore sequences in `quantctl predict`.
 4. Replace manual backtest signals with `ModelSignalStream`.
 5. Add deterministic real-data backtest fixtures.
