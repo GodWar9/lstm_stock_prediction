@@ -7,8 +7,11 @@ use arrow2::datatypes::{DataType, Field, Schema};
 use arrow2::io::parquet::write::{
     transverse, CompressionOptions, Encoding, FileWriter, RowGroupIterator, Version, WriteOptions,
 };
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
+use std::fs;
 use std::io::Write;
+use std::path::{Path, PathBuf};
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -19,6 +22,18 @@ pub enum ExportError {
     IoError(#[from] std::io::Error),
     #[error("Empty dataset cannot be exported")]
     EmptyDataset,
+    #[error("Manifest serialization error: {0}")]
+    ManifestError(#[from] serde_json::Error),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FeatureDatasetManifest {
+    pub feature_set: String,
+    pub feature_set_version: u32,
+    pub symbol: String,
+    pub source_dataset_version: String,
+    pub row_count: usize,
+    pub columns: Vec<String>,
 }
 
 /// Helper to build an Arrow2 Chunk and Schema from FeatureRow records.
@@ -50,13 +65,15 @@ impl FeatureArrowExporter {
 
         // Populate timestamp column
         let timestamps: Vec<i64> = rows.iter().map(|r| r.timestamp.0).collect();
-        let ts_array = Box::new(Int64Array::from_slice(&timestamps)) as Box<dyn arrow2::array::Array>;
+        let ts_array =
+            Box::new(Int64Array::from_slice(&timestamps)) as Box<dyn arrow2::array::Array>;
 
         let mut columns: Vec<Box<dyn arrow2::array::Array>> = vec![ts_array];
 
         // Populate feature columns with null handling
         for name in &column_names {
-            let values: Vec<Option<f64>> = rows.iter().map(|r| r.values.get(name).copied()).collect();
+            let values: Vec<Option<f64>> =
+                rows.iter().map(|r| r.values.get(name).copied()).collect();
             let arr = Box::new(Float64Array::from(values)) as Box<dyn arrow2::array::Array>;
             columns.push(arr);
         }
@@ -82,12 +99,8 @@ impl FeatureArrowExporter {
             .map(|f| transverse(&f.data_type, |_| Encoding::Plain))
             .collect();
 
-        let row_groups = RowGroupIterator::try_new(
-            vec![Ok(chunk)].into_iter(),
-            &schema,
-            options,
-            encodings,
-        )?;
+        let row_groups =
+            RowGroupIterator::try_new(vec![Ok(chunk)].into_iter(), &schema, options, encodings)?;
 
         let mut file_writer = FileWriter::try_new(&mut writer, schema, options)?;
         for group in row_groups {
@@ -96,6 +109,33 @@ impl FeatureArrowExporter {
         file_writer.end(None)?;
 
         Ok(())
+    }
+
+    /// Persist a feature parquet file and its versioned manifest together.
+    pub fn write_versioned_dataset(
+        root: impl AsRef<Path>,
+        manifest: &FeatureDatasetManifest,
+        rows: &[FeatureRow],
+    ) -> Result<PathBuf, ExportError> {
+        if rows.is_empty() {
+            return Err(ExportError::EmptyDataset);
+        }
+
+        let output_dir = root
+            .as_ref()
+            .join(&manifest.feature_set)
+            .join(format!("v{}", manifest.feature_set_version));
+        fs::create_dir_all(&output_dir)?;
+
+        let output_path = output_dir.join(format!("{}.parquet", manifest.symbol));
+        let file = fs::File::create(&output_path)?;
+        Self::write_parquet(rows, file)?;
+
+        let manifest_path = output_dir.join(format!("{}.manifest.json", manifest.symbol));
+        let manifest_bytes = serde_json::to_vec_pretty(manifest)?;
+        fs::write(manifest_path, manifest_bytes)?;
+
+        Ok(output_path)
     }
 }
 
@@ -147,5 +187,29 @@ mod tests {
         assert!(!buffer.is_empty());
         // Check Parquet magic bytes "PAR1"
         assert_eq!(&buffer[0..4], b"PAR1");
+    }
+
+    #[test]
+    fn test_versioned_dataset_writes_manifest() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut values = HashMap::new();
+        values.insert("rsi".to_string(), 50.0);
+        let rows = vec![FeatureRow {
+            timestamp: Timestamp(100),
+            values,
+        }];
+        let manifest = FeatureDatasetManifest {
+            feature_set: "baseline".to_string(),
+            feature_set_version: 1,
+            symbol: "TEST".to_string(),
+            source_dataset_version: "ds_test".to_string(),
+            row_count: 1,
+            columns: vec!["rsi".to_string()],
+        };
+
+        let path =
+            FeatureArrowExporter::write_versioned_dataset(dir.path(), &manifest, &rows).unwrap();
+        assert!(path.exists());
+        assert!(path.with_file_name("TEST.manifest.json").exists());
     }
 }

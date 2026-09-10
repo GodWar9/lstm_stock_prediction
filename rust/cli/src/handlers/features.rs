@@ -7,10 +7,10 @@ use quant_config::load_config;
 use quant_data::adapters::mock::SyntheticDataProvider;
 use quant_data::MarketDataProvider;
 use quant_features::{
-    export::FeatureArrowExporter, Atr, BollingerBands, Ema, FeatureGraph, FeatureStore, LogReturn,
-    Macd, RollingVolatility, Rsi, Sma,
+    export::{FeatureArrowExporter, FeatureDatasetManifest},
+    Atr, BollingerBands, Ema, FeatureGraph, FeatureStore, LogReturn, Macd, RollingVolatility, Rsi,
+    Sma,
 };
-use std::fs::{create_dir_all, File};
 use std::path::Path;
 use tracing::info;
 
@@ -19,8 +19,8 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
         FeaturesSubcommands::Build { feature_set } => {
             info!(feature_set = %feature_set, "Building feature dataset");
 
-            let app_config = load_config(config_path)
-                .context("Failed to load application configuration")?;
+            let app_config =
+                load_config(config_path).context("Failed to load application configuration")?;
 
             let start_date = NaiveDate::parse_from_str(&app_config.data.start_date, "%Y-%m-%d")
                 .unwrap_or_else(|_| NaiveDate::from_ymd_opt(2023, 1, 1).unwrap());
@@ -66,13 +66,21 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
 
                 if !rows.is_empty() {
                     // Export to Parquet in the configured data directory
-                    let out_dir = Path::new("data/features");
-                    create_dir_all(out_dir)?;
-                    let out_path = out_dir.join(format!("{}_{}.parquet", symbol, feature_set));
-
-                    let file = File::create(&out_path)
-                        .with_context(|| format!("Failed to create output file {:?}", out_path))?;
-                    FeatureArrowExporter::write_parquet(&rows, file)?;
+                    let mut columns: Vec<String> = rows[0].values.keys().cloned().collect();
+                    columns.sort();
+                    let out_path = FeatureArrowExporter::write_versioned_dataset(
+                        Path::new("datasets/features"),
+                        &FeatureDatasetManifest {
+                            feature_set: feature_set.clone(),
+                            feature_set_version: app_config.features.feature_set_version,
+                            symbol: symbol.clone(),
+                            source_dataset_version: app_config.data.dataset_version.clone(),
+                            row_count,
+                            columns,
+                        },
+                        &rows,
+                    )
+                    .with_context(|| format!("Failed to persist feature dataset for {}", symbol))?;
 
                     info!(
                         symbol = %symbol,
