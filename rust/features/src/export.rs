@@ -4,6 +4,7 @@ use crate::graph::FeatureRow;
 use arrow2::array::{Float64Array, Int64Array};
 use arrow2::chunk::Chunk;
 use arrow2::datatypes::{DataType, Field, Schema};
+use arrow2::io::ipc::write::{StreamWriter, WriteOptions as IpcWriteOptions};
 use arrow2::io::parquet::write::{
     transverse, CompressionOptions, Encoding, FileWriter, RowGroupIterator, Version, WriteOptions,
 };
@@ -34,6 +35,17 @@ pub struct FeatureDatasetManifest {
     pub source_dataset_version: String,
     pub row_count: usize,
     pub columns: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct TrainingDatasetManifest {
+    pub dataset_version: String,
+    pub feature_set: String,
+    pub feature_set_version: u32,
+    pub symbol: String,
+    pub row_count: usize,
+    pub feature_columns: Vec<String>,
+    pub target_horizon: usize,
 }
 
 /// Helper to build an Arrow2 Chunk and Schema from FeatureRow records.
@@ -137,6 +149,114 @@ impl FeatureArrowExporter {
 
         Ok(output_path)
     }
+
+    /// Writes feature rows joined with forward targets as an Arrow IPC stream.
+    pub fn write_training_ipc(
+        root: impl AsRef<Path>,
+        manifest: &TrainingDatasetManifest,
+        rows: &[FeatureRow],
+        targets: &[crate::targets::TargetRow],
+    ) -> Result<PathBuf, ExportError> {
+        if rows.is_empty() || targets.is_empty() {
+            return Err(ExportError::EmptyDataset);
+        }
+
+        let target_by_timestamp: std::collections::HashMap<_, _> = targets
+            .iter()
+            .map(|target| (target.timestamp, target))
+            .collect();
+        let joined: Vec<_> = rows
+            .iter()
+            .filter_map(|row| {
+                target_by_timestamp
+                    .get(&row.timestamp)
+                    .map(|target| (row, *target))
+            })
+            .collect();
+        if joined.is_empty() {
+            return Err(ExportError::EmptyDataset);
+        }
+
+        let mut feature_names = BTreeSet::new();
+        for (row, _) in &joined {
+            feature_names.extend(row.values.keys().cloned());
+        }
+        let mut fields = vec![
+            Field::new("timestamp", DataType::Int64, false),
+            Field::new("target_timestamp", DataType::Int64, false),
+            Field::new("target", DataType::Float32, false),
+            Field::new("asset_id", DataType::UInt32, false),
+            Field::new("feature_set_version", DataType::UInt32, false),
+            Field::new("target_horizon", DataType::UInt16, false),
+        ];
+        fields.extend(
+            feature_names
+                .iter()
+                .map(|name| Field::new(name, DataType::Float32, false)),
+        );
+        let schema = Schema::from(fields);
+
+        let columns: Vec<Box<dyn arrow2::array::Array>> = vec![
+            Box::new(Int64Array::from_slice(
+                &joined
+                    .iter()
+                    .map(|(row, _)| row.timestamp.0)
+                    .collect::<Vec<_>>(),
+            )),
+            Box::new(Int64Array::from_slice(
+                &joined
+                    .iter()
+                    .map(|(_, target)| target.target_timestamp.0)
+                    .collect::<Vec<_>>(),
+            )),
+            Box::new(arrow2::array::Float32Array::from_slice(
+                &joined
+                    .iter()
+                    .map(|(_, target)| target.forward_return as f32)
+                    .collect::<Vec<_>>(),
+            )),
+            Box::new(arrow2::array::UInt32Array::from_slice(&vec![
+                1_u32;
+                joined.len()
+            ])),
+            Box::new(arrow2::array::UInt32Array::from_slice(
+                &vec![manifest.feature_set_version; joined.len()],
+            )),
+            Box::new(arrow2::array::UInt16Array::from_slice(&vec![
+                manifest.target_horizon
+                    as u16;
+                joined.len()
+            ])),
+        ];
+        let mut columns = columns;
+        for name in &feature_names {
+            columns.push(Box::new(arrow2::array::Float32Array::from_slice(
+                &joined
+                    .iter()
+                    .map(|(row, _)| *row.values.get(name).unwrap_or(&0.0) as f32)
+                    .collect::<Vec<_>>(),
+            )));
+        }
+
+        let output_dir = root.as_ref().join(&manifest.dataset_version);
+        fs::create_dir_all(&output_dir)?;
+        let output_path = output_dir.join(format!("{}.arrow", manifest.symbol));
+        let mut file = fs::File::create(&output_path)?;
+        let mut writer = StreamWriter::new(&mut file, IpcWriteOptions { compression: None });
+        writer.start(&schema, None)?;
+        writer.write(&Chunk::new(columns), None)?;
+        writer.finish()?;
+        fs::write(
+            output_dir.join(format!("{}.manifest.json", manifest.symbol)),
+            serde_json::to_vec_pretty(&TrainingDatasetManifest {
+                row_count: joined.len(),
+                feature_columns: feature_names.into_iter().collect(),
+                ..manifest.clone()
+            })?,
+        )?;
+
+        Ok(output_path)
+    }
 }
 
 #[cfg(test)]
@@ -211,5 +331,44 @@ mod tests {
             FeatureArrowExporter::write_versioned_dataset(dir.path(), &manifest, &rows).unwrap();
         assert!(path.exists());
         assert!(path.with_file_name("TEST.manifest.json").exists());
+    }
+
+    #[test]
+    fn test_training_ipc_joins_only_rows_with_targets() {
+        let dir = tempfile::tempdir().unwrap();
+        let rows = vec![
+            FeatureRow {
+                timestamp: Timestamp(1),
+                values: HashMap::from([("sma".to_string(), 10.0)]),
+            },
+            FeatureRow {
+                timestamp: Timestamp(2),
+                values: HashMap::from([("sma".to_string(), 11.0)]),
+            },
+        ];
+        let targets = vec![crate::targets::TargetRow {
+            timestamp: Timestamp(1),
+            target_timestamp: Timestamp(2),
+            forward_return: 0.1,
+            direction: crate::targets::DirectionLabel::Up,
+        }];
+        let manifest = TrainingDatasetManifest {
+            dataset_version: "ds_test".to_string(),
+            feature_set: "baseline".to_string(),
+            feature_set_version: 1,
+            symbol: "TEST".to_string(),
+            row_count: 0,
+            feature_columns: Vec::new(),
+            target_horizon: 1,
+        };
+
+        let path = FeatureArrowExporter::write_training_ipc(dir.path(), &manifest, &rows, &targets)
+            .unwrap();
+        assert!(path.exists());
+        assert!(path.with_file_name("TEST.manifest.json").exists());
+        let manifest_content =
+            std::fs::read_to_string(path.with_file_name("TEST.manifest.json")).unwrap();
+        assert!(manifest_content.contains("\"row_count\": 1"));
+        assert!(manifest_content.contains("\"sma\""));
     }
 }

@@ -12,6 +12,4 @@ thiserror.workspace = true
 anyhow.workspace = true
 arrow2.workspace = true
 ringbuf.workspace = true
-
-[dev-dependencies]
 tempfile.workspace = true
