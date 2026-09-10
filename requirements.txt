@@ -4,3 +4,5 @@ pyarrow
 pyyaml
 scipy
 torch
+onnx
+onnxruntime

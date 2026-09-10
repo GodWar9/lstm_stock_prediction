@@ -1,6 +1,6 @@
 """Export PyTorch LSTM models to validated ONNX artifacts with dynamic axes."""
 
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 import os
 import sys
 
@@ -184,4 +184,3 @@ if __name__ == "__main__":
         lookback=20,
     )
     print(f"Successfully exported full artifact package to: {path}")
-

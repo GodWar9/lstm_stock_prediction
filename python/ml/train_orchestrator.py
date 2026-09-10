@@ -18,9 +18,15 @@ if hasattr(sys.stdout, "reconfigure"):
         pass
 
 import yaml
-from python.ml.dataset import FeatureScaler, PurgedWalkForwardSplitter, TimeSeriesTorchDataset, create_sliding_windows
+from python.ml.arrow_dataset import load_arrow_training_dataset
+from python.ml.dataset import (
+    FeatureScaler,
+    PurgedWalkForwardSplitter,
+    TimeSeriesTorchDataset,
+    create_sliding_windows,
+)
 from python.ml.evaluate import compute_metrics
-from python.ml.export_onnx import export_artifact_package, export_to_onnx
+from python.ml.export_onnx import export_artifact_package
 from python.ml.loss import DirectionalAsymmetricLoss
 from python.ml.models.lstm import LSTMForecaster
 from python.ml.trainer import ModelTrainer
@@ -29,6 +35,13 @@ from python.ml.trainer import ModelTrainer
 def parse_args():
     parser = argparse.ArgumentParser(description="Train LSTM Quant Model")
     parser.add_argument("--config", type=str, default="configs/default.yaml")
+    parser.add_argument("--dataset", type=str, default=None)
+    parser.add_argument("--manifest", type=str, default=None)
+    parser.add_argument(
+        "--synthetic",
+        action="store_true",
+        help="Use deterministic synthetic data when no Arrow dataset is available",
+    )
     return parser.parse_args()
 
 
@@ -37,6 +50,61 @@ def load_config(path: str) -> dict:
         with open(path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
     return {}
+
+
+def load_training_arrays(args, cfg, lookback):
+    """Load the Rust dataset, retaining synthetic data only as an explicit fallback."""
+    data_cfg = cfg.get("data", {})
+    dataset_version = data_cfg.get("dataset_version", "ds_2024_v1")
+    symbol = (data_cfg.get("symbols") or ["AAPL"])[0]
+    dataset_path = args.dataset or os.path.join(
+        "datasets", "training", dataset_version, f"{symbol}.arrow"
+    )
+    manifest_path = args.manifest or os.path.join(
+        "datasets", "training", dataset_version, f"{symbol}.manifest.json"
+    )
+
+    if os.path.exists(dataset_path):
+        dataset = load_arrow_training_dataset(
+            dataset_path, manifest_path if os.path.exists(manifest_path) else None
+        )
+        if dataset.features.shape[0] < lookback:
+            raise ValueError(
+                f"Training dataset has {dataset.features.shape[0]} rows, "
+                f"but lookback requires {lookback}"
+            )
+        return (
+            dataset.features,
+            dataset.targets,
+            dataset.feature_names,
+            dataset.timestamps,
+            dataset.target_timestamps,
+            dataset.feature_set_version,
+            dataset.target_horizon,
+            dataset_path,
+        )
+
+    if not args.synthetic:
+        raise FileNotFoundError(
+            f"Arrow training dataset not found at {dataset_path}. "
+            "Run `quantctl features build` or pass --synthetic for a test run."
+        )
+
+    print(f"[Python ML] Using explicit synthetic training mode: {dataset_path}")
+    n_samples = 300
+    n_features = 9
+    raw_features = np.random.randn(n_samples, n_features).astype(np.float32)
+    raw_targets = (0.01 * np.random.randn(n_samples)).astype(np.float32)
+    return (
+        raw_features,
+        raw_targets,
+        [f"feature_{i}" for i in range(n_features)],
+        np.arange(n_samples, dtype=np.int64),
+        np.arange(1, n_samples + 1, dtype=np.int64),
+        1,
+        1,
+        None,
+    )
 
 
 def main():
@@ -59,16 +127,28 @@ def main():
     torch.manual_seed(seed)
     np.random.seed(seed)
 
-    print(f"[Python ML] Training model '{model_id}' (lookback={lookback}, hidden={hidden_dim}, epochs={epochs})...")
+    print(
+        f"[Python ML] Training model '{model_id}' "
+        f"(lookback={lookback}, hidden={hidden_dim}, epochs={epochs})..."
+    )
 
-    # Generate synthetic training sequence or load Parquet features
-    n_samples = 300
-    n_features = 9
-    raw_features = np.random.randn(n_samples, n_features).astype(np.float32)
-    raw_targets = (0.01 * np.random.randn(n_samples)).astype(np.float32)
+    (
+        raw_features,
+        raw_targets,
+        feature_schema,
+        timestamps,
+        target_timestamps,
+        feature_set_version,
+        target_horizon,
+        dataset_path,
+    ) = load_training_arrays(args, cfg, lookback)
+    n_samples, n_features = raw_features.shape
 
     # Split dataset with purge and embargo
-    splitter = PurgedWalkForwardSplitter(purge_bars=5, embargo_bars=10)
+    splitter = PurgedWalkForwardSplitter(
+        purge_bars=train_cfg.get("purge_gap", 5),
+        embargo_bars=train_cfg.get("embargo_gap", 10),
+    )
     train_idx, val_idx, test_idx = splitter.split_train_test(n_samples, train_ratio=0.7, val_ratio=0.15)
 
     # Scale using train statistics
@@ -76,6 +156,9 @@ def main():
     scaled_train = scaler.fit_transform(raw_features[train_idx])
     scaled_val = scaler.transform(raw_features[val_idx])
     scaled_test = scaler.transform(raw_features[test_idx])
+
+    if len(train_idx) < lookback:
+        raise ValueError("Training split is shorter than the configured lookback")
 
     # Windows
     x_tr, y_tr = create_sliding_windows(scaled_train, raw_targets[train_idx], lookback)
@@ -116,6 +199,18 @@ def main():
         evaluation_metrics=metrics,
         training_log=history,
         random_seed=seed,
+        feature_schema=feature_schema,
+        training_period=[str(timestamps[train_idx[0]]), str(target_timestamps[train_idx[-1]])],
+        validation_period=(
+            [str(timestamps[val_idx[0]]), str(target_timestamps[val_idx[-1]])]
+            if len(val_idx)
+            else None
+        ),
+        test_period=(
+            [str(timestamps[test_idx[0]]), str(target_timestamps[test_idx[-1]])]
+            if len(test_idx)
+            else None
+        ),
     )
     onnx_path = os.path.join(onnx_out_dir, "model.onnx")
 
@@ -126,6 +221,10 @@ def main():
         "onnx_artifact": onnx_path,
         "metrics": metrics,
         "epochs_completed": len(history["train_loss"]),
+        "dataset_path": dataset_path,
+        "feature_schema": feature_schema,
+        "feature_set_version": feature_set_version,
+        "target_horizon": target_horizon,
     }
     print(json.dumps(report))
 

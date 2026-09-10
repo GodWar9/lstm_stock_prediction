@@ -236,24 +236,31 @@ Generated test artifacts were removed after validation. Dataset outputs created
 by real CLI runs should remain outside source control unless they are
 deliberately selected as small fixtures.
 
+### Dataset-driven training
+
+The Python training entrypoint now loads the versioned Rust Arrow dataset by
+default, derives feature dimensions from its schema, and carries dataset
+metadata into the training report and model artifact metadata. Synthetic input
+is available only through the explicit `--synthetic` flag for development
+smoke tests. ONNX and ONNX Runtime are declared in `requirements.txt` to match
+the exporter requirements. A workspace-environment smoke run completed
+successfully and validated the exported ONNX artifact.
+
 ## Remaining Work
 
 The next implementation milestones are:
 
-1. Replace synthetic arrays in `python/ml/train_orchestrator.py` with the
-   Arrow loader.
-2. Record dataset and feature metadata in model artifacts.
-3. Add formal dataset-driven walk-forward training.
-4. Use real FeatureStore sequences in `quantctl predict`.
-5. Replace manual backtest signals with `ModelSignalStream`.
-6. Add deterministic real-data backtest fixtures.
-7. Complete Monte Carlo stress and benchmark reporting.
-8. Add CI gates for Rust, Python, leakage, parity, and artifact validation.
-9. Document limitations, data licensing, and research reproducibility.
-10. Add derivatives only after the equity pipeline is fully verified.
+1. Wire Rust `quantctl train` to pass dataset and manifest paths.
+2. Add formal dataset-driven walk-forward training.
+3. Use real FeatureStore sequences in `quantctl predict`.
+4. Replace manual backtest signals with `ModelSignalStream`.
+5. Add deterministic real-data backtest fixtures.
+6. Complete Monte Carlo stress and benchmark reporting.
+7. Add CI gates for Rust, Python, leakage, parity, and artifact validation.
+8. Document limitations, data licensing, and research reproducibility.
+9. Add derivatives only after the equity pipeline is fully verified.
 
 The target remains more than 100 meaningful commits, with an expected final
 range of approximately 110-130 commits. Commit count should come from
 independently understandable implementation, test, benchmark, and
 documentation changes rather than artificial history inflation.
-

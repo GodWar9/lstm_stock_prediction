@@ -45,8 +45,9 @@ The first implementation slice provides:
 
 The current slice produces a versioned Arrow IPC training dataset by joining
 feature rows with forward targets. Python now has a schema- and manifest-aware
-reader for this contract. The next slice will replace synthetic training
-arrays with this reader and enforce dataset-driven feature dimensions.
+reader for this contract. The training orchestrator consumes that dataset by
+default, derives its feature schema and dimensions from the Arrow contract, and
+requires an explicit `--synthetic` flag for development-only synthetic runs.
 
 ## Commit Standard
 
