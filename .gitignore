@@ -23,6 +23,7 @@ Docs/HANDOVER.md
 /data/
 /datasets/
 **/datasets/
+rust/cli/data/
 models/*/*.onnx
 models/*/*.pt
 reports/
