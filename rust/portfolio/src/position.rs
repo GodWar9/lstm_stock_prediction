@@ -18,7 +18,12 @@ pub struct Position {
 }
 
 impl Position {
-    pub fn new(instrument: InstrumentId, symbol: impl Into<String>, quantity: f64, price: f64) -> Self {
+    pub fn new(
+        instrument: InstrumentId,
+        symbol: impl Into<String>,
+        quantity: f64,
+        price: f64,
+    ) -> Self {
         Self {
             instrument,
             symbol: symbol.into(),
