@@ -1,8 +1,8 @@
 //! Data validation passes: monotonic timestamps, bar price integrity, and leakage prevention.
 
-use std::collections::HashSet;
 use crate::provider::DataError;
 use crate::types::{Bar, Timestamp};
+use std::collections::HashSet;
 
 /// Validates that a sequence of bars has strictly monotonically increasing timestamps
 /// and physically valid prices (positive, non-NaN, high >= max(open, close), low <= min(open, close)).
