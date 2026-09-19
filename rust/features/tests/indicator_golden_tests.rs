@@ -22,7 +22,9 @@ fn generate_sample_bars(closes: &[f64]) -> Vec<Bar> {
 
 #[test]
 fn test_golden_sma() {
-    let prices = [22.27, 22.19, 22.08, 22.17, 22.18, 22.13, 22.23, 22.43, 22.24, 22.29];
+    let prices = [
+        22.27, 22.19, 22.08, 22.17, 22.18, 22.13, 22.23, 22.43, 22.24, 22.29,
+    ];
     let bars = generate_sample_bars(&prices);
     let mut win = BarWindow::new(10);
     for b in bars {
@@ -33,7 +35,12 @@ fn test_golden_sma() {
     let val = sma5.compute(&win).expect("SMA-5 should compute");
     // Last 5: 22.13, 22.23, 22.43, 22.24, 22.29 -> Sum = 111.32 -> 111.32 / 5 = 22.264
     let expected = 22.264;
-    assert!((val - expected).abs() < 1e-6, "SMA mismatch: got {}, expected {}", val, expected);
+    assert!(
+        (val - expected).abs() < 1e-6,
+        "SMA mismatch: got {}, expected {}",
+        val,
+        expected
+    );
 }
 
 #[test]
@@ -46,7 +53,9 @@ fn test_golden_bollinger_bands() {
     }
 
     let bb = BollingerBands::new(5, 2.0);
-    let out = bb.compute_bands(&win).expect("Bollinger bands should compute");
+    let out = bb
+        .compute_bands(&win)
+        .expect("Bollinger bands should compute");
     // Mean = (20 + 22 + 21 + 23 + 24) / 5 = 22.0
     // Var = ((20-22)^2 + (22-22)^2 + (21-22)^2 + (23-22)^2 + (24-22)^2) / 5
     //     = (4 + 0 + 1 + 1 + 4) / 5 = 10 / 5 = 2.0
@@ -62,8 +71,8 @@ fn test_golden_bollinger_bands() {
 fn test_golden_rsi_wilder() {
     // Known test sequence
     let prices = [
-        44.34, 44.09, 44.15, 43.61, 44.33, 44.83, 45.10, 45.42, 45.84, 46.08,
-        45.89, 46.03, 45.61, 46.28, 46.28,
+        44.34, 44.09, 44.15, 43.61, 44.33, 44.83, 45.10, 45.42, 45.84, 46.08, 45.89, 46.03, 45.61,
+        46.28, 46.28,
     ];
     let bars = generate_sample_bars(&prices);
     let mut win = BarWindow::new(15);
@@ -73,7 +82,11 @@ fn test_golden_rsi_wilder() {
     let rsi14 = Rsi::new(14);
     let val = rsi14.compute(&win).expect("RSI-14 should compute");
     // Classic Wilder's 14-period RSI on this sequence produces ~70.53
-    assert!(val > 68.0 && val < 73.0, "RSI out of expected range: {}", val);
+    assert!(
+        val > 68.0 && val < 73.0,
+        "RSI out of expected range: {}",
+        val
+    );
 }
 
 #[test]
