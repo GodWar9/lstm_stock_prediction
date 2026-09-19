@@ -36,8 +36,12 @@ pub fn handle_predict(args: &PredictArgs, _config_path: &Path) -> Result<()> {
         .with_context(|| format!("Failed to locate model artifact for {}", args.model))?;
 
     info!(path = %artifact_dir.display(), "Loading ONNX model artifact and fitted scaler");
-    let provider = OnnxLstmProvider::load(&artifact_dir)
-        .with_context(|| format!("Failed to load OnnxLstmProvider from {}", artifact_dir.display()))?;
+    let provider = OnnxLstmProvider::load(&artifact_dir).with_context(|| {
+        format!(
+            "Failed to load OnnxLstmProvider from {}",
+            artifact_dir.display()
+        )
+    })?;
 
     let lookback = provider.lookback();
     let num_features = provider.feature_schema().len();
@@ -63,7 +67,8 @@ pub fn handle_predict(args: &PredictArgs, _config_path: &Path) -> Result<()> {
     }
 
     // 1. Run inference
-    let prediction = provider.predict(&raw_features, lookback, num_features)
+    let prediction = provider
+        .predict(&raw_features, lookback, num_features)
         .context("Model inference failed")?;
 
     // 2. Calibrate prediction to Signal
@@ -83,10 +88,20 @@ pub fn handle_predict(args: &PredictArgs, _config_path: &Path) -> Result<()> {
     println!("Model:              {}", signal.model_id);
     println!("Lookback:           {} bars", lookback);
     println!("Feature Count:      {}", num_features);
-    println!("Expected Return:    {:+0.4}%", signal.expected_return * 100.0);
+    println!(
+        "Expected Return:    {:+0.4}%",
+        signal.expected_return * 100.0
+    );
     println!("Confidence:         {:.2}%", signal.confidence * 100.0);
     println!("Signal Direction:   {:?}", signal.direction);
-    println!("Actionable:         {}", if signal.direction.is_active() { "YES" } else { "NO" });
+    println!(
+        "Actionable:         {}",
+        if signal.direction.is_active() {
+            "YES"
+        } else {
+            "NO"
+        }
+    );
     println!("Artifact Dir:       {}", artifact_dir.display());
     println!("Timestamp (UTC):    {}", chrono::Utc::now().to_rfc3339());
     println!("--------------------------------------------------");
