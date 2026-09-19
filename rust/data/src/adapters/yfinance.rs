@@ -1,13 +1,13 @@
 //! YfinanceAdapter: Free/experimental market data feed via Python subprocess helper.
 
-use std::fs;
-use std::path::{Path, PathBuf};
-use std::process::Command;
-use chrono::{DateTime, NaiveDate, TimeZone, Utc};
-use quant_calendar::{TradingCalendar, UsEquityCalendar};
 use crate::provider::{DataError, MarketDataProvider};
 use crate::types::{Bar, CorporateAction, Timestamp};
 use crate::validate::{check_duplicate_timestamps, validate_bars_monotonic_and_sound};
+use chrono::{DateTime, NaiveDate, TimeZone, Utc};
+use quant_calendar::{TradingCalendar, UsEquityCalendar};
+use std::fs;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 
 /// Free/experimental market data adapter powered by yfinance via an isolated Python child process.
 #[derive(Debug, Clone)]
@@ -18,7 +18,11 @@ pub struct YfinanceAdapter {
 }
 
 impl YfinanceAdapter {
-    pub fn new(python_bin: impl Into<PathBuf>, helper_script: impl Into<PathBuf>, cache_dir: impl Into<PathBuf>) -> Self {
+    pub fn new(
+        python_bin: impl Into<PathBuf>,
+        helper_script: impl Into<PathBuf>,
+        cache_dir: impl Into<PathBuf>,
+    ) -> Self {
         let cache_dir = cache_dir.into();
         let _ = fs::create_dir_all(&cache_dir);
         Self {
@@ -57,8 +61,15 @@ impl YfinanceAdapter {
 }
 
 impl MarketDataProvider for YfinanceAdapter {
-    fn fetch_ohlcv(&self, symbol: &str, start: NaiveDate, end: NaiveDate) -> Result<Vec<Bar>, DataError> {
-        let output_file = self.cache_dir.join(format!("{}_{}_{}.csv", symbol, start, end));
+    fn fetch_ohlcv(
+        &self,
+        symbol: &str,
+        start: NaiveDate,
+        end: NaiveDate,
+    ) -> Result<Vec<Bar>, DataError> {
+        let output_file = self
+            .cache_dir
+            .join(format!("{}_{}_{}.csv", symbol, start, end));
         let output_str = output_file.to_string_lossy();
 
         let _ = self.run_helper(&[
@@ -93,13 +104,24 @@ impl MarketDataProvider for YfinanceAdapter {
             } else if let Ok(nd) = NaiveDate::parse_from_str(dt_str, "%Y-%m-%d") {
                 Utc.from_utc_datetime(&nd.and_hms_opt(21, 0, 0).unwrap())
             } else {
-                return Err(DataError::ParseError(format!("Invalid date format in line: {}", line)));
+                return Err(DataError::ParseError(format!(
+                    "Invalid date format in line: {}",
+                    line
+                )));
             };
 
-            let open: f64 = parts[1].parse().map_err(|_| DataError::ParseError("Invalid open".into()))?;
-            let high: f64 = parts[2].parse().map_err(|_| DataError::ParseError("Invalid high".into()))?;
-            let low: f64 = parts[3].parse().map_err(|_| DataError::ParseError("Invalid low".into()))?;
-            let close: f64 = parts[4].parse().map_err(|_| DataError::ParseError("Invalid close".into()))?;
+            let open: f64 = parts[1]
+                .parse()
+                .map_err(|_| DataError::ParseError("Invalid open".into()))?;
+            let high: f64 = parts[2]
+                .parse()
+                .map_err(|_| DataError::ParseError("Invalid high".into()))?;
+            let low: f64 = parts[3]
+                .parse()
+                .map_err(|_| DataError::ParseError("Invalid low".into()))?;
+            let close: f64 = parts[4]
+                .parse()
+                .map_err(|_| DataError::ParseError("Invalid close".into()))?;
             let volume: u64 = parts[5].parse().unwrap_or(0);
 
             let ts = Timestamp::from_datetime(dt);
@@ -113,8 +135,15 @@ impl MarketDataProvider for YfinanceAdapter {
         Ok(bars)
     }
 
-    fn corporate_actions(&self, symbol: &str, start: NaiveDate, end: NaiveDate) -> Result<Vec<CorporateAction>, DataError> {
-        let output_file = self.cache_dir.join(format!("{}_actions_{}_{}.csv", symbol, start, end));
+    fn corporate_actions(
+        &self,
+        symbol: &str,
+        start: NaiveDate,
+        end: NaiveDate,
+    ) -> Result<Vec<CorporateAction>, DataError> {
+        let output_file = self
+            .cache_dir
+            .join(format!("{}_actions_{}_{}.csv", symbol, start, end));
         let output_str = output_file.to_string_lossy();
 
         let _ = self.run_helper(&[
