@@ -78,26 +78,155 @@ impl Feature for RollingVolatility {
     }
 
     fn compute(&self, window: &BarWindow) -> Option<f64> {
-        let closes = window.closes();
-        if closes.len() < self.lookback() {
+        let w_len = window.len();
+        if w_len < self.lookback() {
             return None;
         }
 
-        let slice = &closes[closes.len() - (self.period + 1)..];
-        let mut returns = Vec::with_capacity(self.period);
-        for i in 1..slice.len() {
-            if slice[i - 1] <= 0.0 || slice[i] <= 0.0 {
-                return None;
-            }
-            returns.push((slice[i] / slice[i - 1]).ln());
+        let start_idx = w_len - (self.period + 1);
+        let mut prev_close = window.get(start_idx)?.close;
+        if prev_close <= 0.0 {
+            return None;
         }
 
-        let n = returns.len() as f64;
-        let mean = returns.iter().sum::<f64>() / n;
-        let variance = returns.iter().map(|&r| (r - mean).powi(2)).sum::<f64>() / (n - 1.0);
-        let std_dev = variance.sqrt();
+        let mut mean = 0.0;
+        let mut m2 = 0.0;
 
-        Some(std_dev * self.annualization_factor)
+        for step in 1..=self.period {
+            let curr_close = window.get(start_idx + step)?.close;
+            if curr_close <= 0.0 {
+                return None;
+            }
+            let r = (curr_close / prev_close).ln();
+            prev_close = curr_close;
+
+            let delta = r - mean;
+            mean += delta / (step as f64);
+            let delta2 = r - mean;
+            m2 += delta * delta2;
+        }
+
+        let variance = m2 / (self.period as f64 - 1.0);
+        Some(variance.sqrt() * self.annualization_factor)
+    }
+}
+
+/// Parkinson High-Low Volatility Estimator.
+/// Up to 5x more statistically efficient than close-to-close volatility by capturing intraday price dispersion.
+#[derive(Debug)]
+pub struct ParkinsonVolatility {
+    period: usize,
+    annualization_factor: f64,
+}
+
+impl ParkinsonVolatility {
+    pub fn new(period: usize, annualization_factor: f64) -> Self {
+        assert!(period > 0, "period must be > 0");
+        Self {
+            period,
+            annualization_factor,
+        }
+    }
+
+    pub fn daily(period: usize) -> Self {
+        Self::new(period, 252.0f64.sqrt())
+    }
+}
+
+impl Feature for ParkinsonVolatility {
+    fn name(&self) -> &str {
+        "parkinson_volatility"
+    }
+
+    fn version(&self) -> u32 {
+        1
+    }
+
+    fn lookback(&self) -> usize {
+        self.period
+    }
+
+    fn compute(&self, window: &BarWindow) -> Option<f64> {
+        let w_len = window.len();
+        if w_len < self.period {
+            return None;
+        }
+
+        let start_idx = w_len - self.period;
+        let mut sum_hl_sq = 0.0;
+
+        for i in 0..self.period {
+            let bar = window.get(start_idx + i)?;
+            if bar.low <= 0.0 || bar.high <= 0.0 || bar.high < bar.low {
+                return None;
+            }
+            let hl_ratio = (bar.high / bar.low).ln();
+            sum_hl_sq += hl_ratio * hl_ratio;
+        }
+
+        let factor = 1.0 / (4.0 * 2.0_f64.ln());
+        let variance = (factor * sum_hl_sq) / self.period as f64;
+        Some(variance.sqrt() * self.annualization_factor)
+    }
+}
+
+/// Garman-Klass Open-High-Low-Close Volatility Estimator.
+/// Up to 8x more statistically efficient than close-to-close volatility by incorporating opening gaps and intraday ranges.
+#[derive(Debug)]
+pub struct GarmanKlassVolatility {
+    period: usize,
+    annualization_factor: f64,
+}
+
+impl GarmanKlassVolatility {
+    pub fn new(period: usize, annualization_factor: f64) -> Self {
+        assert!(period > 0, "period must be > 0");
+        Self {
+            period,
+            annualization_factor,
+        }
+    }
+
+    pub fn daily(period: usize) -> Self {
+        Self::new(period, 252.0f64.sqrt())
+    }
+}
+
+impl Feature for GarmanKlassVolatility {
+    fn name(&self) -> &str {
+        "garman_klass_volatility"
+    }
+
+    fn version(&self) -> u32 {
+        1
+    }
+
+    fn lookback(&self) -> usize {
+        self.period
+    }
+
+    fn compute(&self, window: &BarWindow) -> Option<f64> {
+        let w_len = window.len();
+        if w_len < self.period {
+            return None;
+        }
+
+        let start_idx = w_len - self.period;
+        let mut sum_term = 0.0;
+        let c2 = 2.0_f64.ln() * 2.0 - 1.0;
+
+        for i in 0..self.period {
+            let bar = window.get(start_idx + i)?;
+            if bar.low <= 0.0 || bar.high <= 0.0 || bar.open <= 0.0 || bar.close <= 0.0 {
+                return None;
+            }
+            let hl_ratio = (bar.high / bar.low).ln();
+            let co_ratio = (bar.close / bar.open).ln();
+            sum_term += 0.5 * hl_ratio * hl_ratio - c2 * co_ratio * co_ratio;
+        }
+
+        let variance = (sum_term / self.period as f64).max(0.0);
+        Some(variance.sqrt() * self.annualization_factor)
     }
 }
 
@@ -132,5 +261,33 @@ mod tests {
         let val = vol.compute(&w);
         assert!(val.is_some());
         assert!(val.unwrap() > 0.0);
+    }
+
+    #[test]
+    fn test_parkinson_and_garman_klass_volatility() {
+        let mut w = BarWindow::new(5);
+        for i in 0..5 {
+            let ts = Timestamp(i as i64 * 86_400_000_000_000);
+            w.push(Bar::new(
+                ts,
+                ts,
+                100.0 + i as f64,
+                105.0 + i as f64,
+                98.0 + i as f64,
+                102.0 + i as f64,
+                1000,
+                false,
+            ));
+        }
+
+        let pv = ParkinsonVolatility::daily(5);
+        let p_val = pv.compute(&w);
+        assert!(p_val.is_some());
+        assert!(p_val.unwrap() > 0.0);
+
+        let gk = GarmanKlassVolatility::daily(5);
+        let gk_val = gk.compute(&w);
+        assert!(gk_val.is_some());
+        assert!(gk_val.unwrap() > 0.0);
     }
 }
