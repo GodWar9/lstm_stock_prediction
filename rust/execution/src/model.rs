@@ -29,10 +29,10 @@ pub struct CompositeExecutionModel {
 impl Default for CompositeExecutionModel {
     fn default() -> Self {
         Self {
-            commission_rate: 0.0005, // 5 bps
-            min_commission: 1.0,     // $1.00
-            half_spread_bps: 2.0,    // 2 bps
-            slippage_factor: 0.10,   // linear slippage
+            commission_rate: 0.0005,         // 5 bps
+            min_commission: 1.0,             // $1.00
+            half_spread_bps: 2.0,            // 2 bps
+            slippage_factor: 0.10,           // linear slippage
             default_participation_cap: 0.05, // 5% volume limit
         }
     }
@@ -71,7 +71,10 @@ impl ExecutionModel for CompositeExecutionModel {
         }
 
         // 1. Enforce volume participation cap
-        let cap_ratio = order.participation_cap.unwrap_or(self.default_participation_cap).clamp(0.001, 1.0);
+        let cap_ratio = order
+            .participation_cap
+            .unwrap_or(self.default_participation_cap)
+            .clamp(0.001, 1.0);
         let max_shares = (bar.volume as f64) * cap_ratio;
         let eligible_qty = order.quantity.clamp(-max_shares, max_shares);
 
@@ -132,10 +135,16 @@ impl ExecutionModel for CompositeExecutionModel {
 
         let (fill_price, total_slippage_cost) = if eligible_qty > 0.0 {
             // Buyer pays half-spread and upward slippage
-            (base_price + half_spread_cost + slippage_cost, half_spread_cost + slippage_cost)
+            (
+                base_price + half_spread_cost + slippage_cost,
+                half_spread_cost + slippage_cost,
+            )
         } else {
             // Seller pays half-spread and downward slippage
-            (base_price - half_spread_cost - slippage_cost, half_spread_cost + slippage_cost)
+            (
+                base_price - half_spread_cost - slippage_cost,
+                half_spread_cost + slippage_cost,
+            )
         };
 
         // 4. Commission calculation
