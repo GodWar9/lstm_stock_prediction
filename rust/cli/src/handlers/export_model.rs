@@ -13,12 +13,17 @@ pub fn handle_export_model(args: &ExportModelArgs, _config_path: &Path) -> Resul
     let mut cmd = Command::new("python");
     cmd.arg(python_script);
 
-    let status = cmd.status().context("Failed to execute python export script")?;
+    let status = cmd
+        .status()
+        .context("Failed to execute python export script")?;
     if !status.success() {
         bail!("Model export script exited with non-zero status");
     }
 
     let target_dir = format!("models/{}", args.model_version);
-    println!("Successfully verified and exported model artifact: {}", target_dir);
+    println!(
+        "Successfully verified and exported model artifact: {}",
+        target_dir
+    );
     Ok(())
 }
