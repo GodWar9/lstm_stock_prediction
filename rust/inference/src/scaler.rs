@@ -78,7 +78,7 @@ impl FittedScaler {
     /// Normalize a raw feature slice (single timestep or flattened sequence [T, F]).
     pub fn transform(&self, features: &[f64]) -> Result<Vec<f64>, InferenceError> {
         let n_feat = self.num_features();
-        if features.is_empty() || features.len() % n_feat != 0 {
+        if features.is_empty() || !features.len().is_multiple_of(n_feat) {
             return Err(InferenceError::ShapeMismatch {
                 expected: format!("multiple of {} features", n_feat),
                 got: format!("{} elements", features.len()),

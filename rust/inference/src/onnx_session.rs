@@ -4,9 +4,11 @@ use crate::provider::{InferenceError, Prediction, PredictionProvider};
 use std::path::Path;
 use tract_onnx::prelude::*;
 
+type TractPlan = SimplePlan<TypedFact, Box<dyn TypedOp>, Graph<TypedFact, Box<dyn TypedOp>>>;
+
 /// ONNX model session backed by tract.
 pub struct OnnxSession {
-    model: SimplePlan<TypedFact, Box<dyn TypedOp>, Graph<TypedFact, Box<dyn TypedOp>>>,
+    model: TractPlan,
     model_id: String,
     seq_len: usize,
     num_features: usize,
