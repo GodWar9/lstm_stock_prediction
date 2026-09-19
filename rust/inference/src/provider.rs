@@ -46,7 +46,12 @@ pub struct Prediction {
 /// Trait for any inference backend (ONNX, mock, ensemble).
 pub trait PredictionProvider: Send + Sync {
     /// Predict from a raw feature window of shape `[seq_len, num_features]`.
-    fn predict(&self, raw_features: &[f64], seq_len: usize, num_features: usize) -> Result<Prediction, InferenceError>;
+    fn predict(
+        &self,
+        raw_features: &[f64],
+        seq_len: usize,
+        num_features: usize,
+    ) -> Result<Prediction, InferenceError>;
 
     /// Predict over a batch of sequences of shape `[batch_size, seq_len, num_features]`.
     fn predict_batch(
@@ -59,7 +64,12 @@ pub trait PredictionProvider: Send + Sync {
         let seq_elements = seq_len * num_features;
         if raw_features_batch.len() != batch_size * seq_elements {
             return Err(InferenceError::ShapeMismatch {
-                expected: format!("batch size {} * {} elements = {}", batch_size, seq_elements, batch_size * seq_elements),
+                expected: format!(
+                    "batch size {} * {} elements = {}",
+                    batch_size,
+                    seq_elements,
+                    batch_size * seq_elements
+                ),
                 got: format!("{} elements", raw_features_batch.len()),
             });
         }
@@ -120,8 +130,16 @@ impl OnnxLstmProvider {
         let scaler = FittedScaler::load(&scaler_path)?;
         if scaler.num_features() != metadata.feature_schema.len() {
             return Err(InferenceError::ShapeMismatch {
-                expected: format!("scaler features {} matching metadata schema {}", scaler.num_features(), metadata.feature_schema.len()),
-                got: format!("{} scaler features vs {} schema columns", scaler.num_features(), metadata.feature_schema.len()),
+                expected: format!(
+                    "scaler features {} matching metadata schema {}",
+                    scaler.num_features(),
+                    metadata.feature_schema.len()
+                ),
+                got: format!(
+                    "{} scaler features vs {} schema columns",
+                    scaler.num_features(),
+                    metadata.feature_schema.len()
+                ),
             });
         }
 
@@ -152,10 +170,19 @@ impl OnnxLstmProvider {
 }
 
 impl PredictionProvider for OnnxLstmProvider {
-    fn predict(&self, raw_features: &[f64], seq_len: usize, num_features: usize) -> Result<Prediction, InferenceError> {
+    fn predict(
+        &self,
+        raw_features: &[f64],
+        seq_len: usize,
+        num_features: usize,
+    ) -> Result<Prediction, InferenceError> {
         if seq_len != self.metadata.lookback || num_features != self.scaler.num_features() {
             return Err(InferenceError::ShapeMismatch {
-                expected: format!("[{}, {}]", self.metadata.lookback, self.scaler.num_features()),
+                expected: format!(
+                    "[{}, {}]",
+                    self.metadata.lookback,
+                    self.scaler.num_features()
+                ),
                 got: format!("[{}, {}]", seq_len, num_features),
             });
         }
@@ -164,7 +191,9 @@ impl PredictionProvider for OnnxLstmProvider {
         let scaled_features = self.scaler.transform(raw_features)?;
 
         // Run inference through ONNX session
-        let raw_pred = self.session.predict(&scaled_features, seq_len, num_features)?;
+        let raw_pred = self
+            .session
+            .predict(&scaled_features, seq_len, num_features)?;
 
         // Return calibrated prediction tagged with model provenance
         Ok(Prediction {
@@ -211,7 +240,10 @@ mod tests {
     fn test_onnx_lstm_provider_load_and_predict() {
         let dir = find_artifact_dir();
         if !dir.join("model.onnx").exists() || !dir.join("metadata.json").exists() {
-            eprintln!("Skipping test: model artifact directory not found at {:?}", dir);
+            eprintln!(
+                "Skipping test: model artifact directory not found at {:?}",
+                dir
+            );
             return;
         }
 
@@ -224,7 +256,9 @@ mod tests {
 
         // Dummy raw features: lookback timesteps * num_features
         let raw_features = vec![0.05; lookback * num_features];
-        let pred = provider.predict(&raw_features, lookback, num_features).unwrap();
+        let pred = provider
+            .predict(&raw_features, lookback, num_features)
+            .unwrap();
         assert_eq!(pred.model_id, "lstm_v1");
         assert!(pred.value.is_finite());
     }
@@ -241,7 +275,9 @@ mod tests {
         let num_features = provider.feature_schema().len();
         let batch_size = 3;
         let batch_features = vec![0.02; batch_size * lookback * num_features];
-        let preds = provider.predict_batch(&batch_features, batch_size, lookback, num_features).unwrap();
+        let preds = provider
+            .predict_batch(&batch_features, batch_size, lookback, num_features)
+            .unwrap();
         assert_eq!(preds.len(), batch_size);
         for p in preds {
             assert!(p.value.is_finite());
