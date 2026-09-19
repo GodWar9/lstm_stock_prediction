@@ -29,7 +29,11 @@ impl RiskEngine {
         let (mean_ret, daily_vol) = if daily_returns.len() >= 2 {
             let n = daily_returns.len() as f64;
             let mean = daily_returns.iter().sum::<f64>() / n;
-            let var = daily_returns.iter().map(|r| (r - mean).powi(2)).sum::<f64>() / (n - 1.0);
+            let var = daily_returns
+                .iter()
+                .map(|r| (r - mean).powi(2))
+                .sum::<f64>()
+                / (n - 1.0);
             (mean, var.sqrt())
         } else {
             (0.0, 0.0)
@@ -84,17 +88,29 @@ impl RiskEngine {
             StressResult {
                 scenario_name: "MarketCrash_10Pct".to_string(),
                 estimated_pnl: -0.10 * net_value,
-                estimated_pnl_pct: if nav > 1e-8 { (-0.10 * net_value) / nav } else { 0.0 },
+                estimated_pnl_pct: if nav > 1e-8 {
+                    (-0.10 * net_value) / nav
+                } else {
+                    0.0
+                },
             },
             StressResult {
                 scenario_name: "MarketRally_10Pct".to_string(),
                 estimated_pnl: 0.10 * net_value,
-                estimated_pnl_pct: if nav > 1e-8 { (0.10 * net_value) / nav } else { 0.0 },
+                estimated_pnl_pct: if nav > 1e-8 {
+                    (0.10 * net_value) / nav
+                } else {
+                    0.0
+                },
             },
             StressResult {
                 scenario_name: "SevereCrisis_20Pct".to_string(),
                 estimated_pnl: -0.20 * net_value,
-                estimated_pnl_pct: if nav > 1e-8 { (-0.20 * net_value) / nav } else { 0.0 },
+                estimated_pnl_pct: if nav > 1e-8 {
+                    (-0.20 * net_value) / nav
+                } else {
+                    0.0
+                },
             },
         ];
 
@@ -134,6 +150,9 @@ mod tests {
         assert!(report.cvar_95 >= report.var_95);
         assert!((report.beta - 1.0).abs() < 0.5);
         assert_eq!(report.stress_scenarios.len(), 3);
-        assert_eq!(report.stress_scenarios[0].scenario_name, "MarketCrash_10Pct");
+        assert_eq!(
+            report.stress_scenarios[0].scenario_name,
+            "MarketCrash_10Pct"
+        );
     }
 }
