@@ -198,31 +198,32 @@ impl FeatureArrowExporter {
 
         let columns: Vec<Box<dyn arrow2::array::Array>> = vec![
             Box::new(Int64Array::from_slice(
-                &joined
+                joined
                     .iter()
                     .map(|(row, _)| row.timestamp.0)
                     .collect::<Vec<_>>(),
             )),
             Box::new(Int64Array::from_slice(
-                &joined
+                joined
                     .iter()
                     .map(|(_, target)| target.target_timestamp.0)
                     .collect::<Vec<_>>(),
             )),
             Box::new(arrow2::array::Float32Array::from_slice(
-                &joined
+                joined
                     .iter()
                     .map(|(_, target)| target.forward_return as f32)
                     .collect::<Vec<_>>(),
             )),
-            Box::new(arrow2::array::UInt32Array::from_slice(&vec![
+            Box::new(arrow2::array::UInt32Array::from_slice(vec![
                 1_u32;
                 joined.len()
             ])),
-            Box::new(arrow2::array::UInt32Array::from_slice(
-                &vec![manifest.feature_set_version; joined.len()],
-            )),
-            Box::new(arrow2::array::UInt16Array::from_slice(&vec![
+            Box::new(arrow2::array::UInt32Array::from_slice(vec![
+                manifest.feature_set_version;
+                joined.len()
+            ])),
+            Box::new(arrow2::array::UInt16Array::from_slice(vec![
                 manifest.target_horizon
                     as u16;
                 joined.len()
@@ -231,7 +232,7 @@ impl FeatureArrowExporter {
         let mut columns = columns;
         for name in &feature_names {
             columns.push(Box::new(arrow2::array::Float32Array::from_slice(
-                &joined
+                joined
                     .iter()
                     .map(|(row, _)| *row.values.get(name).unwrap_or(&0.0) as f32)
                     .collect::<Vec<_>>(),
