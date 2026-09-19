@@ -37,7 +37,10 @@ impl Portfolio {
 
     /// Total portfolio gross market value: sum(|market value|).
     pub fn gross_market_value(&self) -> f64 {
-        self.positions.values().map(|p| p.market_value().abs()).sum()
+        self.positions
+            .values()
+            .map(|p| p.market_value().abs())
+            .sum()
     }
 
     /// Total portfolio net market value: sum(market value).
