@@ -18,7 +18,11 @@ pub struct FittedScaler {
 
 impl FittedScaler {
     /// Create a new FittedScaler with given mean and std vectors.
-    pub fn new(mean: Vec<f64>, mut std: Vec<f64>, feature_names: Option<Vec<String>>) -> Result<Self, InferenceError> {
+    pub fn new(
+        mean: Vec<f64>,
+        mut std: Vec<f64>,
+        feature_names: Option<Vec<String>>,
+    ) -> Result<Self, InferenceError> {
         if mean.is_empty() {
             return Err(InferenceError::MetadataValidationFailed(
                 "Scaler mean vector cannot be empty".to_string(),
