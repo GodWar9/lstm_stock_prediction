@@ -106,10 +106,7 @@ mod tests {
 
     #[test]
     fn test_feature_graph_warmup_and_compute() {
-        let mut graph = FeatureGraph::new(vec![
-            Box::new(Sma::new(3)),
-            Box::new(Rsi::new(3)),
-        ]);
+        let mut graph = FeatureGraph::new(vec![Box::new(Sma::new(3)), Box::new(Rsi::new(3))]);
 
         assert_eq!(graph.feature_count(), 2);
         assert!(graph.max_lookback() >= 3);
