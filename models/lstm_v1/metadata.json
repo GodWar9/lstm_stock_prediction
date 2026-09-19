@@ -4,15 +4,15 @@
   "training_dataset_version": "ds_2024_v1",
   "feature_set_version": 1,
   "feature_schema": [
-    "log_return",
-    "rolling_vol_10",
-    "rsi_14",
-    "macd_diff",
-    "bollinger_width",
-    "atr_14",
-    "adx_14",
-    "obv_zscore",
-    "volume_ratio"
+    "feature_0",
+    "feature_1",
+    "feature_2",
+    "feature_3",
+    "feature_4",
+    "feature_5",
+    "feature_6",
+    "feature_7",
+    "feature_8"
   ],
   "target_definition": {
     "horizon": 1,
@@ -30,12 +30,12 @@
     "weight_decay": 0.0001
   },
   "training_period": [
-    "2023-01-01",
-    "2023-10-01"
+    "0",
+    "205"
   ],
   "validation_period": [
-    "2023-10-02",
-    "2023-11-15"
+    "270",
+    "271"
   ],
   "test_period": [
     "2023-11-16",
@@ -54,5 +54,5 @@
     "volatility": 0.0
   },
   "git_commit": "HEAD",
-  "created_at": "2026-09-08T04:57:11.489088+00:00"
+  "created_at": "2026-09-19T11:51:47.510183+00:00"
 }
