@@ -100,7 +100,14 @@ mod tests {
     use quant_data::{Bar, Timestamp};
 
     fn bar(close: f64) -> Bar {
-        Bar::same_bar(Timestamp(0), close - 1.0, close + 1.0, close - 2.0, close, 1000)
+        Bar::same_bar(
+            Timestamp(0),
+            close - 1.0,
+            close + 1.0,
+            close - 2.0,
+            close,
+            1000,
+        )
     }
 
     fn make_window(closes: &[f64]) -> BarWindow {
