@@ -60,6 +60,7 @@ impl BacktestEngine {
     /// 1. Model-Agnostic: takes `impl SignalStream`, with zero import of concrete ML models.
     /// 2. Point-in-Time: at step `i`, only `bars[..=i]` are observable.
     /// 3. Determinism: identical inputs produce byte-identical `BacktestReport`.
+    #[allow(clippy::too_many_arguments)]
     pub fn run<S, C, E>(
         &self,
         mut signal_stream: S,
