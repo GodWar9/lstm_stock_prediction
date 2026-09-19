@@ -47,3 +47,26 @@ class SharpeAwareLoss(nn.Module):
         # Negative Sharpe ratio
         sharpe = mean_ret / std_ret
         return -sharpe
+
+
+class SortinoAwareLoss(nn.Module):
+    """Sortino-ratio objective maximizing strategy return while penalizing downside semi-deviation."""
+
+    def __init__(self, target_return: float = 0.0, eps: float = 1e-6):
+        super().__init__()
+        self.target_return = target_return
+        self.eps = eps
+
+    def forward(self, y_pred: torch.Tensor, y_true: torch.Tensor) -> torch.Tensor:
+        # Position sizing bounded in [-1, 1]
+        positions = torch.tanh(y_pred)
+        strategy_returns = positions * y_true
+
+        mean_ret = torch.mean(strategy_returns)
+        # Penalize only downside returns below target
+        downside = torch.clamp(self.target_return - strategy_returns, min=0.0)
+        downside_dev = torch.sqrt(torch.mean(downside**2) + self.eps)
+
+        sortino = (mean_ret - self.target_return) / downside_dev
+        return -sortino
+

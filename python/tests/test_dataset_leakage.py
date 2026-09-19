@@ -67,3 +67,19 @@ def test_feature_scaler_no_test_leakage():
 
     transformed_train = scaler.transform(train_data)
     np.testing.assert_allclose(np.mean(transformed_train, axis=0), 0.0, atol=1e-6)
+
+
+def test_sortino_aware_loss():
+    import torch
+    from python.ml.loss import SortinoAwareLoss
+
+    loss_fn = SortinoAwareLoss()
+    y_pred = torch.tensor([0.5, -0.3, 0.8, -0.2], requires_grad=True)
+    y_true = torch.tensor([0.02, -0.01, 0.03, 0.01])
+
+    loss = loss_fn(y_pred, y_true)
+    assert loss.dim() == 0
+    loss.backward()
+    assert y_pred.grad is not None
+    assert torch.isfinite(loss)
+
