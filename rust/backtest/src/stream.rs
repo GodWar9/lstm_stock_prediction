@@ -20,6 +20,7 @@ pub struct ModelSignalStream<P: PredictionProvider> {
     pub instrument: InstrumentId,
     pub symbol: String,
     pub feature_history: VecDeque<Vec<f64>>,
+    pub timed_features: VecDeque<(i64, Vec<f64>)>,
 }
 
 impl<P: PredictionProvider> ModelSignalStream<P> {
@@ -30,7 +31,15 @@ impl<P: PredictionProvider> ModelSignalStream<P> {
             instrument,
             symbol: symbol.into(),
             feature_history: VecDeque::new(),
+            timed_features: VecDeque::new(),
         }
+    }
+
+    /// Pre-populate chronological timed feature vectors for point-in-time ingestion.
+    pub fn with_timed_features(mut self, mut features: Vec<(i64, Vec<f64>)>) -> Self {
+        features.sort_by_key(|(ts, _)| *ts);
+        self.timed_features = features.into();
+        self
     }
 
     /// Push a new observed point-in-time feature vector.
@@ -45,6 +54,16 @@ impl<P: PredictionProvider> ModelSignalStream<P> {
 
 impl<P: PredictionProvider> SignalStream for ModelSignalStream<P> {
     fn next_batch(&mut self, as_of: i64) -> Vec<Signal> {
+        // Ingest pending features whose observation timestamp is <= as_of
+        while let Some((ts, _)) = self.timed_features.front() {
+            if *ts <= as_of {
+                let (_, feat) = self.timed_features.pop_front().unwrap();
+                self.push_features(feat);
+            } else {
+                break;
+            }
+        }
+
         let lookback = self.provider.lookback();
         let num_features = self.provider.feature_schema().len();
 
@@ -130,5 +149,72 @@ mod tests {
         assert_eq!(batch.len(), 1);
         assert_eq!(batch[0].symbol, "AAPL");
         assert_eq!(stream.next_batch(1500).len(), 0);
+    }
+
+    struct MockProvider {
+        lookback: usize,
+        schema: Vec<String>,
+    }
+
+    impl PredictionProvider for MockProvider {
+        fn predict(
+            &self,
+            _features: &[f64],
+            _seq_len: usize,
+            _num_features: usize,
+        ) -> Result<quant_inference::Prediction, quant_inference::InferenceError> {
+            Ok(quant_inference::Prediction {
+                value: 0.02,
+                confidence: Some(0.75),
+                model_id: "mock_model".to_string(),
+                as_of: None,
+            })
+        }
+
+        fn lookback(&self) -> usize {
+            self.lookback
+        }
+
+        fn feature_schema(&self) -> &[String] {
+            &self.schema
+        }
+
+        fn model_id(&self) -> &str {
+            "mock_model"
+        }
+    }
+
+    #[test]
+    fn test_model_signal_stream_with_timed_features() {
+        let provider = MockProvider {
+            lookback: 2,
+            schema: vec!["f1".to_string(), "f2".to_string()],
+        };
+
+        let timed_features = vec![
+            (100, vec![0.1, 0.2]),
+            (200, vec![0.3, 0.4]),
+            (300, vec![0.5, 0.6]),
+        ];
+
+        let mut stream = ModelSignalStream::new(provider, InstrumentId(1), "AAPL")
+            .with_timed_features(timed_features);
+
+        // At ts 50, no features arrived yet
+        assert_eq!(stream.next_batch(50).len(), 0);
+
+        // At ts 100, 1 feature arrived (need lookback 2)
+        assert_eq!(stream.next_batch(100).len(), 0);
+
+        // At ts 200, 2nd feature arrived, meets lookback 2 -> produces signal
+        let signals = stream.next_batch(200);
+        assert_eq!(signals.len(), 1);
+        assert_eq!(signals[0].symbol, "AAPL");
+        assert_eq!(signals[0].as_of, 200);
+
+        // At ts 300, 3rd feature arrived -> produces signal
+        let signals3 = stream.next_batch(300);
+        assert_eq!(signals3.len(), 1);
+        assert_eq!(signals3[0].as_of, 300);
     }
 }
