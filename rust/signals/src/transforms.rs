@@ -32,7 +32,9 @@ impl ThresholdFilter {
 
 impl SignalTransform for ThresholdFilter {
     fn apply(&self, raw: &Signal) -> Signal {
-        if raw.expected_return.abs() < self.min_expected_return || raw.confidence < self.min_confidence {
+        if raw.expected_return.abs() < self.min_expected_return
+            || raw.confidence < self.min_confidence
+        {
             Signal {
                 direction: Direction::Flat,
                 expected_return: 0.0,
