@@ -1,8 +1,10 @@
 //! US Equity Calendar implementation for NYSE / NASDAQ exchanges.
 
-use chrono::{DateTime, Datelike, Duration, NaiveDate, NaiveDateTime, NaiveTime, TimeZone, Utc, Weekday};
-use std::collections::HashSet;
 use crate::{Session, TradingCalendar};
+use chrono::{
+    DateTime, Datelike, Duration, NaiveDate, NaiveDateTime, NaiveTime, TimeZone, Utc, Weekday,
+};
+use std::collections::HashSet;
 
 /// Calendar representing NYSE / NASDAQ market schedules, rules, and holidays.
 #[derive(Debug, Clone)]
@@ -128,7 +130,12 @@ impl UsEquityCalendar {
         }
 
         // July 3rd when July 4th falls on a weekday
-        if month == 7 && day == 3 && weekday != Weekday::Sat && weekday != Weekday::Sun && weekday != Weekday::Fri {
+        if month == 7
+            && day == 3
+            && weekday != Weekday::Sat
+            && weekday != Weekday::Sun
+            && weekday != Weekday::Fri
+        {
             return true;
         }
 
@@ -141,11 +148,31 @@ impl UsEquityCalendar {
         if month > 3 && month < 11 {
             -4 // EDT
         } else if month == 3 {
-            let second_sunday = (8..=14).find(|d| NaiveDate::from_ymd_opt(date.year(), 3, *d).map(|d| d.weekday() == Weekday::Sun).unwrap_or(false)).unwrap_or(8);
-            if date.day() >= second_sunday { -4 } else { -5 }
+            let second_sunday = (8..=14)
+                .find(|d| {
+                    NaiveDate::from_ymd_opt(date.year(), 3, *d)
+                        .map(|d| d.weekday() == Weekday::Sun)
+                        .unwrap_or(false)
+                })
+                .unwrap_or(8);
+            if date.day() >= second_sunday {
+                -4
+            } else {
+                -5
+            }
         } else if month == 11 {
-            let first_sunday = (1..=7).find(|d| NaiveDate::from_ymd_opt(date.year(), 11, *d).map(|d| d.weekday() == Weekday::Sun).unwrap_or(false)).unwrap_or(1);
-            if date.day() < first_sunday { -4 } else { -5 }
+            let first_sunday = (1..=7)
+                .find(|d| {
+                    NaiveDate::from_ymd_opt(date.year(), 11, *d)
+                        .map(|d| d.weekday() == Weekday::Sun)
+                        .unwrap_or(false)
+                })
+                .unwrap_or(1);
+            if date.day() < first_sunday {
+                -4
+            } else {
+                -5
+            }
         } else {
             -5 // EST
         }
