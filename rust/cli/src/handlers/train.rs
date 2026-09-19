@@ -34,7 +34,22 @@ pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
             )
         });
 
+    // Resolve target Python interpreter in python/.venv (or fallback to python on PATH)
+    let venv_candidates = [
+        work_dir.join("python/.venv/Scripts/python.exe"),
+        work_dir.join("python/.venv/bin/python"),
+        PathBuf::from("python/.venv/Scripts/python.exe"),
+        PathBuf::from("python/.venv/bin/python"),
+    ];
+
+    let python_bin = venv_candidates
+        .iter()
+        .find(|p| p.exists())
+        .cloned()
+        .unwrap_or_else(|| PathBuf::from("python"));
+
     info!(
+        python = %python_bin.display(),
         script = %script_path.display(),
         config = %config_file.display(),
         "Launching PyTorch training orchestrator subprocess"
@@ -43,7 +58,7 @@ pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
     let abs_config =
         std::fs::canonicalize(config_file).unwrap_or_else(|_| config_file.to_path_buf());
 
-    let mut cmd = Command::new("python");
+    let mut cmd = Command::new(&python_bin);
     cmd.arg(&script_path).arg("--config").arg(&abs_config);
     if let Some(dataset) = &args.dataset {
         cmd.arg("--dataset").arg(dataset);
