@@ -117,13 +117,19 @@ impl SimulationStrategy for MonteCarloResampler {
             let mut nav = 1.0;
             let mut peak = 1.0;
             let mut max_dd = 0.0;
-            let mut path_returns = Vec::with_capacity(path_len);
+            let mut mean = 0.0;
+            let mut m2 = 0.0;
 
-            for _ in 0..path_len {
+            for step in 1..=path_len {
                 let rand_val = Self::next_rand(&mut rng_state);
                 let idx = (rand_val * (returns.len() as f64)).floor() as usize;
                 let ret = returns[idx.min(returns.len() - 1)];
-                path_returns.push(ret);
+
+                // Welford's algorithm for numerically stable zero-allocation online variance
+                let delta = ret - mean;
+                mean += delta / (step as f64);
+                let delta2 = ret - mean;
+                m2 += delta * delta2;
 
                 nav *= 1.0 + ret;
                 if nav > peak {
@@ -140,10 +146,11 @@ impl SimulationStrategy for MonteCarloResampler {
             }
 
             // Path stats
-            let n = path_returns.len() as f64;
-            let mean = path_returns.iter().sum::<f64>() / n;
-            let var =
-                path_returns.iter().map(|r| (r - mean).powi(2)).sum::<f64>() / (n - 1.0).max(1.0);
+            let var = if path_len > 1 {
+                m2 / (path_len as f64 - 1.0)
+            } else {
+                0.0
+            };
             let vol = var.sqrt();
             let path_sharpe = if vol > 1e-8 {
                 (mean / vol) * (252.0_f64).sqrt()
