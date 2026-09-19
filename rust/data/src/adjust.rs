@@ -1,8 +1,8 @@
 //! Corporate actions adjustment logic with strict point-in-time enforcement.
 
-use chrono::NaiveDate;
 use crate::provider::DataError;
 use crate::types::{Bar, CorporateAction, CorporateActionKind};
+use chrono::NaiveDate;
 
 /// Adjusts a historical series of price bars for corporate actions strictly known as of `as_of`.
 ///
@@ -40,7 +40,9 @@ pub fn adjust_bars_pit(
                 match &action.action {
                     CorporateActionKind::Split { ratio } => {
                         if *ratio <= 0.0 {
-                            return Err(DataError::ValidationError("Split ratio must be positive".into()));
+                            return Err(DataError::ValidationError(
+                                "Split ratio must be positive".into(),
+                            ));
                         }
                         split_multiplier /= ratio;
                     }
@@ -68,8 +70,8 @@ pub fn adjust_bars_pit(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::TimeZone;
     use crate::types::Timestamp;
+    use chrono::TimeZone;
 
     #[test]
     fn test_split_adjustment_pit() {
@@ -77,8 +79,12 @@ mod tests {
         let d2 = NaiveDate::from_ymd_opt(2023, 1, 2).unwrap();
         let d3 = NaiveDate::from_ymd_opt(2023, 1, 3).unwrap();
 
-        let ts1 = Timestamp::from_datetime(chrono::Utc.from_utc_datetime(&d1.and_hms_opt(16, 0, 0).unwrap()));
-        let ts2 = Timestamp::from_datetime(chrono::Utc.from_utc_datetime(&d2.and_hms_opt(16, 0, 0).unwrap()));
+        let ts1 = Timestamp::from_datetime(
+            chrono::Utc.from_utc_datetime(&d1.and_hms_opt(16, 0, 0).unwrap()),
+        );
+        let ts2 = Timestamp::from_datetime(
+            chrono::Utc.from_utc_datetime(&d2.and_hms_opt(16, 0, 0).unwrap()),
+        );
 
         let bars = vec![
             Bar::same_bar(ts1, 100.0, 105.0, 95.0, 100.0, 1000),
