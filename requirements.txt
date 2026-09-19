@@ -1,3 +1,12 @@
+# DEPRECATED — This file is kept for backward compatibility only.
+# The canonical dependency specification has moved to python/pyproject.toml,
+# managed by uv. To install dependencies, run:
+#
+#   cd python && uv sync
+#
+# This creates a virtual environment at python/.venv with all pinned
+# dependencies from python/uv.lock.
+
 numpy
 pandas
 pyarrow
