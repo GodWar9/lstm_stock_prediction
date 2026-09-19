@@ -76,7 +76,9 @@ impl MonteCarloResampler {
 
     /// Linear congruential generator step for lightweight determinism without heavy RNG deps.
     fn next_rand(state: &mut u64) -> f64 {
-        *state = state.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        *state = state
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         let high = (*state >> 32) as u32;
         high as f64 / (u32::MAX as f64)
     }
@@ -140,7 +142,8 @@ impl SimulationStrategy for MonteCarloResampler {
             // Path stats
             let n = path_returns.len() as f64;
             let mean = path_returns.iter().sum::<f64>() / n;
-            let var = path_returns.iter().map(|r| (r - mean).powi(2)).sum::<f64>() / (n - 1.0).max(1.0);
+            let var =
+                path_returns.iter().map(|r| (r - mean).powi(2)).sum::<f64>() / (n - 1.0).max(1.0);
             let vol = var.sqrt();
             let path_sharpe = if vol > 1e-8 {
                 (mean / vol) * (252.0_f64).sqrt()
