@@ -26,7 +26,10 @@ fn resolve_model_path(model_id: &str) -> Result<PathBuf> {
         }
     }
 
-    bail!("Model artifact for '{}' not found in search paths", model_id);
+    bail!(
+        "Model artifact for '{}' not found in search paths",
+        model_id
+    );
 }
 
 fn generate_market_replay(n_bars: usize, start_price: f64) -> Vec<Bar> {
@@ -34,9 +37,22 @@ fn generate_market_replay(n_bars: usize, start_price: f64) -> Vec<Bar> {
     let mut price = start_price;
     for i in 0..n_bars {
         let ts = Timestamp((i as i64 + 1) * 86_400_000_000_000);
-        let ret = if i % 3 == 0 { 0.008 } else if i % 2 == 0 { -0.004 } else { 0.002 };
+        let ret = if i % 3 == 0 {
+            0.008
+        } else if i % 2 == 0 {
+            -0.004
+        } else {
+            0.002
+        };
         price *= 1.0 + ret;
-        bars.push(Bar::same_bar(ts, price * 0.999, price * 1.004, price * 0.996, price, 100_000));
+        bars.push(Bar::same_bar(
+            ts,
+            price * 0.999,
+            price * 1.004,
+            price * 0.996,
+            price,
+            100_000,
+        ));
     }
     bars
 }
@@ -64,7 +80,11 @@ pub fn handle_backtest(command: &BacktestSubcommands, _config_path: &Path) -> Re
             for (idx, bar) in bars.iter().enumerate() {
                 if idx % 5 == 0 {
                     signals.push(Signal {
-                        direction: if idx % 10 == 0 { Direction::Long } else { Direction::Short },
+                        direction: if idx % 10 == 0 {
+                            Direction::Long
+                        } else {
+                            Direction::Short
+                        },
                         expected_return: 0.015,
                         confidence: 0.80,
                         horizon_bars: 1,
@@ -115,7 +135,10 @@ pub fn handle_backtest(command: &BacktestSubcommands, _config_path: &Path) -> Re
             println!("Split:              {}", split);
             println!("Initial Capital:    ${:.2}", report.initial_cash);
             println!("Final NAV:          ${:.2}", report.final_nav);
-            println!("Total Return:       {:+0.2}%", report.total_return_pct * 100.0);
+            println!(
+                "Total Return:       {:+0.2}%",
+                report.total_return_pct * 100.0
+            );
             println!("CAGR:               {:+0.2}%", report.cagr * 100.0);
             println!("Sharpe Ratio:       {:.2}", report.sharpe);
             println!("Deflated Sharpe:    {:.2}", report.deflated_sharpe);
