@@ -3,9 +3,10 @@
 use serde::{Deserialize, Serialize};
 
 /// Trading exposure strategy style.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
 pub enum LongShortMode {
     /// Long positions only; negative signals result in flat allocations.
+    #[default]
     LongOnly,
     /// Both long and short positions permitted.
     LongShort,
@@ -13,12 +14,6 @@ pub enum LongShortMode {
     DollarNeutral,
     /// Benchmark beta neutralized allocations.
     BetaNeutral,
-}
-
-impl Default for LongShortMode {
-    fn default() -> Self {
-        Self::LongOnly
-    }
 }
 
 /// Portfolio construction constraints and de-risking thresholds.
