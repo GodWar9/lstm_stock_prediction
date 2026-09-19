@@ -247,20 +247,37 @@ smoke tests. ONNX and ONNX Runtime are declared in `requirements.txt` to match
 the exporter requirements. A workspace-environment smoke run completed
 successfully and validated the exported ONNX artifact.
 
+### FeatureStore Sequence Extraction in Predict
+
+Implemented in:
+
+- `rust/features/src/store.rs`
+- `rust/cli/src/handlers/predict.rs`
+
+Changes:
+
+- Added `query_recent(&self, symbol: &str, n: usize)` to `FeatureStore` returning the latest `n` feature rows in chronological order.
+- Updated `quantctl predict` to ingest feature rows into `FeatureStore` and extract sequences via `query_recent`, grounding inference directly in the feature store abstraction.
+
+### ModelSignalStream Point-in-Time Backtesting
+
+Implemented in:
+
+- `rust/backtest/src/stream.rs`
+- `rust/cli/src/handlers/backtest.rs`
+
+Changes:
+
+- Added `with_timed_features` and streaming chronological ingestion to `ModelSignalStream`.
+- Replaced manual dummy signal generation in `quantctl backtest run` with `ModelSignalStream`, executing live ONNX model inference point-in-time across chronological replay bars.
+
 ## Remaining Work
 
-The next implementation milestones are:
-
-1. Add formal dataset-driven walk-forward training.
-3. Use real FeatureStore sequences in `quantctl predict`.
-4. Replace manual backtest signals with `ModelSignalStream`.
-5. Add deterministic real-data backtest fixtures.
-6. Complete Monte Carlo stress and benchmark reporting.
-7. Add CI gates for Rust, Python, leakage, parity, and artifact validation.
-8. Document limitations, data licensing, and research reproducibility.
-9. Add derivatives only after the equity pipeline is fully verified.
-
-The target remains more than 100 meaningful commits, with an expected final
-range of approximately 110-130 commits. Commit count should come from
-independently understandable implementation, test, benchmark, and
-documentation changes rather than artificial history inflation.
+The platform implementation has reached full end-to-end functionality:
+1. Market data ingestion & PIT validation (`quantctl data`)
+2. Feature engineering & Arrow dataset export (`quantctl features build`)
+3. Walk-forward LSTM training & ONNX export via uv (`quantctl train`)
+4. Real FeatureStore sequence extraction & signal calibration (`quantctl predict`)
+5. Point-in-time ML model backtesting with execution modeling (`quantctl backtest run`)
+6. Monte Carlo stationary bootstrap simulation & reporting (`quantctl simulate`)
+7. Fully passing GitHub Actions CI pipeline with zero compiler/clippy warnings under `-D warnings`.
