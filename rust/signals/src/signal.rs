@@ -52,7 +52,12 @@ pub struct Signal {
 
 impl Signal {
     /// Create a new flat/neutral signal.
-    pub fn flat(instrument: InstrumentId, symbol: impl Into<String>, model_id: impl Into<String>, as_of: i64) -> Self {
+    pub fn flat(
+        instrument: InstrumentId,
+        symbol: impl Into<String>,
+        model_id: impl Into<String>,
+        as_of: i64,
+    ) -> Self {
         Self {
             direction: Direction::Flat,
             expected_return: 0.0,
@@ -82,7 +87,7 @@ impl Default for SignalConfig {
         Self {
             return_threshold: 0.0002, // 2 bps minimum expectation
             default_horizon_bars: 1,
-            confidence_scale: 0.01,   // 1% expected return reaches ~76% confidence
+            confidence_scale: 0.01, // 1% expected return reaches ~76% confidence
         }
     }
 }
@@ -124,7 +129,8 @@ impl SignalCalibrator {
                 if direction == Direction::Flat {
                     0.0
                 } else {
-                    let normalized = (expected_return.abs() / self.config.confidence_scale.max(1e-6)).tanh();
+                    let normalized =
+                        (expected_return.abs() / self.config.confidence_scale.max(1e-6)).tanh();
                     normalized.clamp(0.0, 1.0)
                 }
             }
