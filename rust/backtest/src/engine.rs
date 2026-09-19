@@ -170,7 +170,14 @@ mod tests {
             let ts = Timestamp((i as i64 + 1) * 86_400_000_000_000);
             let ret = if i % 2 == 0 { 0.005 } else { -0.003 };
             price *= 1.0 + ret;
-            bars.push(Bar::same_bar(ts, price * 0.998, price * 1.005, price * 0.995, price, 50_000));
+            bars.push(Bar::same_bar(
+                ts,
+                price * 0.998,
+                price * 1.005,
+                price * 0.995,
+                price,
+                50_000,
+            ));
         }
         bars
     }
@@ -200,13 +207,31 @@ mod tests {
         // Run 1
         let stream1 = ManualSignalStream::from_signals(vec![sig.clone()]);
         let rep1 = engine
-            .run(stream1, &constructor, &exec, &bars, id, symbol, &constraints, "lstm_v1")
+            .run(
+                stream1,
+                &constructor,
+                &exec,
+                &bars,
+                id,
+                symbol,
+                &constraints,
+                "lstm_v1",
+            )
             .unwrap();
 
         // Run 2
         let stream2 = ManualSignalStream::from_signals(vec![sig]);
         let rep2 = engine
-            .run(stream2, &constructor, &exec, &bars, id, symbol, &constraints, "lstm_v1")
+            .run(
+                stream2,
+                &constructor,
+                &exec,
+                &bars,
+                id,
+                symbol,
+                &constraints,
+                "lstm_v1",
+            )
             .unwrap();
 
         // Replay must be 100% byte-identical and deterministic
