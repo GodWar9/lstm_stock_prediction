@@ -27,7 +27,12 @@ pub struct Order {
 }
 
 impl Order {
-    pub fn market(instrument: InstrumentId, symbol: impl Into<String>, quantity: f64, as_of: i64) -> Self {
+    pub fn market(
+        instrument: InstrumentId,
+        symbol: impl Into<String>,
+        quantity: f64,
+        as_of: i64,
+    ) -> Self {
         Self {
             instrument,
             symbol: symbol.into(),
