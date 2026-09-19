@@ -93,33 +93,29 @@ impl ExecutionModel for CompositeExecutionModel {
         // 2. Limit order condition check
         if let Some(limit_price) = order.limit_price {
             match order.order_type {
-                OrderType::Limit if order.is_buy() => {
-                    if bar.low > limit_price {
-                        // Market low didn't reach limit price
-                        return Fill {
-                            instrument: order.instrument,
-                            symbol: order.symbol.clone(),
-                            fill_price: limit_price,
-                            fill_quantity: 0.0,
-                            commission: 0.0,
-                            slippage: 0.0,
-                            as_of: order.as_of,
-                        };
-                    }
+                OrderType::Limit if order.is_buy() && bar.low > limit_price => {
+                    // Market low didn't reach limit price
+                    return Fill {
+                        instrument: order.instrument,
+                        symbol: order.symbol.clone(),
+                        fill_price: limit_price,
+                        fill_quantity: 0.0,
+                        commission: 0.0,
+                        slippage: 0.0,
+                        as_of: order.as_of,
+                    };
                 }
-                OrderType::Limit if order.is_sell() => {
-                    if bar.high < limit_price {
-                        // Market high didn't reach limit price
-                        return Fill {
-                            instrument: order.instrument,
-                            symbol: order.symbol.clone(),
-                            fill_price: limit_price,
-                            fill_quantity: 0.0,
-                            commission: 0.0,
-                            slippage: 0.0,
-                            as_of: order.as_of,
-                        };
-                    }
+                OrderType::Limit if order.is_sell() && bar.high < limit_price => {
+                    // Market high didn't reach limit price
+                    return Fill {
+                        instrument: order.instrument,
+                        symbol: order.symbol.clone(),
+                        fill_price: limit_price,
+                        fill_quantity: 0.0,
+                        commission: 0.0,
+                        slippage: 0.0,
+                        as_of: order.as_of,
+                    };
                 }
                 _ => {}
             }
