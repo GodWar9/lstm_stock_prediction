@@ -4,14 +4,14 @@
 //! Phase 1 implements `Equity`, while maintaining an extensible trait boundary
 //! for `Future` and `Option` derivatives in future phases.
 
-use std::fmt;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
-pub mod equity;
 pub mod derivative;
+pub mod equity;
 
-pub use equity::Equity;
 pub use derivative::{Future, OptionType, Option_};
+pub use equity::Equity;
 
 /// Unique identifier for an instrument within the system.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
