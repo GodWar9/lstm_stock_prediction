@@ -59,6 +59,7 @@ pub struct Bar {
 }
 
 impl Bar {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         timestamp: Timestamp,
         availability_timestamp: Timestamp,
