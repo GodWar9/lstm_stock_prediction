@@ -147,7 +147,14 @@ mod tests {
     use quant_data::Timestamp;
 
     fn make_bar(close: f64) -> Bar {
-        Bar::same_bar(Timestamp(close as i64 * 1_000_000_000), close - 1.0, close + 1.0, close - 2.0, close, 1000)
+        Bar::same_bar(
+            Timestamp(close as i64 * 1_000_000_000),
+            close - 1.0,
+            close + 1.0,
+            close - 2.0,
+            close,
+            1000,
+        )
     }
 
     #[test]
