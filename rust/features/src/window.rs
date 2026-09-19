@@ -94,19 +94,43 @@ impl BarWindow {
         }
     }
 
+    /// Returns a zero-allocation iterator over close prices from oldest to newest.
+    pub fn iter_closes(&self) -> impl ExactSizeIterator<Item = f64> + '_ {
+        self.iter().map(|b| b.close)
+    }
+
+    /// Fills a caller-provided destination slice with close prices without heap allocations.
+    pub fn closes_into(&self, out: &mut [f64]) -> usize {
+        let count = self.len.min(out.len());
+        for (i, b) in self.iter().take(count).enumerate() {
+            out[i] = b.close;
+        }
+        count
+    }
+
     /// Collects the `close` prices from oldest to newest.
     pub fn closes(&self) -> Vec<f64> {
-        self.iter().map(|b| b.close).collect()
+        self.iter_closes().collect()
+    }
+
+    /// Returns a zero-allocation iterator over high prices from oldest to newest.
+    pub fn iter_highs(&self) -> impl ExactSizeIterator<Item = f64> + '_ {
+        self.iter().map(|b| b.high)
     }
 
     /// Collects the `high` prices from oldest to newest.
     pub fn highs(&self) -> Vec<f64> {
-        self.iter().map(|b| b.high).collect()
+        self.iter_highs().collect()
+    }
+
+    /// Returns a zero-allocation iterator over low prices from oldest to newest.
+    pub fn iter_lows(&self) -> impl ExactSizeIterator<Item = f64> + '_ {
+        self.iter().map(|b| b.low)
     }
 
     /// Collects the `low` prices from oldest to newest.
     pub fn lows(&self) -> Vec<f64> {
-        self.iter().map(|b| b.low).collect()
+        self.iter_lows().collect()
     }
 
     /// Collects the `volume` values from oldest to newest.
