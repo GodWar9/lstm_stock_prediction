@@ -137,19 +137,16 @@ Rust: Simulation Engine ──▶ Stationary bootstrap Monte Carlo & regime clas
 
 ### 1. System Requirements
 - **Rust**: 1.70+ stable (`rustup default stable`)
-- **Python**: 3.10, 3.11, or 3.14
+- **Python**: 3.14+ (pinned in `python/pyproject.toml`)
+- **uv**: [Install uv](https://docs.astral.sh/uv/getting-started/installation/) — the Python package manager
 - **C++ Build Tools**: MSVC v143+ (Windows) or `build-essential` (Linux)
 
-### 2. Python Setup
-Create and activate a virtual environment, then install requirements:
+### 2. Python Setup (via uv)
+Dependencies are managed via `python/pyproject.toml` and locked in `python/uv.lock`. To create the virtual environment and install all packages:
 ```bash
-python -m venv .venv
-# On Windows PowerShell:
-.venv\Scripts\Activate.ps1
-# On Linux / macOS:
-source .venv/bin/activate
-
-pip install -r requirements.txt
+cd python
+uv sync          # Creates python/.venv and installs all locked dependencies
+uv run pytest tests -v  # Verify 11/11 tests pass
 ```
 
 ### 3. Rust Workspace Verification
@@ -228,7 +225,7 @@ To run all automated suites:
 cargo test --workspace
 
 # Python Parity & Leakage Tests (11 tests)
-pytest python/tests
+cd python && uv run pytest tests -v
 ```
 
 ---
