@@ -32,16 +32,27 @@ impl OnnxSession {
     ) -> Result<Self, InferenceError> {
         let model = tract_onnx::onnx()
             .model_for_path(path.as_ref())
-            .map_err(|e| InferenceError::InferenceFailed(format!("Failed to load ONNX model: {}", e)))?
+            .map_err(|e| {
+                InferenceError::InferenceFailed(format!("Failed to load ONNX model: {}", e))
+            })?
             .with_input_fact(
                 0,
-                InferenceFact::dt_shape(f32::datum_type(), tvec![1, seq_len as i64, num_features as i64]),
+                InferenceFact::dt_shape(
+                    f32::datum_type(),
+                    tvec![1, seq_len as i64, num_features as i64],
+                ),
             )
-            .map_err(|e| InferenceError::InferenceFailed(format!("Failed to set input fact: {}", e)))?
+            .map_err(|e| {
+                InferenceError::InferenceFailed(format!("Failed to set input fact: {}", e))
+            })?
             .into_optimized()
-            .map_err(|e| InferenceError::InferenceFailed(format!("Failed to optimize model: {}", e)))?
+            .map_err(|e| {
+                InferenceError::InferenceFailed(format!("Failed to optimize model: {}", e))
+            })?
             .into_runnable()
-            .map_err(|e| InferenceError::InferenceFailed(format!("Failed to make model runnable: {}", e)))?;
+            .map_err(|e| {
+                InferenceError::InferenceFailed(format!("Failed to make model runnable: {}", e))
+            })?;
 
         Ok(Self {
             model,
@@ -76,11 +87,8 @@ impl PredictionProvider for OnnxSession {
 
         // Convert f64 -> f32 for tract
         let f32_data: Vec<f32> = features.iter().map(|&v| v as f32).collect();
-        let input = tract_ndarray::Array3::from_shape_vec(
-            (1, seq_len, num_features),
-            f32_data,
-        )
-        .map_err(|e| InferenceError::InferenceFailed(format!("Array shape error: {}", e)))?;
+        let input = tract_ndarray::Array3::from_shape_vec((1, seq_len, num_features), f32_data)
+            .map_err(|e| InferenceError::InferenceFailed(format!("Array shape error: {}", e)))?;
 
         let input_tensor: Tensor = input.into();
         let result = self
@@ -88,9 +96,9 @@ impl PredictionProvider for OnnxSession {
             .run(tvec![input_tensor.into()])
             .map_err(|e| InferenceError::InferenceFailed(format!("Inference run failed: {}", e)))?;
 
-        let output = result[0]
-            .to_array_view::<f32>()
-            .map_err(|e| InferenceError::InferenceFailed(format!("Output extraction failed: {}", e)))?;
+        let output = result[0].to_array_view::<f32>().map_err(|e| {
+            InferenceError::InferenceFailed(format!("Output extraction failed: {}", e))
+        })?;
 
         let value = output.iter().next().copied().unwrap_or(0.0) as f64;
 
