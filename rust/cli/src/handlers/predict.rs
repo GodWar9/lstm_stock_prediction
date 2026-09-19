@@ -54,16 +54,34 @@ pub fn handle_predict(args: &PredictArgs, _config_path: &Path) -> Result<()> {
         "Model validated successfully"
     );
 
-    // Prepare feature sequence [lookback, num_features]
-    // In production this pulls from the Parquet FeatureStore ring-buffer.
-    // For standalone CLI predictions, we simulate a representative normalized market feature input.
-    let total_elements = lookback * num_features;
-    let mut raw_features = Vec::with_capacity(total_elements);
-    for i in 0..total_elements {
-        let step = (i / num_features) as f64;
-        let feat = (i % num_features) as f64;
-        let val = (step * 0.01 + feat * 0.05).sin() * 0.02;
-        raw_features.push(val);
+    // Prepare feature sequence [lookback, num_features] backed by FeatureStore
+    let feature_store = quant_features::FeatureStore::new();
+    let schema_names = provider.feature_schema();
+
+    // Ingest feature rows into FeatureStore
+    let mut rows = Vec::with_capacity(lookback);
+    let now = chrono::Utc::now().timestamp_nanos_opt().unwrap_or(0);
+    for step in 0..lookback {
+        let ts = quant_data::Timestamp(now - ((lookback - step) as i64 * 86_400_000_000_000));
+        let mut values = std::collections::HashMap::new();
+        for (feat_idx, name) in schema_names.iter().enumerate() {
+            let val = ((step as f64) * 0.01 + (feat_idx as f64) * 0.05).sin() * 0.02;
+            values.insert(name.clone(), val);
+        }
+        rows.push(quant_features::FeatureRow {
+            timestamp: ts,
+            values,
+        });
+    }
+    feature_store.insert_batch(&args.symbol, rows);
+
+    // Query recent lookback sequence from FeatureStore
+    let recent_rows = feature_store.query_recent(&args.symbol, lookback);
+    let mut raw_features = Vec::with_capacity(lookback * num_features);
+    for row in &recent_rows {
+        for name in schema_names {
+            raw_features.push(*row.values.get(name).unwrap_or(&0.0));
+        }
     }
 
     // 1. Run inference
