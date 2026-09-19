@@ -20,8 +20,8 @@ dist/
 Docs/HANDOVER.md
 
 # Artifacts and data
-data/
-datasets/
+/data/
+/datasets/
 **/datasets/
 models/*/*.onnx
 models/*/*.pt
