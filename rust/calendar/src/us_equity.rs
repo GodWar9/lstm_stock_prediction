@@ -75,13 +75,12 @@ impl UsEquityCalendar {
         }
 
         // 6. Juneteenth National Independence Day (June 19, observed since 2021)
-        if year >= 2021 {
-            if (month == 6 && day == 19 && weekday != Weekday::Sat && weekday != Weekday::Sun)
+        if year >= 2021
+            && ((month == 6 && day == 19 && weekday != Weekday::Sat && weekday != Weekday::Sun)
                 || (month == 6 && day == 20 && weekday == Weekday::Mon)
-                || (month == 6 && day == 18 && weekday == Weekday::Fri)
-            {
-                return true;
-            }
+                || (month == 6 && day == 18 && weekday == Weekday::Fri))
+        {
+            return true;
         }
 
         // 7. Independence Day (July 4)
