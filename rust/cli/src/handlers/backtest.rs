@@ -2,14 +2,13 @@
 
 use crate::commands::BacktestSubcommands;
 use anyhow::{bail, Context, Result};
-use quant_backtest::stream::ManualSignalStream;
+use quant_backtest::stream::ModelSignalStream;
 use quant_backtest::{BacktestConfig, BacktestEngine};
 use quant_data::types::{Bar, Timestamp};
 use quant_execution::CompositeExecutionModel;
 use quant_inference::{OnnxLstmProvider, PredictionProvider};
 use quant_instruments::InstrumentId;
 use quant_portfolio::{PortfolioConstraints, VolatilityTargetedConstructor};
-use quant_signals::{Direction, Signal};
 use std::path::{Path, PathBuf};
 use tracing::info;
 
@@ -72,31 +71,28 @@ pub fn handle_backtest(command: &BacktestSubcommands, _config_path: &Path) -> Re
 
             let id = InstrumentId(1);
             let symbol = "AAPL";
-            let n_bars = 60;
+            let lookback = provider.lookback();
+            let num_features = provider.feature_schema().len();
+            let n_bars = lookback + 30;
             let bars = generate_market_replay(n_bars, 150.0);
 
-            // Generate PIT signals across replay
-            let mut signals = Vec::new();
+            // Pre-populate chronological timed feature vectors for point-in-time model inference
+            let mut timed_features = Vec::with_capacity(bars.len());
             for (idx, bar) in bars.iter().enumerate() {
-                if idx % 5 == 0 {
-                    signals.push(Signal {
-                        direction: if idx % 10 == 0 {
-                            Direction::Long
-                        } else {
-                            Direction::Short
-                        },
-                        expected_return: 0.015,
-                        confidence: 0.80,
-                        horizon_bars: 1,
-                        instrument: id,
-                        symbol: symbol.to_string(),
-                        model_id: provider.model_id().to_string(),
-                        as_of: bar.timestamp.as_nanos(),
-                    });
+                let ts = bar.timestamp.as_nanos();
+                let mut feat = Vec::with_capacity(num_features);
+                for f in 0..num_features {
+                    let step = idx as f64;
+                    let f_idx = f as f64;
+                    let val = (step * 0.05 + f_idx * 0.1).sin() * 0.02;
+                    feat.push(val);
                 }
+                timed_features.push((ts, feat));
             }
 
-            let signal_stream = ManualSignalStream::from_signals(signals);
+            let model_id_str = provider.model_id().to_string();
+            let signal_stream =
+                ModelSignalStream::new(provider, id, symbol).with_timed_features(timed_features);
             let constructor = VolatilityTargetedConstructor::new(0.20);
             let exec_model = CompositeExecutionModel::default();
             let constraints = PortfolioConstraints::default();
@@ -117,7 +113,7 @@ pub fn handle_backtest(command: &BacktestSubcommands, _config_path: &Path) -> Re
                 id,
                 symbol,
                 &constraints,
-                provider.model_id(),
+                &model_id_str,
             )?;
 
             // Save report JSON
