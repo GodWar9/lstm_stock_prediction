@@ -1,7 +1,7 @@
 //! Environment, system, and version reporting for quantctl.
 
-use std::path::Path;
 use quant_config::load_config;
+use std::path::Path;
 
 pub fn handle_env(config_path: &Path) {
     println!("=== quantctl Environment & Build Metadata ===");
