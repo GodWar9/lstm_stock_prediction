@@ -1,7 +1,7 @@
 //! Equity instrument implementation.
 
-use serde::{Deserialize, Serialize};
 use crate::{AssetClass, Currency, Instrument, InstrumentId};
+use serde::{Deserialize, Serialize};
 
 /// Represents a cash equity instrument (common or preferred stock).
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -35,7 +35,11 @@ impl Equity {
     }
 
     /// Factory method for standard US common equities (USD denominated, 1 cent tick, 1 lot).
-    pub fn us_common_stock(id: InstrumentId, symbol: impl Into<String>, exchange: impl Into<String>) -> Self {
+    pub fn us_common_stock(
+        id: InstrumentId,
+        symbol: impl Into<String>,
+        exchange: impl Into<String>,
+    ) -> Self {
         Self::new(id, symbol, exchange, Currency::USD, 0.01, 1)
     }
 }
@@ -90,7 +94,8 @@ mod tests {
     fn test_equity_serde_roundtrip() {
         let equity = Equity::us_common_stock(InstrumentId(42), "MSFT", "NASDAQ");
         let serialized = serde_json::to_string(&equity).expect("serialization failed");
-        let deserialized: Equity = serde_json::from_str(&serialized).expect("deserialization failed");
+        let deserialized: Equity =
+            serde_json::from_str(&serialized).expect("deserialization failed");
         assert_eq!(equity, deserialized);
     }
 }
