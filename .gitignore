@@ -15,10 +15,14 @@ build/
 dist/
 *.egg-info/
 
+# Handover documentation (internal handover, not pushed)
+*HANDOVER.md
+Docs/HANDOVER.md
+
 # Artifacts and data
 data/
-datasets/*.arrow
-datasets/*.parquet
+datasets/
+**/datasets/
 models/*/*.onnx
 models/*/*.pt
 reports/
@@ -32,3 +36,4 @@ benchmarks/results/*.json
 *.swo
 .DS_Store
 Thumbs.db
+
