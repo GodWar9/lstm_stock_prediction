@@ -66,12 +66,7 @@ impl FeatureStore {
     }
 
     /// Retrieve rows for a symbol in a closed timestamp interval `[start, end]`.
-    pub fn query_range(
-        &self,
-        symbol: &str,
-        start: Timestamp,
-        end: Timestamp,
-    ) -> Vec<FeatureRow> {
+    pub fn query_range(&self, symbol: &str, start: Timestamp, end: Timestamp) -> Vec<FeatureRow> {
         let data = self.data.read().unwrap();
         if let Some(symbol_entry) = data.get(symbol) {
             symbol_entry
