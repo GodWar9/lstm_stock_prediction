@@ -112,7 +112,13 @@ impl BacktestReport {
 
             let downside_var = returns
                 .iter()
-                .map(|r| if *r < daily_rf { (r - daily_rf).powi(2) } else { 0.0 })
+                .map(|r| {
+                    if *r < daily_rf {
+                        (r - daily_rf).powi(2)
+                    } else {
+                        0.0
+                    }
+                })
                 .sum::<f64>()
                 / (n - 1.0);
             let downside_vol = downside_var.sqrt();
@@ -134,11 +140,7 @@ impl BacktestReport {
             (0.0, 0.0)
         };
 
-        let calmar = if max_dd > 1e-4 {
-            cagr / max_dd
-        } else {
-            0.0
-        };
+        let calmar = if max_dd > 1e-4 { cagr / max_dd } else { 0.0 };
 
         // Trade performance stats from fills
         let total_trades = trade_log.len();
