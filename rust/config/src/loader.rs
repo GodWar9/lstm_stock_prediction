@@ -1,9 +1,9 @@
 //! YAML config loading and environment variable override support.
 
-use std::{env, fs, path::Path};
-use thiserror::Error;
 use crate::schema::AppConfig;
 use crate::validation::ConfigValidationError;
+use std::{env, fs, path::Path};
+use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum ConfigError {
@@ -37,7 +37,11 @@ pub fn apply_env_overrides(config: &mut AppConfig) {
         config.env = env_val;
     }
     if let Ok(syms) = env::var("QUANTCTL_SYMBOLS") {
-        config.data.symbols = syms.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect();
+        config.data.symbols = syms
+            .split(',')
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect();
     }
     if let Ok(dataset_ver) = env::var("QUANTCTL_DATASET_VERSION") {
         config.data.dataset_version = dataset_ver;
@@ -129,9 +133,13 @@ backtest:
     #[test]
     fn test_invalid_date_ordering() {
         let _guard = TEST_MUTEX.lock().unwrap();
-        let invalid_yaml = VALID_YAML.replace("start_date: \"2020-01-01\"", "start_date: \"2025-01-01\"");
+        let invalid_yaml =
+            VALID_YAML.replace("start_date: \"2020-01-01\"", "start_date: \"2025-01-01\"");
         let res = load_config_from_str(&invalid_yaml);
-        assert!(matches!(res, Err(ConfigError::Validation(ConfigValidationError::Data(_)))));
+        assert!(matches!(
+            res,
+            Err(ConfigError::Validation(ConfigValidationError::Data(_)))
+        ));
     }
 
     #[test]
@@ -139,7 +147,10 @@ backtest:
         let _guard = TEST_MUTEX.lock().unwrap();
         let invalid_yaml = VALID_YAML.replace("symbols: [\"AAPL\", \"MSFT\"]", "symbols: []");
         let res = load_config_from_str(&invalid_yaml);
-        assert!(matches!(res, Err(ConfigError::Validation(ConfigValidationError::Data(_)))));
+        assert!(matches!(
+            res,
+            Err(ConfigError::Validation(ConfigValidationError::Data(_)))
+        ));
     }
 
     #[test]
@@ -147,7 +158,10 @@ backtest:
         let _guard = TEST_MUTEX.lock().unwrap();
         let invalid_yaml = VALID_YAML.replace("lookback: 30", "lookback: 1");
         let res = load_config_from_str(&invalid_yaml);
-        assert!(matches!(res, Err(ConfigError::Validation(ConfigValidationError::Features(_)))));
+        assert!(matches!(
+            res,
+            Err(ConfigError::Validation(ConfigValidationError::Features(_)))
+        ));
     }
 
     #[test]
@@ -155,7 +169,10 @@ backtest:
         let _guard = TEST_MUTEX.lock().unwrap();
         let invalid_yaml = VALID_YAML.replace("max_net_exposure: 0.5", "max_net_exposure: 1.5");
         let res = load_config_from_str(&invalid_yaml);
-        assert!(matches!(res, Err(ConfigError::Validation(ConfigValidationError::Portfolio(_)))));
+        assert!(matches!(
+            res,
+            Err(ConfigError::Validation(ConfigValidationError::Portfolio(_)))
+        ));
     }
 
     #[test]
@@ -163,7 +180,10 @@ backtest:
         let _guard = TEST_MUTEX.lock().unwrap();
         let invalid_yaml = VALID_YAML.replace("participation_cap: 0.02", "participation_cap: 1.5");
         let res = load_config_from_str(&invalid_yaml);
-        assert!(matches!(res, Err(ConfigError::Validation(ConfigValidationError::Execution(_)))));
+        assert!(matches!(
+            res,
+            Err(ConfigError::Validation(ConfigValidationError::Execution(_)))
+        ));
     }
 
     #[test]
