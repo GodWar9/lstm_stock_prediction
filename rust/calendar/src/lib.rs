@@ -46,7 +46,12 @@ pub struct Session {
 }
 
 impl Session {
-    pub fn new(date: NaiveDate, open_utc: DateTime<Utc>, close_utc: DateTime<Utc>, is_early_close: bool) -> Self {
+    pub fn new(
+        date: NaiveDate,
+        open_utc: DateTime<Utc>,
+        close_utc: DateTime<Utc>,
+        is_early_close: bool,
+    ) -> Self {
         Self {
             date,
             open_utc,
