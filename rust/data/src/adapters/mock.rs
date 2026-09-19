@@ -1,10 +1,10 @@
 //! In-memory and synthetic deterministic test adapters for MarketDataProvider.
 
-use std::collections::HashMap;
-use chrono::{Duration, NaiveDate, TimeZone, Utc};
-use quant_calendar::{TradingCalendar, UsEquityCalendar};
 use crate::provider::{DataError, MarketDataProvider};
 use crate::types::{Bar, CorporateAction, Timestamp};
+use chrono::{Duration, NaiveDate, TimeZone, Utc};
+use quant_calendar::{TradingCalendar, UsEquityCalendar};
+use std::collections::HashMap;
 
 /// Pre-populated in-memory data provider for testing.
 #[derive(Debug, Clone, Default)]
@@ -23,15 +23,27 @@ impl InMemoryDataProvider {
         self
     }
 
-    pub fn with_actions(mut self, symbol: impl Into<String>, actions: Vec<CorporateAction>) -> Self {
+    pub fn with_actions(
+        mut self,
+        symbol: impl Into<String>,
+        actions: Vec<CorporateAction>,
+    ) -> Self {
         self.actions.insert(symbol.into(), actions);
         self
     }
 }
 
 impl MarketDataProvider for InMemoryDataProvider {
-    fn fetch_ohlcv(&self, symbol: &str, start: NaiveDate, end: NaiveDate) -> Result<Vec<Bar>, DataError> {
-        let bars = self.bars.get(symbol).ok_or_else(|| DataError::UnknownSymbol(symbol.to_string()))?;
+    fn fetch_ohlcv(
+        &self,
+        symbol: &str,
+        start: NaiveDate,
+        end: NaiveDate,
+    ) -> Result<Vec<Bar>, DataError> {
+        let bars = self
+            .bars
+            .get(symbol)
+            .ok_or_else(|| DataError::UnknownSymbol(symbol.to_string()))?;
 
         let start_dt = Utc.from_utc_datetime(&start.and_hms_opt(0, 0, 0).unwrap());
         let end_dt = Utc.from_utc_datetime(&end.and_hms_opt(23, 59, 59).unwrap());
@@ -47,7 +59,12 @@ impl MarketDataProvider for InMemoryDataProvider {
         Ok(filtered)
     }
 
-    fn corporate_actions(&self, symbol: &str, start: NaiveDate, end: NaiveDate) -> Result<Vec<CorporateAction>, DataError> {
+    fn corporate_actions(
+        &self,
+        symbol: &str,
+        start: NaiveDate,
+        end: NaiveDate,
+    ) -> Result<Vec<CorporateAction>, DataError> {
         let actions = self.actions.get(symbol).cloned().unwrap_or_default();
         let filtered: Vec<CorporateAction> = actions
             .into_iter()
@@ -80,7 +97,9 @@ impl SyntheticDataProvider {
 
     /// Pseudo-random float in [-1.0, 1.0].
     fn next_rand(&self, state: &mut u64) -> f64 {
-        *state = state.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+        *state = state
+            .wrapping_mul(6364136223846793005)
+            .wrapping_add(1442695040888963407);
         let val = (*state >> 33) as f64 / (1u64 << 31) as f64;
         (val * 2.0) - 1.0
     }
@@ -93,7 +112,12 @@ impl Default for SyntheticDataProvider {
 }
 
 impl MarketDataProvider for SyntheticDataProvider {
-    fn fetch_ohlcv(&self, _symbol: &str, start: NaiveDate, end: NaiveDate) -> Result<Vec<Bar>, DataError> {
+    fn fetch_ohlcv(
+        &self,
+        _symbol: &str,
+        start: NaiveDate,
+        end: NaiveDate,
+    ) -> Result<Vec<Bar>, DataError> {
         let calendar = UsEquityCalendar::default();
         let mut bars = Vec::new();
         let mut curr_date = start;
@@ -109,7 +133,8 @@ impl MarketDataProvider for SyntheticDataProvider {
                     let close = price * (1.0 + daily_ret);
                     let high = open.max(close) * (1.0 + (self.next_rand(&mut prng).abs() * 0.005));
                     let low = open.min(close) * (1.0 - (self.next_rand(&mut prng).abs() * 0.005));
-                    let volume = (1_000_000.0 + self.next_rand(&mut prng) * 200_000.0).max(100_000.0) as u64;
+                    let volume =
+                        (1_000_000.0 + self.next_rand(&mut prng) * 200_000.0).max(100_000.0) as u64;
 
                     let ts = Timestamp::from_datetime(session.close_utc);
                     bars.push(Bar::same_bar(ts, open, high, low, close, volume));
@@ -123,7 +148,12 @@ impl MarketDataProvider for SyntheticDataProvider {
         Ok(bars)
     }
 
-    fn corporate_actions(&self, _symbol: &str, _start: NaiveDate, _end: NaiveDate) -> Result<Vec<CorporateAction>, DataError> {
+    fn corporate_actions(
+        &self,
+        _symbol: &str,
+        _start: NaiveDate,
+        _end: NaiveDate,
+    ) -> Result<Vec<CorporateAction>, DataError> {
         Ok(Vec::new())
     }
 
