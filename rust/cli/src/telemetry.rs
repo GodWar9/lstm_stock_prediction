@@ -4,8 +4,13 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilte
 
 /// Initializes structured logging based on CLI arguments and RUST_LOG environment variable.
 pub fn init_telemetry(log_format: &str, verbose: bool) -> anyhow::Result<()> {
-    let default_filter = if verbose { "quant=debug,quantctl=debug,info" } else { "quant=info,quantctl=info,warn" };
-    let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(default_filter));
+    let default_filter = if verbose {
+        "quant=debug,quantctl=debug,info"
+    } else {
+        "quant=info,quantctl=info,warn"
+    };
+    let env_filter =
+        EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(default_filter));
 
     let registry = tracing_subscriber::registry().with(env_filter);
 
