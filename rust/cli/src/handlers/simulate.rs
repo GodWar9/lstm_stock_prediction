@@ -11,7 +11,10 @@ pub fn handle_simulate(args: &SimulateArgs, _config_path: &Path) -> Result<()> {
     info!(report = %args.report.display(), paths = args.paths, "Running Monte Carlo simulation");
 
     if !args.report.exists() {
-        bail!("Backtest report file not found at: {}", args.report.display());
+        bail!(
+            "Backtest report file not found at: {}",
+            args.report.display()
+        );
     }
 
     let report_content = std::fs::read_to_string(&args.report)
@@ -27,7 +30,10 @@ pub fn handle_simulate(args: &SimulateArgs, _config_path: &Path) -> Result<()> {
     println!("        QUANTCTL MONTE CARLO SIMULATION           ");
     println!("==================================================");
     println!("Simulated Paths:    {}", sim_result.num_paths);
-    println!("Probability of Ruin:{:.2}%", sim_result.prob_of_ruin * 100.0);
+    println!(
+        "Probability of Ruin:{:.2}%",
+        sim_result.prob_of_ruin * 100.0
+    );
     println!("--------------------------------------------------");
     println!("Metric              p5        p50       p95");
     println!("--------------------------------------------------");
