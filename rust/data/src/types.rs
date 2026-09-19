@@ -82,7 +82,14 @@ impl Bar {
     }
 
     /// Convenience constructor when availability is immediate at bar close.
-    pub fn same_bar(timestamp: Timestamp, open: f64, high: f64, low: f64, close: f64, volume: u64) -> Self {
+    pub fn same_bar(
+        timestamp: Timestamp,
+        open: f64,
+        high: f64,
+        low: f64,
+        close: f64,
+        volume: u64,
+    ) -> Self {
         Self::new(timestamp, timestamp, open, high, low, close, volume, false)
     }
 }
