@@ -27,7 +27,7 @@ This document provides the definitive, prioritized engineering and quantitative 
 ## 2. Quantitative Alpha & Signal Strategy Improvisations
 
 ### 2.1 Advanced Feature Engineering
-- [ ] **Garman-Klass & Parkinson Volatility Estimators**:
+- [x] **Garman-Klass & Parkinson Volatility Estimators**:
   - Incorporate High-Low price extremes into volatility estimations rather than relying solely on Close-to-Close log returns:
     $$\sigma_{GK}^2 = 0.5 \ln\left(\frac{H}{L}\right)^2 - (2\ln 2 - 1) \ln\left(\frac{C}{O}\right)^2$$
 - [ ] **Cross-Sectional Z-Score Normalization**:
@@ -38,9 +38,8 @@ This document provides the definitive, prioritized engineering and quantitative 
 ### 2.2 Model Architecture & Loss Functions
 - [ ] **Multi-Horizon Return Forecasting**:
   - Extend the LSTM output head to predict joint 1-day, 5-day, and 20-day cumulative returns with shared temporal representations.
-- [ ] **Asymmetric Downside Loss (Sortino Loss)**:
-  - Penalize negative prediction errors more severely than positive errors:
-    $$\mathcal{L}(y, \hat{y}) = \frac{1}{N} \sum_i \left( (y_i - \hat{y}_i)^2 \cdot (1 + \alpha \cdot \mathbb{I}_{y_i < 0}) \right)$$
+- [x] **Asymmetric Downside Loss (Sortino Loss)**:
+  - Maximize returns while penalizing downside semi-deviation below target threshold (`SortinoAwareLoss`).
 - [ ] **Conformal Prediction Uncertainty Intervals**:
   - Generate distribution-free calibrated prediction bands to dynamically modulate signal confidence.
 
@@ -49,9 +48,8 @@ This document provides the definitive, prioritized engineering and quantitative 
 ## 3. Portfolio, Risk & Execution Simulation
 
 ### 3.1 Advanced Portfolio Construction
-- [ ] **Bayesian Shrinkage Kelly Criterion**:
-  - Implement dynamic position sizing combining expected return $\mu$, volatility $\sigma$, and fractional shrinkage parameter $\lambda \in (0, 0.5]$:
-    $$w_i^* = \lambda \cdot \frac{\mu_i - r_f}{\sigma_i^2}$$
+- [x] **Bayesian Shrinkage Kelly Criterion**:
+  - Implement dynamic position sizing combining expected return $\mu$, volatility $\sigma$, and fractional shrinkage parameter $\lambda \in (0, 0.5]$ (`KellyCriterionConstructor`).
 - [ ] **Convex Optimization with Sector Neutrality**:
   - Integrate a pure-Rust quadratic programming solver (e.g., OSQP or Clarabel) to enforce sector and factor neutrality constraints.
 - [ ] **Regime-Switching Risk Guardrails**:
