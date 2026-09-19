@@ -196,4 +196,160 @@ mod tests {
         // Target weight should reflect the 0.50 derisking multiplier
         assert!(t1.target_weight <= constraints.max_position_pct * 0.50 + 1e-4);
     }
+
+    #[test]
+    fn test_kelly_criterion_constructor() {
+        let constructor = KellyCriterionConstructor::new(0.50, 0.04, 0.20);
+        let portfolio = Portfolio::new(100_000.0);
+        let mut prices = HashMap::new();
+        prices.insert(InstrumentId(1), 150.0);
+
+        let signals = vec![make_test_signal(1, Direction::Long, 0.9)];
+        let constraints = PortfolioConstraints {
+            max_gross_exposure: 1.0,
+            max_position_pct: 0.30,
+            ..Default::default()
+        };
+
+        let targets = constructor.target_positions(&signals, &portfolio, &prices, &constraints);
+        let t1 = targets.get(&InstrumentId(1)).unwrap();
+
+        assert!(t1.target_weight > 0.0);
+        assert!(t1.target_weight <= constraints.max_position_pct);
+        assert!(t1.target_quantity > 0.0);
+    }
+}
+
+/// Fractional Kelly Criterion Portfolio Constructor with Bayesian Shrinkage.
+/// Sizes positions asymptotically optimizing geometric capital growth:
+/// f* = lambda * (mu - r_f) / (sigma^2 + eps), clamped by portfolio constraints.
+#[derive(Debug, Clone)]
+pub struct KellyCriterionConstructor {
+    /// Fractional Kelly leverage multiplier (typically 0.25 to 0.50 to avoid over-betting).
+    pub shrinkage_fraction: f64,
+    /// Annualized risk-free rate fallback (e.g. 0.04 for 4%).
+    pub risk_free_rate: f64,
+    /// Default assumed asset volatility.
+    pub default_asset_vol: f64,
+}
+
+impl Default for KellyCriterionConstructor {
+    fn default() -> Self {
+        Self {
+            shrinkage_fraction: 0.50, // Half-Kelly default
+            risk_free_rate: 0.04,
+            default_asset_vol: 0.20,
+        }
+    }
+}
+
+impl KellyCriterionConstructor {
+    pub fn new(shrinkage_fraction: f64, risk_free_rate: f64, default_asset_vol: f64) -> Self {
+        Self {
+            shrinkage_fraction: shrinkage_fraction.clamp(0.05, 1.0),
+            risk_free_rate: risk_free_rate.max(0.0),
+            default_asset_vol: default_asset_vol.max(0.01),
+        }
+    }
+}
+
+impl PortfolioConstructor for KellyCriterionConstructor {
+    fn target_positions(
+        &self,
+        signals: &[Signal],
+        current: &Portfolio,
+        prices: &HashMap<InstrumentId, f64>,
+        constraints: &PortfolioConstraints,
+    ) -> TargetPositions {
+        let nav = current.nav();
+        let as_of = signals.first().map(|s| s.as_of).unwrap_or(0);
+        let mut target_positions = TargetPositions::new(as_of);
+
+        if signals.is_empty() || nav <= 1e-8 {
+            return target_positions;
+        }
+
+        // Drawdown de-risking multiplier
+        let is_derisking = current.current_drawdown() > constraints.drawdown_derisk_threshold;
+        let derisk_scalar = if is_derisking {
+            constraints.drawdown_derisk_multiplier.clamp(0.1, 1.0)
+        } else {
+            1.0
+        };
+
+        // Daily risk-free rate and asset variance
+        let rf_daily = self.risk_free_rate / 252.0;
+        let asset_vol_daily = self.default_asset_vol / 252.0_f64.sqrt();
+        let var_daily = (asset_vol_daily * asset_vol_daily).max(1e-6);
+
+        let mut raw_weights: Vec<(InstrumentId, String, f64)> = Vec::with_capacity(signals.len());
+        for sig in signals {
+            let dir_mult: f64 = match sig.direction {
+                Direction::Long => 1.0,
+                Direction::Short => match constraints.long_short_mode {
+                    LongShortMode::LongOnly => 0.0,
+                    _ => -1.0,
+                },
+                Direction::Flat => 0.0,
+            };
+
+            if dir_mult.abs() < 1e-8 {
+                raw_weights.push((sig.instrument, sig.symbol.clone(), 0.0));
+                continue;
+            }
+
+            // Continuous Kelly optimal fraction: f* = (E[R] - Rf) / Var(R)
+            let excess_return = (sig.expected_return.abs() - rf_daily).max(0.0);
+            let kelly_raw = excess_return / var_daily;
+            let shrunk_kelly = self.shrinkage_fraction * kelly_raw * sig.confidence;
+
+            let clamped_weight = (dir_mult * shrunk_kelly)
+                .clamp(-constraints.max_position_pct, constraints.max_position_pct);
+
+            raw_weights.push((
+                sig.instrument,
+                sig.symbol.clone(),
+                clamped_weight * derisk_scalar,
+            ));
+        }
+
+        // Dollar-neutral adjustment if requested
+        if constraints.long_short_mode == LongShortMode::DollarNeutral && !raw_weights.is_empty() {
+            let active_count = raw_weights.iter().filter(|w| w.2.abs() > 1e-8).count();
+            if active_count > 0 {
+                let sum_weights: f64 = raw_weights.iter().map(|w| w.2).sum();
+                let mean_offset = sum_weights / active_count as f64;
+                for w in &mut raw_weights {
+                    if w.2.abs() > 1e-8 {
+                        w.2 -= mean_offset;
+                    }
+                }
+            }
+        }
+
+        // Gross exposure scaling: sum(|weights|) <= max_gross_exposure
+        let total_gross: f64 = raw_weights.iter().map(|w| w.2.abs()).sum();
+        let scale_factor = if total_gross > constraints.max_gross_exposure && total_gross > 1e-8 {
+            constraints.max_gross_exposure / total_gross
+        } else {
+            1.0
+        };
+
+        for (inst, sym, weight) in raw_weights {
+            let final_weight = weight * scale_factor;
+            let target_value = final_weight * nav;
+            let price = prices.get(&inst).copied().unwrap_or(1.0).max(1e-4);
+            let target_quantity = (target_value / price).round();
+
+            target_positions.add(TargetPosition {
+                instrument: inst,
+                symbol: sym,
+                target_weight: final_weight,
+                target_value,
+                target_quantity,
+            });
+        }
+
+        target_positions
+    }
 }
