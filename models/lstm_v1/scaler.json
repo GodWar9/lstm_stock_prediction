@@ -22,14 +22,14 @@
     0.9316473603248596
   ],
   "feature_names": [
-    "log_return",
-    "rolling_vol_10",
-    "rsi_14",
-    "macd_diff",
-    "bollinger_width",
-    "atr_14",
-    "adx_14",
-    "obv_zscore",
-    "volume_ratio"
+    "feature_0",
+    "feature_1",
+    "feature_2",
+    "feature_3",
+    "feature_4",
+    "feature_5",
+    "feature_6",
+    "feature_7",
+    "feature_8"
   ]
 }
