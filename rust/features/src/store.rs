@@ -84,6 +84,18 @@ impl FeatureStore {
         data.get(symbol).map(|e| e.len()).unwrap_or(0)
     }
 
+    /// Retrieve the most recent `n` rows for a symbol in chronological order.
+    pub fn query_recent(&self, symbol: &str, n: usize) -> Vec<FeatureRow> {
+        let data = self.data.read().unwrap();
+        if let Some(symbol_entry) = data.get(symbol) {
+            let mut rows: Vec<FeatureRow> = symbol_entry.values().rev().take(n).cloned().collect();
+            rows.reverse();
+            rows
+        } else {
+            Vec::new()
+        }
+    }
+
     /// Clears data for a symbol or all symbols.
     pub fn clear(&self) {
         let mut data = self.data.write().unwrap();
@@ -144,5 +156,10 @@ mod tests {
         assert_eq!(all.len(), 3);
         assert_eq!(store.count_rows("AAPL"), 3);
         assert_eq!(store.count_rows("MSFT"), 0);
+
+        let recent = store.query_recent("AAPL", 2);
+        assert_eq!(recent.len(), 2);
+        assert_eq!(recent[0].timestamp, Timestamp(200));
+        assert_eq!(recent[1].timestamp, Timestamp(300));
     }
 }
