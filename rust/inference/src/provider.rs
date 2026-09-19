@@ -187,13 +187,13 @@ impl PredictionProvider for OnnxLstmProvider {
             });
         }
 
-        // Normalize raw features using the frozen artifact scaler
-        let scaled_features = self.scaler.transform(raw_features)?;
+        // Single-pass normalize and cast directly into f32 tensor input
+        let scaled_f32 = self.scaler.transform_f32(raw_features)?;
 
-        // Run inference through ONNX session
+        // Run inference through ONNX session without extra memory conversions
         let raw_pred = self
             .session
-            .predict(&scaled_features, seq_len, num_features)?;
+            .predict_f32_slice(&scaled_f32, seq_len, num_features)?;
 
         // Return calibrated prediction tagged with model provenance
         Ok(Prediction {

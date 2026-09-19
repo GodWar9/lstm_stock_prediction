@@ -5,15 +5,36 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 
 /// Immutable fitted feature scaler loaded from model artifact `scaler.json`.
+#[derive(Deserialize)]
+struct RawFittedScaler {
+    #[serde(alias = "means")]
+    mean: Vec<f64>,
+    #[serde(alias = "stds", alias = "scale")]
+    std: Vec<f64>,
+    #[serde(default)]
+    feature_names: Option<Vec<String>>,
+}
+
+/// Immutable fitted feature scaler loaded from model artifact `scaler.json`.
 /// Deliberately exposes ONLY `transform()`, strictly preventing any training-time `fit()` calls.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(from = "RawFittedScaler")]
 pub struct FittedScaler {
-    #[serde(alias = "means")]
     pub mean: Vec<f64>,
-    #[serde(alias = "stds", alias = "scale")]
     pub std: Vec<f64>,
-    #[serde(default)]
     pub feature_names: Option<Vec<String>>,
+    pub inv_std: Vec<f64>,
+}
+
+impl From<RawFittedScaler> for FittedScaler {
+    fn from(raw: RawFittedScaler) -> Self {
+        Self::new(raw.mean, raw.std, raw.feature_names).unwrap_or_else(|_| Self {
+            mean: Vec::new(),
+            std: Vec::new(),
+            feature_names: None,
+            inv_std: Vec::new(),
+        })
+    }
 }
 
 impl FittedScaler {
@@ -42,10 +63,14 @@ impl FittedScaler {
             }
         }
 
+        // Precompute reciprocal std for SIMD-accelerated multiplication
+        let inv_std = std.iter().map(|&s| 1.0 / s).collect();
+
         Ok(Self {
             mean,
             std,
             feature_names,
+            inv_std,
         })
     }
 
@@ -59,7 +84,7 @@ impl FittedScaler {
             ))
         })?;
 
-        let raw: Self = serde_json::from_str(&content).map_err(|e| {
+        let raw: RawFittedScaler = serde_json::from_str(&content).map_err(|e| {
             InferenceError::MetadataValidationFailed(format!(
                 "Invalid scaler.json format at {}: {}",
                 path.as_ref().display(),
@@ -77,6 +102,13 @@ impl FittedScaler {
 
     /// Normalize a raw feature slice (single timestep or flattened sequence [T, F]).
     pub fn transform(&self, features: &[f64]) -> Result<Vec<f64>, InferenceError> {
+        let mut scaled = vec![0.0; features.len()];
+        self.transform_into(features, &mut scaled)?;
+        Ok(scaled)
+    }
+
+    /// Pure software optimization: zero-allocation in-place normalization into caller slice.
+    pub fn transform_into(&self, features: &[f64], out: &mut [f64]) -> Result<(), InferenceError> {
         let n_feat = self.num_features();
         if features.is_empty() || !features.len().is_multiple_of(n_feat) {
             return Err(InferenceError::ShapeMismatch {
@@ -84,15 +116,53 @@ impl FittedScaler {
                 got: format!("{} elements", features.len()),
             });
         }
-
-        let mut scaled = Vec::with_capacity(features.len());
-        for (idx, &val) in features.iter().enumerate() {
-            let feat_idx = idx % n_feat;
-            let m = self.mean[feat_idx];
-            let s = self.std[feat_idx];
-            scaled.push((val - m) / s);
+        if out.len() != features.len() {
+            return Err(InferenceError::ShapeMismatch {
+                expected: format!("output slice of length {}", features.len()),
+                got: format!("output slice of length {}", out.len()),
+            });
         }
 
+        for (idx, &val) in features.iter().enumerate() {
+            let feat_idx = idx % n_feat;
+            out[idx] = (val - self.mean[feat_idx]) * self.inv_std[feat_idx];
+        }
+
+        Ok(())
+    }
+
+    /// Single-pass normalize and cast directly into a pre-allocated f32 destination slice.
+    pub fn transform_into_f32(
+        &self,
+        features: &[f64],
+        out: &mut [f32],
+    ) -> Result<(), InferenceError> {
+        let n_feat = self.num_features();
+        if features.is_empty() || !features.len().is_multiple_of(n_feat) {
+            return Err(InferenceError::ShapeMismatch {
+                expected: format!("multiple of {} features", n_feat),
+                got: format!("{} elements", features.len()),
+            });
+        }
+        if out.len() != features.len() {
+            return Err(InferenceError::ShapeMismatch {
+                expected: format!("output slice of length {}", features.len()),
+                got: format!("output slice of length {}", out.len()),
+            });
+        }
+
+        for (idx, &val) in features.iter().enumerate() {
+            let feat_idx = idx % n_feat;
+            out[idx] = ((val - self.mean[feat_idx]) * self.inv_std[feat_idx]) as f32;
+        }
+
+        Ok(())
+    }
+
+    /// Single-pass normalization returning Vec<f32> directly for ONNX runtime tensor creation.
+    pub fn transform_f32(&self, features: &[f64]) -> Result<Vec<f32>, InferenceError> {
+        let mut scaled = vec![0.0f32; features.len()];
+        self.transform_into_f32(features, &mut scaled)?;
         Ok(scaled)
     }
 }

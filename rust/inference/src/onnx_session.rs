@@ -63,12 +63,12 @@ impl OnnxSession {
             num_features,
         })
     }
-}
 
-impl PredictionProvider for OnnxSession {
-    fn predict(
+    /// High-performance execution taking pre-scaled f32 feature slice directly.
+    /// Avoids redundant f64 -> f32 conversion on inference hot-paths.
+    pub fn predict_f32_slice(
         &self,
-        features: &[f64],
+        features_f32: &[f32],
         seq_len: usize,
         num_features: usize,
     ) -> Result<Prediction, InferenceError> {
@@ -80,17 +80,18 @@ impl PredictionProvider for OnnxSession {
         }
 
         let expected_len = seq_len * num_features;
-        if features.len() != expected_len {
+        if features_f32.len() != expected_len {
             return Err(InferenceError::ShapeMismatch {
                 expected: format!("{} elements", expected_len),
-                got: format!("{} elements", features.len()),
+                got: format!("{} elements", features_f32.len()),
             });
         }
 
-        // Convert f64 -> f32 for tract
-        let f32_data: Vec<f32> = features.iter().map(|&v| v as f32).collect();
-        let input = tract_ndarray::Array3::from_shape_vec((1, seq_len, num_features), f32_data)
-            .map_err(|e| InferenceError::InferenceFailed(format!("Array shape error: {}", e)))?;
+        let input = tract_ndarray::Array3::from_shape_vec(
+            (1, seq_len, num_features),
+            features_f32.to_vec(),
+        )
+        .map_err(|e| InferenceError::InferenceFailed(format!("Array shape error: {}", e)))?;
 
         let input_tensor: Tensor = input.into();
         let result = self
@@ -110,6 +111,18 @@ impl PredictionProvider for OnnxSession {
             model_id: self.model_id.clone(),
             as_of: None,
         })
+    }
+}
+
+impl PredictionProvider for OnnxSession {
+    fn predict(
+        &self,
+        features: &[f64],
+        seq_len: usize,
+        num_features: usize,
+    ) -> Result<Prediction, InferenceError> {
+        let f32_data: Vec<f32> = features.iter().map(|&v| v as f32).collect();
+        self.predict_f32_slice(&f32_data, seq_len, num_features)
     }
 
     fn model_id(&self) -> &str {
