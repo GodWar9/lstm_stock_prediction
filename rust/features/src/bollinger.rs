@@ -45,7 +45,11 @@ impl BollingerBands {
 
         let upper = mean + self.num_std * std_dev;
         let lower = mean - self.num_std * std_dev;
-        let bandwidth = if mean > 0.0 { (upper - lower) / mean } else { 0.0 };
+        let bandwidth = if mean > 0.0 {
+            (upper - lower) / mean
+        } else {
+            0.0
+        };
 
         let latest = *slice.last()?;
         let percent_b = if (upper - lower).abs() > 1e-10 {
