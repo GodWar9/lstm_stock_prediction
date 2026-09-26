@@ -57,6 +57,7 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
                     end_date: end.to_string(),
                     bar_count: bars.len(),
                     source: cfg.data.provider.clone(),
+                    content_sha256: String::new(),
                 };
                 let path = write_dataset("datasets/market", &manifest, &bars)?;
                 println!(

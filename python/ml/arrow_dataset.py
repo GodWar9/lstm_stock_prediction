@@ -1,6 +1,7 @@
 """Reader and schema validation for Rust-generated Arrow training datasets."""
 
 from dataclasses import dataclass
+import hashlib
 import json
 from pathlib import Path
 from typing import Dict, List
@@ -30,6 +31,7 @@ class ArrowTrainingDataset:
     target_timestamps: np.ndarray
     feature_set_version: int
     target_horizon: int
+    integrity: dict
 
 
 def load_arrow_training_dataset(
@@ -50,7 +52,15 @@ def load_arrow_training_dataset(
         ) from exc
 
     dataset_path = Path(path)
+    if manifest_path is None:
+        raise ValueError("A hashed training manifest is required; rebuild features")
+    with Path(manifest_path).open(encoding="utf-8") as handle:
+        manifest = json.load(handle)
     with dataset_path.open("rb") as handle:
+        digest = hashlib.file_digest(handle, "sha256").hexdigest()
+        if manifest.get("content_sha256") != digest:
+            raise ValueError("Training dataset integrity mismatch; rebuild features")
+        handle.seek(0)
         table = ipc.open_stream(handle).read_all()
 
     columns = set(table.column_names)
@@ -75,6 +85,8 @@ def load_arrow_training_dataset(
 
     features = pandas_frame[feature_names].to_numpy(dtype=np.float32)
     targets = pandas_frame["target"].to_numpy(dtype=np.float32)
+    if not np.isfinite(features).all() or not np.isfinite(targets).all():
+        raise ValueError("Training features and targets must be finite")
     target_timestamps = pandas_frame["target_timestamp"].to_numpy(dtype=np.int64)
     asset_ids = pandas_frame["asset_id"].to_numpy(dtype=np.uint32)
 
@@ -104,4 +116,8 @@ def load_arrow_training_dataset(
         target_timestamps=target_timestamps,
         feature_set_version=int(feature_set_versions[0]),
         target_horizon=int(horizons[0]),
+        integrity={"training_sha256": digest,
+                   "market_sha256": manifest.get("source_market_sha256", ""),
+                   "symbol": manifest.get("symbol", ""),
+                   "dataset_version": manifest.get("dataset_version", "")},
     )

@@ -1,5 +1,7 @@
 """Tests for the Rust-to-Python Arrow training contract."""
 
+import hashlib
+import json
 import os
 import sys
 
@@ -34,7 +36,7 @@ def _write_dataset(tmp_path, timestamps=(1, 2), target_timestamps=(2, 3)):
             writer.write_table(table)
     manifest = tmp_path / "dataset.manifest.json"
     manifest.write_text(
-        '{"row_count": 2, "feature_columns": ["sma"]}', encoding="utf-8"
+        json.dumps({"row_count": 2, "feature_columns": ["sma"], "content_sha256": hashlib.sha256(path.read_bytes()).hexdigest()}), encoding="utf-8"
     )
     return path, manifest
 
@@ -51,3 +53,13 @@ def test_rejects_non_monotonic_timestamps(tmp_path):
     path, manifest = _write_dataset(tmp_path, timestamps=(2, 1), target_timestamps=(3, 2))
     with pytest.raises(ValueError, match="strictly increasing"):
         load_arrow_training_dataset(path, manifest)
+
+
+def test_rejects_changed_bytes_and_missing_manifest(tmp_path):
+    path, manifest = _write_dataset(tmp_path)
+    with path.open("ab") as output:
+        output.write(b" ")
+    with pytest.raises(ValueError, match="integrity mismatch"):
+        load_arrow_training_dataset(path, manifest)
+    with pytest.raises(ValueError, match="manifest is required"):
+        load_arrow_training_dataset(path)

@@ -15,6 +15,8 @@ ringbuf.workspace = true
 tempfile.workspace = true
 memmap2 = "0.9"
 
+sha2 = "0.10"
+
 [dev-dependencies]
 criterion.workspace = true
 

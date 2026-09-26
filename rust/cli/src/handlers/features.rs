@@ -76,6 +76,13 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
                             feature_set: feature_set.clone(),
                             feature_set_version: app_config.features.feature_set_version,
                             symbol: symbol.clone(),
+                            content_sha256: String::new(),
+                            source_market_sha256: quant_data::read_manifest(
+                                "datasets/market",
+                                &app_config.data.dataset_version,
+                                symbol,
+                            )?
+                            .content_sha256,
                             row_count: 0,
                             feature_columns: Vec::new(),
                             target_horizon: app_config.features.target_horizon as usize,

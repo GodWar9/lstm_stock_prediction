@@ -3,6 +3,7 @@
 use crate::provider::DataError;
 use crate::types::Bar;
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -14,6 +15,8 @@ pub struct DatasetManifest {
     pub end_date: String,
     pub bar_count: usize,
     pub source: String,
+    #[serde(default)]
+    pub content_sha256: String,
 }
 
 pub fn dataset_path(root: impl AsRef<Path>, dataset_version: &str, symbol: &str) -> PathBuf {
@@ -59,10 +62,12 @@ pub fn write_dataset(
 
     let data = serde_json::to_vec_pretty(bars)
         .map_err(|e| DataError::FetchError(format!("Failed to serialize bars: {}", e)))?;
+    let mut sealed = manifest.clone();
+    sealed.content_sha256 = format!("{:x}", Sha256::digest(&data));
     fs::write(&data_path, data)
         .map_err(|e| DataError::FetchError(format!("Failed to write dataset: {}", e)))?;
 
-    let metadata = serde_json::to_vec_pretty(manifest)
+    let metadata = serde_json::to_vec_pretty(&sealed)
         .map_err(|e| DataError::FetchError(format!("Failed to serialize manifest: {}", e)))?;
     fs::write(&metadata_path, metadata)
         .map_err(|e| DataError::FetchError(format!("Failed to write manifest: {}", e)))?;
@@ -75,13 +80,27 @@ pub fn read_dataset(
     dataset_version: &str,
     symbol: &str,
 ) -> Result<Vec<Bar>, DataError> {
-    let path = dataset_path(root, dataset_version, symbol);
+    let path = dataset_path(&root, dataset_version, symbol);
     let content = fs::read(&path).map_err(|e| {
         DataError::FetchError(format!("Failed to read dataset {}: {}", path.display(), e))
     })?;
+    let manifest = read_manifest(root, dataset_version, symbol)?;
+    if manifest.dataset_version != dataset_version
+        || manifest.symbol != symbol
+        || manifest.content_sha256 != format!("{:x}", Sha256::digest(&content))
+    {
+        return Err(DataError::ValidationError(
+            "Market dataset integrity mismatch; ingest a new dataset version".into(),
+        ));
+    }
     let bars: Vec<Bar> = serde_json::from_slice(&content)
         .map_err(|e| DataError::ParseError(format!("Invalid dataset JSON: {}", e)))?;
     crate::validate_bars_monotonic_and_sound(&bars)?;
+    if manifest.bar_count != bars.len() {
+        return Err(DataError::ValidationError(
+            "Market row count differs from manifest".into(),
+        ));
+    }
     Ok(bars)
 }
 
@@ -108,17 +127,22 @@ mod tests {
     fn round_trips_versioned_dataset() {
         let dir = tempdir().unwrap();
         let bars = vec![Bar::same_bar(Timestamp(1), 10.0, 11.0, 9.0, 10.5, 100)];
-        let manifest = DatasetManifest {
+        let mut manifest = DatasetManifest {
             dataset_version: "ds_test".to_string(),
             symbol: "TEST".to_string(),
             start_date: "1970-01-01".to_string(),
             end_date: "1970-01-01".to_string(),
             bar_count: bars.len(),
             source: "fixture".to_string(),
+            content_sha256: String::new(),
         };
 
         write_dataset(dir.path(), &manifest, &bars).unwrap();
         assert_eq!(read_dataset(dir.path(), "ds_test", "TEST").unwrap(), bars);
+        manifest.content_sha256 = format!(
+            "{:x}",
+            Sha256::digest(fs::read(dataset_path(dir.path(), "ds_test", "TEST")).unwrap())
+        );
         assert_eq!(
             read_manifest(dir.path(), "ds_test", "TEST").unwrap(),
             manifest

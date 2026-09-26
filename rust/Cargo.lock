@@ -1688,6 +1688,7 @@ dependencies = [
  "quant_instruments",
  "serde",
  "serde_json",
+ "sha2 0.10.9",
  "tempfile",
  "thiserror 1.0.69",
 ]
@@ -1718,6 +1719,7 @@ dependencies = [
  "ringbuf",
  "serde",
  "serde_json",
+ "sha2 0.10.9",
  "tempfile",
  "thiserror 1.0.69",
 ]
@@ -1828,6 +1830,7 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]

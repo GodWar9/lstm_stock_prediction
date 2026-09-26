@@ -9,6 +9,7 @@ use arrow2::io::parquet::write::{
     transverse, CompressionOptions, Encoding, FileWriter, RowGroupIterator, Version, WriteOptions,
 };
 use serde::{Deserialize, Serialize};
+use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
 use std::fs;
 use std::io::Write;
@@ -46,6 +47,10 @@ pub struct TrainingDatasetManifest {
     pub row_count: usize,
     pub feature_columns: Vec<String>,
     pub target_horizon: usize,
+    #[serde(default)]
+    pub content_sha256: String,
+    #[serde(default)]
+    pub source_market_sha256: String,
 }
 
 /// Helper to build an Arrow2 Chunk and Schema from FeatureRow records.
@@ -247,9 +252,13 @@ impl FeatureArrowExporter {
         writer.start(&schema, None)?;
         writer.write(&Chunk::new(columns), None)?;
         writer.finish()?;
+        drop(writer);
+        file.flush()?;
+        let content_sha256 = format!("{:x}", Sha256::digest(fs::read(&output_path)?));
         fs::write(
             output_dir.join(format!("{}.manifest.json", manifest.symbol)),
             serde_json::to_vec_pretty(&TrainingDatasetManifest {
+                content_sha256,
                 row_count: joined.len(),
                 feature_columns: feature_names.into_iter().collect(),
                 ..manifest.clone()
@@ -361,6 +370,8 @@ mod tests {
             row_count: 0,
             feature_columns: Vec::new(),
             target_horizon: 1,
+            content_sha256: String::new(),
+            source_market_sha256: String::new(),
         };
 
         let path = FeatureArrowExporter::write_training_ipc(dir.path(), &manifest, &rows, &targets)
