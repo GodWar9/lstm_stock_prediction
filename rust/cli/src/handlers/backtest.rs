@@ -40,6 +40,12 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
     if validation["data_version"].as_str() != Some(cfg.data.dataset_version.as_str()) {
         bail!("Model and market dataset versions differ");
     }
+    let integrity = &validation["data_integrity"];
+    if integrity["market_sha256"].as_str() != Some(data_manifest.content_sha256.as_str())
+        || integrity["symbol"].as_str() != Some(symbol.as_str())
+    {
+        bail!("Market dataset content differs from the model training input; retrain on a new version");
+    }
     let rows = super::pipeline::graph().compute_batch(&all_bars);
     let ordered = super::pipeline::ordered(&rows, provider.feature_schema())?;
     let bars: Vec<_> = all_bars

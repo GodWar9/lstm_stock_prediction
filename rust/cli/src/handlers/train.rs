@@ -77,6 +77,7 @@ pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
         std::fs::canonicalize(config_file).unwrap_or_else(|_| config_file.to_path_buf());
 
     let mut cmd = Command::new(&python_bin);
+    cmd.env("QUANTCTL_EXECUTABLE", std::env::current_exe()?);
     cmd.arg(&script_path).arg("--config").arg(&abs_config);
     if let Some(dataset) = &args.dataset {
         cmd.arg("--dataset").arg(dataset);

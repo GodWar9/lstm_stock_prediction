@@ -84,6 +84,7 @@ def load_training_arrays(args, cfg, lookback):
             dataset.feature_set_version,
             dataset.target_horizon,
             dataset_path,
+            dataset.integrity,
         )
 
     if not args.synthetic:
@@ -106,6 +107,7 @@ def load_training_arrays(args, cfg, lookback):
         1,
         1,
         None,
+        {},
     )
 
 
@@ -150,6 +152,7 @@ def train_and_export(args, cfg, model_id, stage):
         feature_set_version,
         target_horizon,
         dataset_path,
+        data_integrity,
     ) = load_training_arrays(args, cfg, lookback)
     n_samples, n_features = raw_features.shape
 
@@ -254,7 +257,7 @@ def train_and_export(args, cfg, model_id, stage):
                          "start_ms": int(timestamps[min(begin, n_samples-1)]) // 1000000,
                          "end_ms": int(timestamps[min(max(begin, end-1), n_samples-1)]) // 1000000})
     validation = {"schema_version": 1, "data_version": cfg.get("data", {}).get("dataset_version", "unknown"),
-                  "timestamp_unit": "nanoseconds", "periods": periods, "pit_passed": True,
+                  "data_integrity": data_integrity, "timestamp_unit": "nanoseconds", "periods": periods, "pit_passed": True,
                   "scaler_train_only": True, "purge_bars": splitter.purge_bars,
                   "embargo_bars": splitter.embargo_bars, "folds": [{"fold": 1, "segments": segments}],
                   "onnx_parity": {"passed": True, "max_abs_error": parity_error, "tolerance": 1e-5},
@@ -269,6 +272,24 @@ def train_and_export(args, cfg, model_id, stage):
     metadata["git_commit"] = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip() or "unknown"
     with open(meta_path, "w") as output:
         json.dump(metadata, output, indent=2)
+    raw_windows, _ = create_sliding_windows(raw_features[test_idx], raw_targets[test_idx], lookback)
+    selected = np.unique(np.linspace(0, len(x_te) - 1, min(3, len(x_te)), dtype=int))
+    with torch.no_grad():
+        references = model(torch.from_numpy(x_te[selected].astype(np.float32))).numpy().reshape(-1)
+    validation["runtime_parity"] = {"cases": [
+        {"raw_features": raw_windows[int(index)].reshape(-1).astype(float).tolist(), "expected": float(expected)}
+        for index, expected in zip(selected, references)
+    ]}
+    with open(os.path.join(onnx_out_dir, "validation.json"), "w") as output:
+        json.dump(validation, output, indent=2)
+    executable = os.environ.get("QUANTCTL_EXECUTABLE")
+    if not executable:
+        raise RuntimeError("Train through quantctl or set QUANTCTL_EXECUTABLE for the mandatory Rust parity gate")
+    check = subprocess.run([executable, "verify-model", "--artifact-dir", onnx_out_dir],
+                           capture_output=True, text=True, check=True)
+    validation["runtime_parity"].update(json.loads(check.stdout.strip().splitlines()[-1]))
+    with open(os.path.join(onnx_out_dir, "validation.json"), "w") as output:
+        json.dump(validation, output, indent=2)
     published_dir = os.path.join("models", model_id)
     onnx_path = os.path.join(published_dir, "model.onnx")
 

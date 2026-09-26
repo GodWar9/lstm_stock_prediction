@@ -62,6 +62,9 @@ def validate_package(directory: Path, model_id: str) -> None:
         or not 0 <= error <= tolerance <= 1e-5
     ):
         raise ValueError("Model package has no successful finite ONNX parity evidence")
+    runtime = documents["validation.json"].get("runtime_parity", {})
+    if not isinstance(runtime, dict) or runtime.get("passed") is not True:
+        raise ValueError("Model package requires a passing Rust runtime parity gate")
 
 
 @contextmanager

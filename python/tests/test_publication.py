@@ -19,7 +19,7 @@ def write_package(stage, model_id="example", error=0.0):
         "training_log.json": {"train_loss": [0.1]},
         "validation.json": {"onnx_parity": {
             "passed": True, "max_abs_error": error, "tolerance": 1e-5,
-        }},
+        }, "runtime_parity": {"passed": True}},
     }
     for name, value in documents.items():
         (stage / name).write_text(json.dumps(value), encoding="utf-8")

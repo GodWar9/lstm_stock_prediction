@@ -3,6 +3,7 @@
 pub mod integrity;
 pub mod metadata;
 pub mod onnx_session;
+pub mod parity;
 pub mod provider;
 pub mod scaler;
 
