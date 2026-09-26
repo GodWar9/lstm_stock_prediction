@@ -38,3 +38,15 @@ benchmarks/results/*.json
 .DS_Store
 Thumbs.db
 
+
+# Local build and verification outputs
+node_modules/
+*.log
+*.tsbuildinfo
+web/audit.json
+web/test-results/
+web/playwright-report/
+web/.test-workspace/
+models/test_*/
+models/inspector_demo/
+!rust/Cargo.lock

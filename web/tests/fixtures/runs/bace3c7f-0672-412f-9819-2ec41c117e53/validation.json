@@ -1,0 +1,85 @@
+{
+  "data_version": "inspector_demo",
+  "embargo_bars": 12,
+  "evaluation": "single chronological holdout; rolling walk-forward retraining is not orchestrated",
+  "folds": [
+    {
+      "fold": 1,
+      "segments": [
+        {
+          "end_ms": 1644613200000,
+          "end_row": 498,
+          "kind": "train",
+          "start_ms": 1582318800000,
+          "start_row": 0
+        },
+        {
+          "end_ms": 1645218000000,
+          "end_row": 503,
+          "kind": "purge",
+          "start_ms": 1644872400000,
+          "start_row": 498
+        },
+        {
+          "end_ms": 1646859600000,
+          "end_row": 515,
+          "kind": "embargo",
+          "start_ms": 1645563600000,
+          "start_row": 503
+        },
+        {
+          "end_ms": 1658260800000,
+          "end_row": 605,
+          "kind": "validation",
+          "start_ms": 1646946000000,
+          "start_row": 515
+        },
+        {
+          "end_ms": 1658865600000,
+          "end_row": 610,
+          "kind": "purge",
+          "start_ms": 1658347200000,
+          "start_row": 605
+        },
+        {
+          "end_ms": 1660248000000,
+          "end_row": 622,
+          "kind": "embargo",
+          "start_ms": 1658952000000,
+          "start_row": 610
+        },
+        {
+          "end_ms": 1672347600000,
+          "end_row": 719,
+          "kind": "test",
+          "start_ms": 1660334400000,
+          "start_row": 622
+        }
+      ]
+    }
+  ],
+  "onnx_parity": {
+    "max_abs_error": 2.086162567138672e-7,
+    "passed": true,
+    "tolerance": 0.00001
+  },
+  "periods": {
+    "test": [
+      "1661803200000000000",
+      "1672434000000000000"
+    ],
+    "train": [
+      "1583784000000000000",
+      "1644872400000000000"
+    ],
+    "validation": [
+      "1648238400000000000",
+      "1658347200000000000"
+    ]
+  },
+  "pit_passed": true,
+  "purge_bars": 5,
+  "scaler_train_only": true,
+  "schema_version": 1,
+  "timestamp_unit": "nanoseconds"
+}

@@ -1,0 +1,10 @@
+import { cpSync, mkdirSync } from 'node:fs';
+import { spawn } from 'node:child_process';
+import { resolve } from 'node:path';
+const root = resolve('.test-workspace');
+mkdirSync(`${root}/reports`, { recursive: true });
+cpSync('tests/fixtures/runs', `${root}/reports/runs`, { recursive: true });
+cpSync('tests/fixtures/models', `${root}/models`, { recursive: true });
+const child = spawn('cargo', ['run', '--quiet', '--manifest-path', '../rust/Cargo.toml', '--bin', 'quantctl', '--', 'serve', '--port', '8788', '--root', root], { stdio: 'inherit' });
+for (const event of ['SIGTERM', 'SIGINT']) process.on(event, () => child.kill(event));
+child.on('exit', code => process.exit(code ?? 1));

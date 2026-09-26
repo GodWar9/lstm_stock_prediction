@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "data_version": "inspector_demo",
+  "timestamp_unit": "nanoseconds",
+  "periods": {
+    "train": [
+      "1583784000000000000",
+      "1644872400000000000"
+    ],
+    "validation": [
+      "1648238400000000000",
+      "1658347200000000000"
+    ],
+    "test": [
+      "1661803200000000000",
+      "1672434000000000000"
+    ]
+  },
+  "pit_passed": true,
+  "scaler_train_only": true,
+  "purge_bars": 5,
+  "embargo_bars": 12,
+  "folds": [
+    {
+      "fold": 1,
+      "segments": [
+        {
+          "kind": "train",
+          "start_row": 0,
+          "end_row": 498,
+          "start_ms": 1582318800000,
+          "end_ms": 1644613200000
+        },
+        {
+          "kind": "purge",
+          "start_row": 498,
+          "end_row": 503,
+          "start_ms": 1644872400000,
+          "end_ms": 1645218000000
+        },
+        {
+          "kind": "embargo",
+          "start_row": 503,
+          "end_row": 515,
+          "start_ms": 1645563600000,
+          "end_ms": 1646859600000
+        },
+        {
+          "kind": "validation",
+          "start_row": 515,
+          "end_row": 605,
+          "start_ms": 1646946000000,
+          "end_ms": 1658260800000
+        },
+        {
+          "kind": "purge",
+          "start_row": 605,
+          "end_row": 610,
+          "start_ms": 1658347200000,
+          "end_ms": 1658865600000
+        },
+        {
+          "kind": "embargo",
+          "start_row": 610,
+          "end_row": 622,
+          "start_ms": 1658952000000,
+          "end_ms": 1660248000000
+        },
+        {
+          "kind": "test",
+          "start_row": 622,
+          "end_row": 719,
+          "start_ms": 1660334400000,
+          "end_ms": 1672347600000
+        }
+      ]
+    }
+  ],
+  "onnx_parity": {
+    "passed": true,
+    "max_abs_error": 2.086162567138672e-07,
+    "tolerance": 1e-05
+  },
+  "evaluation": "single chronological holdout; rolling walk-forward retraining is not orchestrated"
+}

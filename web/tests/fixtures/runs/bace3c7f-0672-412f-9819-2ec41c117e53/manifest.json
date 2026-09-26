@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "run_id": "bace3c7f-0672-412f-9819-2ec41c117e53",
+  "created_at": "2026-09-25T10:41:46.526902900+00:00",
+  "kind": "backtest",
+  "split": "test",
+  "provenance": {
+    "git_commit": "308dbab06337700523afd762146fd79ac2e8a193",
+    "config_hash": "4369f1c59342a2e818c33b62bd525668a7c598281a5e6e02421030f6ce64b1c5",
+    "data_version": "inspector_demo",
+    "model_artifact_id": "inspector_demo",
+    "source": "synthetic"
+  },
+  "instruments": [
+    {
+      "id": "AAPL",
+      "kind": "equity"
+    }
+  ],
+  "capabilities": [
+    "equity_curve",
+    "drawdown",
+    "trades",
+    "signals",
+    "validation"
+  ],
+  "artifacts": {
+    "equity": "equity.arrow",
+    "report": "report.json",
+    "signals": "signals.arrow",
+    "trades": "trades.arrow",
+    "validation": "validation.json"
+  },
+  "metrics": {
+    "final_nav": 100020.01632572286,
+    "hit_rate": 0.6666666666666666,
+    "max_drawdown": 0.014005470531172858,
+    "sharpe": -2.159826472519469,
+    "sortino": -2.819861998852664,
+    "total_return": 0.00020016325722855982,
+    "turnover": 0.832098723399304
+  },
+  "warnings": [
+    "Daily-bar annualization uses 252 periods per year. Deflated Sharpe is a heuristic, not a significance test.",
+    "Synthetic market data: these results do not demonstrate trading performance."
+  ]
+}

@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.arrow binary
+*.onnx binary
+*.pt binary
+*.png binary
