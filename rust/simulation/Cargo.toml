@@ -5,8 +5,16 @@ edition.workspace = true
 
 [dependencies]
 quant_backtest.workspace = true
+quant_portfolio.workspace = true
 quant_risk.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 anyhow.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true
+
+[[bench]]
+name = "simulation_benchmarks"
+harness = false

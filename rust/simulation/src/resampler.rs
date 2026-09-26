@@ -92,7 +92,7 @@ impl Default for MonteCarloResampler {
 
 impl SimulationStrategy for MonteCarloResampler {
     fn generate_paths(&self, base: &BacktestReport, n_paths: usize) -> SimulationResult {
-        let n_paths = n_paths.max(10);
+        let n_paths = n_paths.max(1);
         let returns = &base.returns;
 
         if returns.is_empty() {
@@ -120,10 +120,18 @@ impl SimulationStrategy for MonteCarloResampler {
             let mut mean = 0.0;
             let mut m2 = 0.0;
 
+            let mut previous = 0usize;
             for step in 1..=path_len {
+                let restart = step == 1 || Self::next_rand(&mut rng_state) < 0.2;
                 let rand_val = Self::next_rand(&mut rng_state);
                 let idx = (rand_val * (returns.len() as f64)).floor() as usize;
-                let ret = returns[idx.min(returns.len() - 1)];
+                let idx = if restart {
+                    idx.min(returns.len() - 1)
+                } else {
+                    (previous + 1) % returns.len()
+                };
+                previous = idx;
+                let ret = returns[idx];
 
                 // Welford's algorithm for numerically stable zero-allocation online variance
                 let delta = ret - mean;
@@ -188,6 +196,39 @@ impl SimulationStrategy for ParameterPerturbation {
     fn generate_paths(&self, base: &BacktestReport, n_paths: usize) -> SimulationResult {
         let resampler = MonteCarloResampler::new(12345);
         resampler.generate_paths(base, n_paths)
+    }
+}
+
+/// Pointwise NAV percentile bands from the same seeded stationary bootstrap as summary statistics.
+impl MonteCarloResampler {
+    pub fn nav_bands(&self, base: &BacktestReport, n_paths: usize) -> Vec<(usize, Distribution)> {
+        if n_paths == 0 || base.returns.is_empty() {
+            return Vec::new();
+        }
+        let mut samples = vec![Vec::with_capacity(n_paths); base.returns.len() + 1];
+        let mut state = self.seed;
+        for _ in 0..n_paths {
+            let mut nav = base.initial_cash;
+            let mut previous = 0usize;
+            samples[0].push(nav);
+            for (step, sample) in samples.iter_mut().enumerate().skip(1) {
+                let restart = step == 1 || Self::next_rand(&mut state) < 0.2;
+                let random = Self::next_rand(&mut state);
+                let idx = if restart {
+                    ((random * base.returns.len() as f64) as usize).min(base.returns.len() - 1)
+                } else {
+                    (previous + 1) % base.returns.len()
+                };
+                previous = idx;
+                nav *= 1.0 + base.returns[idx];
+                sample.push(nav);
+            }
+        }
+        samples
+            .into_iter()
+            .enumerate()
+            .map(|(i, v)| (i, Distribution::from_values(v)))
+            .collect()
     }
 }
 

@@ -1,7 +1,7 @@
-//! Simulation engine: Monte Carlo resampling, parameter perturbation, and regime analysis.
-
+pub mod guardrails;
 pub mod regime;
 pub mod resampler;
 
+pub use guardrails::*;
 pub use regime::*;
 pub use resampler::*;
