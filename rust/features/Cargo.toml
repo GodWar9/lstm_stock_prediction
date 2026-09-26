@@ -13,3 +13,11 @@ anyhow.workspace = true
 arrow2.workspace = true
 ringbuf.workspace = true
 tempfile.workspace = true
+memmap2 = "0.9"
+
+[dev-dependencies]
+criterion.workspace = true
+
+[[bench]]
+name = "feature_benchmarks"
+harness = false
