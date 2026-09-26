@@ -107,6 +107,14 @@ impl PortfolioConstructor for VolatilityTargetedConstructor {
             1.0
         };
 
+        let net: f64 = raw_weights.iter().map(|w| w.2).sum();
+        let net_scale = if net.abs() * scale_factor > constraints.max_net_exposure {
+            constraints.max_net_exposure / net.abs()
+        } else {
+            scale_factor
+        };
+        let scale_factor = scale_factor.min(net_scale);
+
         // 4. Construct TargetPosition records
         for (inst, sym, weight) in raw_weights {
             let final_weight = weight * scale_factor;
