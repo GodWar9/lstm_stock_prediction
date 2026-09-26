@@ -65,11 +65,11 @@ class LSTMForecaster(nn.Module):
         state: Optional[tuple] = None,
     ) -> torch.Tensor:
         """Forward pass.
-        
+
         Args:
             x: Tensor of shape [batch_size, seq_len, input_dim]
             state: Optional tuple (h_0, c_0)
-            
+
         Returns:
             Tensor of shape [batch_size, output_dim]
         """
@@ -81,3 +81,95 @@ class LSTMForecaster(nn.Module):
         normed = self.layer_norm(last_hidden)
         out = self.head(normed)
         return out
+
+
+class MultiHorizonLSTMForecaster(nn.Module):
+    """Joint Multi-Horizon LSTM Forecaster.
+
+    Predicts returns across multiple future horizons (e.g., 1-day, 5-day, 20-day)
+    simultaneously from a shared sequential representation.
+    """
+
+    def __init__(
+        self,
+        input_dim: int,
+        horizons: tuple[int, ...] = (1, 5, 20),
+        hidden_dim: int = 128,
+        num_layers: int = 2,
+        dropout: float = 0.2,
+    ):
+        super().__init__()
+        self.input_dim = input_dim
+        self.horizons = list(horizons)
+        self.hidden_dim = hidden_dim
+        self.num_layers = num_layers
+
+        self.lstm = nn.LSTM(
+            input_size=input_dim,
+            hidden_size=hidden_dim,
+            num_layers=num_layers,
+            batch_first=True,
+            dropout=dropout if num_layers > 1 else 0.0,
+        )
+
+        self.layer_norm = nn.LayerNorm(hidden_dim)
+
+        # Specialized projection head per prediction horizon
+        self.heads = nn.ModuleDict({
+            f"h_{h}": nn.Sequential(
+                nn.Linear(hidden_dim, hidden_dim // 2),
+                nn.GELU(),
+                nn.Dropout(dropout),
+                nn.Linear(hidden_dim // 2, 1),
+            )
+            for h in self.horizons
+        })
+
+        self._init_weights()
+
+    def _init_weights(self):
+        """Initialize forget-gate bias = 1.0 and Xavier/orthogonal weights."""
+        for name, param in self.lstm.named_parameters():
+            if "weight_ih" in name:
+                nn.init.xavier_uniform_(param.data)
+            elif "weight_hh" in name:
+                nn.init.orthogonal_(param.data)
+            elif "bias" in name:
+                param.data.fill_(0.0)
+                n = param.size(0)
+                param.data[n // 4 : n // 2].fill_(1.0)
+
+        for head in self.heads.values():
+            for m in head.modules():
+                if isinstance(m, nn.Linear):
+                    nn.init.kaiming_normal_(m.weight, nonlinearity="relu")
+                    if m.bias is not None:
+                        m.bias.data.fill_(0.0)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        state: Optional[tuple] = None,
+        return_dict: bool = False,
+    ) -> torch.Tensor | dict[int, torch.Tensor]:
+        """Forward pass.
+
+        Args:
+            x: Tensor of shape [batch_size, seq_len, input_dim]
+            state: Optional tuple (h_0, c_0)
+            return_dict: If True, returns dict {horizon: Tensor[batch, 1]}
+
+        Returns:
+            Tensor of shape [batch_size, num_horizons] or dict if return_dict=True.
+        """
+        lstm_out, _ = self.lstm(x, state)
+        last_hidden = lstm_out[:, -1, :]
+        normed = self.layer_norm(last_hidden)
+
+        outputs = [self.heads[f"h_{h}"](normed) for h in self.horizons]
+
+        if return_dict:
+            return {h: out for h, out in zip(self.horizons, outputs)}
+
+        # Concatenate into [batch_size, num_horizons]
+        return torch.cat(outputs, dim=-1)

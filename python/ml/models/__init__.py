@@ -1,5 +1,5 @@
 """Model architectures package."""
 
-from .lstm import LSTMForecaster
+from .lstm import LSTMForecaster, MultiHorizonLSTMForecaster
 
-__all__ = ["LSTMForecaster"]
+__all__ = ["LSTMForecaster", "MultiHorizonLSTMForecaster"]
