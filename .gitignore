@@ -49,4 +49,5 @@ web/playwright-report/
 web/.test-workspace/
 models/test_*/
 models/inspector_demo/
+/models/.staging/
 !rust/Cargo.lock

@@ -132,6 +132,30 @@ fn persisted_pipeline_training_prediction_backtest_simulation() {
     run(&["data", "validate"]);
     run(&["features", "build"]);
     run(&["train"]);
+    let model_dir = root.join("models").join(&unique);
+    for name in [
+        "model.onnx",
+        "model.pt",
+        "scaler.json",
+        "metadata.json",
+        "training_log.json",
+        "validation.json",
+    ] {
+        assert!(model_dir.join(name).is_file(), "Missing published {name}");
+    }
+    assert!(std::fs::read_dir(root.join("models/.staging"))
+        .unwrap()
+        .flatten()
+        .all(|entry| !entry.file_name().to_string_lossy().starts_with(&unique)));
+    let duplicate = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .current_dir(&root)
+        .arg("--config")
+        .arg(&path)
+        .arg("train")
+        .output()
+        .unwrap();
+    assert!(!duplicate.status.success());
+    assert!(String::from_utf8_lossy(&duplicate.stderr).contains("already exists"));
     run(&["predict", "--model", &unique, "--symbol", "AAPL"]);
     run(&["backtest", "run", "--model", &unique]);
     let reused = Command::new(env!("CARGO_BIN_EXE_quantctl"))

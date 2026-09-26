@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import sys
+from pathlib import Path
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
@@ -30,6 +31,7 @@ from python.ml.export_onnx import export_artifact_package
 from python.ml.loss import DirectionalAsymmetricLoss
 from python.ml.models.lstm import LSTMForecaster
 from python.ml.trainer import ModelTrainer
+from python.ml.publication import staged_model
 
 
 def parse_args():
@@ -111,10 +113,17 @@ def main():
     args = parse_args()
     cfg = load_config(args.config)
 
+    model_id = cfg.get("training", {}).get("model_id", "lstm_v1")
+    with staged_model(Path("models"), model_id) as stage:
+        report = train_and_export(args, cfg, model_id, stage)
+    # Success is emitted only after the complete directory has been published.
+    print(json.dumps(report))
+
+
+def train_and_export(args, cfg, model_id, stage):
     train_cfg = cfg.get("training", {})
     features_cfg = cfg.get("features", {})
 
-    model_id = train_cfg.get("model_id", "lstm_v1")
     lookback = features_cfg.get("lookback", 20)
     hidden_dim = train_cfg.get("hidden_size", 64)
     num_layers = train_cfg.get("num_layers", 2)
@@ -192,9 +201,7 @@ def main():
     print(f"[Python ML] OOS Metrics: IC={metrics['ic']:.4f}, DirAcc={metrics['directional_accuracy']:.2%}")
 
     # Export complete model artifact package
-    onnx_out_dir = f"models/{model_id}"
-    if os.path.exists(onnx_out_dir):
-        raise FileExistsError(f"Model artifact already exists: {onnx_out_dir}; choose a new model_id")
+    onnx_out_dir = str(stage)
     export_artifact_package(
         model=model,
         scaler=scaler,
@@ -228,7 +235,8 @@ def main():
     session = ort.InferenceSession(os.path.join(onnx_out_dir, "model.onnx"), providers=["CPUExecutionProvider"])
     exported = session.run(None, {session.get_inputs()[0].name: x_te[:1].astype(np.float32)})[0]
     parity_error = float(np.max(np.abs(reference - exported)))
-    if parity_error > 1e-5:
+    del session
+    if not np.isfinite(parity_error) or parity_error > 1e-5:
         raise ValueError(f"ONNX parity failed: {parity_error}")
     periods = {name: [str(timestamps[idx[lookback-1]]), str(target_timestamps[idx[-1]])]
                for name, idx in [("train", train_idx), ("validation", val_idx), ("test", test_idx)]}
@@ -261,12 +269,13 @@ def main():
     metadata["git_commit"] = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip() or "unknown"
     with open(meta_path, "w") as output:
         json.dump(metadata, output, indent=2)
-    onnx_path = os.path.join(onnx_out_dir, "model.onnx")
+    published_dir = os.path.join("models", model_id)
+    onnx_path = os.path.join(published_dir, "model.onnx")
 
     report = {
         "status": "SUCCESS",
         "model_id": model_id,
-        "artifact_dir": onnx_out_dir,
+        "artifact_dir": published_dir,
         "onnx_artifact": onnx_path,
         "metrics": metrics,
         "epochs_completed": len(history["train_loss"]),
@@ -275,7 +284,7 @@ def main():
         "feature_set_version": feature_set_version,
         "target_horizon": target_horizon,
     }
-    print(json.dumps(report))
+    return report
 
 
 if __name__ == "__main__":
