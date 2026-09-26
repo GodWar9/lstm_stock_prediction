@@ -2,6 +2,17 @@
 
 # Platform Optimization & Strategy Improvisations Roadmap (TODO)
 
+## Current integration priorities
+
+- [x] Publish trained models atomically after complete export and finite parity validation; reject duplicate writers and clean up failed attempts.
+- [ ] Hash market datasets and model/scaler bundles and verify content before replay.
+- [ ] Gate every model package on PyTorch/ONNX Runtime/tract parity.
+- [ ] Orchestrate rolling walk-forward training with independently recorded folds.
+- [ ] Persist benchmark, positions, realized targets and risk evidence for the inspector.
+
+The historical optimization checklist below describes library components; see
+the capability guide for which components are used by the default pipeline.
+
 This document provides the definitive, prioritized engineering and quantitative roadmap for the `lstm_stock_prediction` platform. It focuses on pure software performance engineering (achieving maximum throughput without GPU/hardware dependencies) and mathematical/strategic alpha improvisations.
 
 ---

@@ -5,7 +5,24 @@ Node 24.12.0, Python 3.14.4. Commands ran from the repository root unless
 otherwise stated. CI uses Ubuntu and Node 22; local results do not establish
 that a remote CI run has passed.
 
-## Checks
+## Atomic model publication follow-up
+
+The training orchestrator now reserves IDs before training and publishes only
+complete, validated model directories. Follow-up checks on 2026-09-26:
+
+- Python suite: **39 passed**, with the same 30 ONNX exporter/deprecation warnings.
+- Rust CLI integration suite: **6 passed**, including real training, complete
+  package checks, staging cleanup, overwrite rejection, inference and replay.
+- Rust formatting and Clippy for the CLI integration target passed. The existing
+  browser/API contract is unchanged.
+
+New tests exercise failed exports, missing files, malformed JSON, wrong model
+IDs, nonfinite/failed parity, invalid paths, simultaneous ID reservations,
+destination collisions and success reporting after publication. Abrupt process
+termination can leave a hidden stage/lock; automatic stale-lock deletion and
+power-loss durability are not claimed.
+
+## Baseline checks before the publication follow-up
 
 | Check | Command | Result |
 |---|---|---|

@@ -54,7 +54,7 @@ quantctl simulate --report reports/runs/<run-id>/report.json --paths 500
 
 Enable the explicit in-sample/unverified toggle to inspect the new simulation. A bootstrap scenario is not a newly verified OOS forecast.
 
-Training refuses to overwrite a model directory. Choose a new `training.model_id` for a new experiment. Test reuse requires deliberate `--allow-reuse`. Run commands from one repository root so artifact paths remain consistent.
+Training reserves the model ID and exports under `models/.staging`. Only a complete package with passing ONNX parity checks is renamed into the final model directory. Failed attempts clean up automatically; interrupted processes may leave hidden stages and locks that need inspection after the process has stopped. Choose a new `training.model_id` for a new experiment; existing models cannot be overwritten. Test reuse requires deliberate `--allow-reuse`. Run commands from one repository root so artifact paths remain consistent.
 
 ## Market data and models
 

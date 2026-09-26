@@ -106,9 +106,16 @@ the present IPC reader still allocates record-batch buffers.
   selected automatically by the standard training CLI or single-head Rust
   provider. Quantized ONNX compatibility needs a runtime parity gate before use.
 
-Training refuses to overwrite an existing model directory. A failed export can
-leave an incomplete directory that must be inspected before retrying under a
-new ID. Legacy checked-in metadata may refer to absent git-ignored weights.
+Training reserves its model ID before processing data, writes under
+`models/.staging`, and publishes the complete directory with a same-filesystem
+rename only after export, metadata and finite ONNX parity checks succeed.
+Ordinary failures clean up the stage and release the ID; competing training
+attempts and existing model directories are rejected. IDs use 1-128 letters,
+digits, underscores or hyphens, begin with a letter or digit, and exclude Windows
+device names. A killed process or machine failure can leave a hidden stage and
+lock: confirm no training process owns that ID before removing its leftovers.
+This provides atomic visibility, not power-loss durability or protection against
+external manual edits. Legacy checked-in metadata may reference absent weights.
 
 ## Inference and signals
 

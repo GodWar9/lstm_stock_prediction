@@ -12,7 +12,7 @@ aspirations until measured on a named machine and workload.
 | P0 | Expand accounting/property tests for partial fills, shorts, splits, dividends and borrow fees | Compare NAV, cash and realized P&L to hand-calculated ledgers |
 | P0 | Walk-forward orchestration with a model per fold | Record exact train/purge/embargo/test timestamps and pooled OOS metrics without reusing test data for selection |
 | P0 | Rust-runtime parity gate for every exported model | Compare PyTorch, ONNX Runtime and tract over representative held-out tensors before publication |
-| P0 | Atomic model staging and manifest rename | Failed training/export must not leave a directory that looks complete |
+| Done | Atomic model staging and directory rename | Training reserves the ID, validates the staged package and parity evidence, then publishes it; failure, collision and real CLI integration tests cover the lifecycle |
 | P1 | Replace finite profit-factor sentinel and heuristic deflated Sharpe | Represent undefined ratios explicitly; implement and validate statistical definitions |
 | P1 | Persist benchmark, positions, realized signal targets and risk reports | Complete cost sensitivity, rolling IC, regime and portfolio inspector views from backend evidence |
 | P1 | Proper risk integration and constrained optimizer certification | Enforce sector, turnover and regime limits in the actual replay; test constraints after rounding and partial fills |
@@ -78,7 +78,7 @@ Choose based on measured bottlenecks rather than spending on an assumed one.
 
 ## Suggested next delivery sequence
 
-1. Artifact hashes and atomic publication, then model-runtime parity.
+1. Artifact hashes and model-runtime parity; atomic model publication is implemented.
 2. Rolling walk-forward runs with a trustworthy OOS comparison report.
 3. Persist missing portfolio/risk/signal evidence and complete the related UI.
 4. Profile one representative production-size dataset and optimize its largest
