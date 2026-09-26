@@ -81,145 +81,80 @@ fn test_cli_invalid_config_path() {
 }
 
 #[test]
-fn test_cli_features_build() {
-    let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args([
-            "features",
-            "build",
-            "--config",
-            "../../configs/default.yaml",
-            "--feature-set",
-            "test_v1",
-        ])
-        .output()
-        .expect("Failed to execute quantctl features build");
-
-    assert!(output.status.success());
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    assert!(stdout.contains("Successfully built feature set 'test_v1'"));
-}
-
-#[test]
-fn test_cli_train() {
-    let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args([
-            "train",
-            "--config",
-            "../../configs/default.yaml",
-            "--synthetic",
-        ])
-        .output()
-        .expect("Failed to execute quantctl train");
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    if !output.status.success() {
-        eprintln!(
-            "test_cli_train FAILED:\nSTDOUT:\n{}\nSTDERR:\n{}",
-            stdout, stderr
+fn persisted_pipeline_training_prediction_backtest_simulation() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .canonicalize()
+        .unwrap();
+    let unique = format!(
+        "test_{}",
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let config = std::fs::read_to_string(root.join("configs/demo.yaml"))
+        .unwrap()
+        .replace("inspector_demo", &unique)
+        .replace("epochs: 2", "epochs: 1");
+    let temp = tempfile::tempdir().unwrap();
+    let path = temp.path().join("config.yaml");
+    std::fs::write(&path, config).unwrap();
+    let run = |args: &[&str]| {
+        let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+            .current_dir(&root)
+            .arg("--config")
+            .arg(&path)
+            .args(args)
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{:?}\n{}\n{}",
+            args,
+            String::from_utf8_lossy(&output.stdout),
+            String::from_utf8_lossy(&output.stderr)
         );
-    }
-    assert!(output.status.success(), "Status not success");
-    assert!(stdout.contains("Training completed successfully"));
-}
-
-#[test]
-fn test_cli_predict() {
-    let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args([
-            "predict",
-            "--model",
-            "lstm_v1",
-            "--symbol",
-            "AAPL",
-            "--config",
-            "../../configs/default.yaml",
-        ])
+        output
+    };
+    let missing = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .current_dir(&root)
+        .arg("--config")
+        .arg(&path)
+        .args(["features", "build"])
         .output()
-        .expect("Failed to execute quantctl predict");
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    if !output.status.success() {
-        eprintln!(
-            "test_cli_predict FAILED:\nSTDOUT:\n{}\nSTDERR:\n{}",
-            stdout, stderr
-        );
-    }
-    assert!(output.status.success());
-    assert!(stdout.contains("QUANTCTL MODEL PREDICTION & SIGNAL"));
-    assert!(stdout.contains("Symbol:             AAPL"));
-    assert!(stdout.contains("Model:              lstm_v1"));
-    assert!(stdout.contains("Signal Direction:"));
-}
-
-#[test]
-fn test_cli_backtest_and_simulate_and_report() {
-    // 1. Backtest Run
-    let backtest_output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args([
-            "backtest",
-            "run",
-            "--model",
-            "lstm_v1",
-            "--split",
-            "test",
-            "--allow-reuse",
-            "--config",
-            "../../configs/default.yaml",
-        ])
+        .unwrap();
+    assert!(
+        !missing.status.success(),
+        "No synthetic fallback for missing data"
+    );
+    run(&["data", "ingest"]);
+    run(&["data", "validate"]);
+    run(&["features", "build"]);
+    run(&["train"]);
+    run(&["predict", "--model", &unique, "--symbol", "AAPL"]);
+    run(&["backtest", "run", "--model", &unique]);
+    let reused = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .current_dir(&root)
+        .arg("--config")
+        .arg(&path)
+        .args(["backtest", "run", "--model", &unique])
         .output()
-        .expect("Failed to execute quantctl backtest run");
-
-    assert!(backtest_output.status.success());
-    let bt_stdout = String::from_utf8_lossy(&backtest_output.stdout);
-    assert!(bt_stdout.contains("QUANTCTL BACKTEST REPORT"));
-    assert!(bt_stdout.contains("Sharpe Ratio:"));
-
-    // Find generated report file (either relative to rust/cli or workspace)
-    let report_candidates = [
-        std::path::PathBuf::from("reports/backtest_lstm_v1_test.json"),
-        std::path::PathBuf::from("../../reports/backtest_lstm_v1_test.json"),
-    ];
-    let report_path = report_candidates
-        .iter()
-        .find(|p| p.exists())
-        .cloned()
-        .unwrap_or_else(|| report_candidates[0].clone());
-
-    // 2. Simulate Run
-    let sim_output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args([
-            "simulate",
-            "--report",
-            report_path.to_str().unwrap(),
-            "--paths",
-            "100",
-            "--config",
-            "../../configs/default.yaml",
-        ])
-        .output()
-        .expect("Failed to execute quantctl simulate");
-
-    assert!(sim_output.status.success());
-    let sim_stdout = String::from_utf8_lossy(&sim_output.stdout);
-    assert!(sim_stdout.contains("QUANTCTL MONTE CARLO SIMULATION"));
-    assert!(sim_stdout.contains("Simulated Paths:    100"));
-
-    // 3. Report Run
-    let rep_output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
-        .args([
-            "report",
-            "--backtest",
-            report_path.to_str().unwrap(),
-            "--config",
-            "../../configs/default.yaml",
-        ])
-        .output()
-        .expect("Failed to execute quantctl report");
-
-    assert!(rep_output.status.success());
-    let rep_stdout = String::from_utf8_lossy(&rep_output.stdout);
-    assert!(rep_stdout.contains("QUANTITATIVE STRATEGY AUDIT REPORT"));
-    assert!(rep_stdout.contains("Cumulative Return:"));
+        .unwrap();
+    assert!(!reused.status.success());
+    let report = format!("reports/backtest_{unique}_test.json");
+    run(&["simulate", "--report", &report, "--paths", "50"]);
+    run(&["report", "--backtest", &report]);
+    let entries = std::fs::read_dir(root.join("reports/runs")).unwrap();
+    let manifest = entries
+        .flatten()
+        .find_map(|entry| {
+            let value: serde_json::Value =
+                serde_json::from_slice(&std::fs::read(entry.path().join("manifest.json")).ok()?)
+                    .ok()?;
+            (value["provenance"]["model_artifact_id"] == unique).then_some(value)
+        })
+        .expect("published run manifest");
+    assert_eq!(manifest["split"], "test");
+    assert_eq!(manifest["provenance"]["source"], "synthetic");
 }

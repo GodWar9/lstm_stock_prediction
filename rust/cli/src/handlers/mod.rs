@@ -8,3 +8,5 @@ pub mod predict;
 pub mod report;
 pub mod simulate;
 pub mod train;
+
+pub mod pipeline;

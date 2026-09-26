@@ -36,8 +36,10 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
             // instead of silently replacing missing market data.
             let provider: Box<dyn MarketDataProvider> = if cfg.data.provider == "yfinance" {
                 Box::new(YfinanceAdapter::default_paths())
-            } else {
+            } else if cfg.data.provider == "synthetic" {
                 Box::new(SyntheticDataProvider::default())
+            } else {
+                anyhow::bail!("Unknown data provider: {}", cfg.data.provider);
             };
 
             for sym in &target_symbols {

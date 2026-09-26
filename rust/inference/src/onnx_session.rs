@@ -25,14 +25,25 @@ impl std::fmt::Debug for OnnxSession {
 }
 
 impl OnnxSession {
-    /// Load an ONNX model from disk.
+    /// Load an ONNX model from disk with default graph optimizations.
     pub fn load(
         path: impl AsRef<Path>,
         model_id: impl Into<String>,
         seq_len: usize,
         num_features: usize,
     ) -> Result<Self, InferenceError> {
-        let model = tract_onnx::onnx()
+        Self::load_optimized(path, model_id, seq_len, num_features, true)
+    }
+
+    /// Load an ONNX model with explicit control over constant folding and decluttering.
+    pub fn load_optimized(
+        path: impl AsRef<Path>,
+        model_id: impl Into<String>,
+        seq_len: usize,
+        num_features: usize,
+        declutter: bool,
+    ) -> Result<Self, InferenceError> {
+        let raw_model = tract_onnx::onnx()
             .model_for_path(path.as_ref())
             .map_err(|e| {
                 InferenceError::InferenceFailed(format!("Failed to load ONNX model: {}", e))
@@ -46,15 +57,27 @@ impl OnnxSession {
             )
             .map_err(|e| {
                 InferenceError::InferenceFailed(format!("Failed to set input fact: {}", e))
-            })?
-            .into_optimized()
-            .map_err(|e| {
-                InferenceError::InferenceFailed(format!("Failed to optimize model: {}", e))
-            })?
-            .into_runnable()
-            .map_err(|e| {
-                InferenceError::InferenceFailed(format!("Failed to make model runnable: {}", e))
             })?;
+
+        let typed = raw_model
+            .into_typed()
+            .map_err(|e| InferenceError::InferenceFailed(format!("Failed to type model: {}", e)))?;
+
+        let decluttered = if declutter {
+            typed.into_decluttered().map_err(|e| {
+                InferenceError::InferenceFailed(format!("Failed to declutter model: {}", e))
+            })?
+        } else {
+            typed
+        };
+
+        let optimized = decluttered.into_optimized().map_err(|e| {
+            InferenceError::InferenceFailed(format!("Failed to optimize model: {}", e))
+        })?;
+
+        let model = optimized.into_runnable().map_err(|e| {
+            InferenceError::InferenceFailed(format!("Failed to make model runnable: {}", e))
+        })?;
 
         Ok(Self {
             model,

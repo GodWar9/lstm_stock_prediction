@@ -8,13 +8,16 @@ use clap::Parser;
 use commands::{Cli, Commands};
 use tracing::info;
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
     telemetry::init_telemetry(&cli.log_format, cli.verbose)?;
 
     info!(version = env!("CARGO_PKG_VERSION"), "quantctl initialized");
 
     match &cli.command {
+        Commands::Serve { port, root } => quant_api::serve(root.clone(), *port).await?,
+        Commands::Openapi => println!("{}", quant_api::openapi()),
         Commands::Config(args) => {
             handlers::config::handle_config(&args.command, &cli.config)?;
         }

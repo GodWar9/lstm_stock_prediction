@@ -29,7 +29,7 @@ fn resolve_model_path(model_id: &str) -> Result<PathBuf> {
     );
 }
 
-pub fn handle_predict(args: &PredictArgs, _config_path: &Path) -> Result<()> {
+pub fn handle_predict(args: &PredictArgs, config_path: &Path) -> Result<()> {
     info!(model = %args.model, symbol = %args.symbol, "Executing quantitative model inference");
 
     let artifact_dir = resolve_model_path(&args.model)
@@ -54,35 +54,16 @@ pub fn handle_predict(args: &PredictArgs, _config_path: &Path) -> Result<()> {
         "Model validated successfully"
     );
 
-    // Prepare feature sequence [lookback, num_features] backed by FeatureStore
-    let feature_store = quant_features::FeatureStore::new();
-    let schema_names = provider.feature_schema();
-
-    // Ingest feature rows into FeatureStore
-    let mut rows = Vec::with_capacity(lookback);
-    let now = chrono::Utc::now().timestamp_nanos_opt().unwrap_or(0);
-    for step in 0..lookback {
-        let ts = quant_data::Timestamp(now - ((lookback - step) as i64 * 86_400_000_000_000));
-        let mut values = std::collections::HashMap::new();
-        for (feat_idx, name) in schema_names.iter().enumerate() {
-            let val = ((step as f64) * 0.01 + (feat_idx as f64) * 0.05).sin() * 0.02;
-            values.insert(name.clone(), val);
-        }
-        rows.push(quant_features::FeatureRow {
-            timestamp: ts,
-            values,
-        });
+    let bars = super::pipeline::bars(config_path, &args.symbol)?;
+    let rows = super::pipeline::graph().compute_batch(&bars);
+    let ordered = super::pipeline::ordered(&rows, provider.feature_schema())?;
+    if ordered.len() < lookback {
+        bail!("Insufficient feature rows for model lookback");
     }
-    feature_store.insert_batch(&args.symbol, rows);
-
-    // Query recent lookback sequence from FeatureStore
-    let recent_rows = feature_store.query_recent(&args.symbol, lookback);
-    let mut raw_features = Vec::with_capacity(lookback * num_features);
-    for row in &recent_rows {
-        for name in schema_names {
-            raw_features.push(*row.values.get(name).unwrap_or(&0.0));
-        }
-    }
+    let raw_features: Vec<f64> = ordered[ordered.len() - lookback..]
+        .iter()
+        .flat_map(|(_, row)| row.iter().copied())
+        .collect();
 
     // 1. Run inference
     let prediction = provider
@@ -91,7 +72,7 @@ pub fn handle_predict(args: &PredictArgs, _config_path: &Path) -> Result<()> {
 
     // 2. Calibrate prediction to Signal
     let calibrator = SignalCalibrator::new(SignalConfig::default());
-    let as_of = chrono::Utc::now().timestamp_millis();
+    let as_of = bars.last().unwrap().timestamp.as_nanos();
     let raw_signal = calibrator.calibrate(&prediction, InstrumentId(1), &args.symbol, as_of);
 
     // 3. Apply post-prediction transform (Threshold filter)

@@ -40,6 +40,12 @@ pub fn write_dataset(
         )));
     }
 
+    crate::validate_bars_monotonic_and_sound(bars)?;
+    if manifest.bar_count != bars.len() {
+        return Err(DataError::ValidationError(
+            "Manifest row count differs from bars".into(),
+        ));
+    }
     let data_path = dataset_path(&root, &manifest.dataset_version, &manifest.symbol);
     let metadata_path = manifest_path(&root, &manifest.dataset_version, &manifest.symbol);
     let parent = data_path.parent().ok_or_else(|| {
@@ -73,8 +79,10 @@ pub fn read_dataset(
     let content = fs::read(&path).map_err(|e| {
         DataError::FetchError(format!("Failed to read dataset {}: {}", path.display(), e))
     })?;
-    serde_json::from_slice(&content)
-        .map_err(|e| DataError::ParseError(format!("Invalid dataset JSON: {}", e)))
+    let bars: Vec<Bar> = serde_json::from_slice(&content)
+        .map_err(|e| DataError::ParseError(format!("Invalid dataset JSON: {}", e)))?;
+    crate::validate_bars_monotonic_and_sound(&bars)?;
+    Ok(bars)
 }
 
 pub fn read_manifest(

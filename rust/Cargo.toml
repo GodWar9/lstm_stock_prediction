@@ -14,6 +14,7 @@ members = [
     "backtest",
     "simulation",
     "cli",
+    "api",
 ]
 
 [workspace.package]
@@ -39,6 +40,8 @@ parking_lot = "0.12"
 ringbuf = "0.4"
 tempfile = "3.10"
 uuid = { version = "1.7", features = ["v4", "serde"] }
+criterion = { version = "0.5", default-features = false, features = ["cargo_bench_support"] }
+
 
 # Workspace crates
 quant_instruments = { path = "instruments" }
@@ -53,3 +56,5 @@ quant_risk = { path = "risk" }
 quant_execution = { path = "execution" }
 quant_backtest = { path = "backtest" }
 quant_simulation = { path = "simulation" }
+
+quant_api = { path = "api" }

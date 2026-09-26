@@ -208,7 +208,8 @@ backtest:
     fn test_default_config_file_loads() {
         let _guard = TEST_MUTEX.lock().unwrap();
         let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../configs/default.yaml");
-        let cfg = load_config(path).expect("configs/default.yaml must load and validate cleanly");
+        let cfg =
+            load_config(path).expect("repository default config must load and validate cleanly");
         assert_eq!(cfg.data.symbols, vec!["AAPL"]);
         assert_eq!(cfg.features.lookback, 60);
     }

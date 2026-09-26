@@ -146,10 +146,16 @@ def main():
 
     # Split dataset with purge and embargo
     splitter = PurgedWalkForwardSplitter(
-        purge_bars=train_cfg.get("purge_gap", 5),
+        purge_bars=max(target_horizon, train_cfg.get("purge_gap", 5)),
         embargo_bars=train_cfg.get("embargo_gap", 10),
     )
     train_idx, val_idx, test_idx = splitter.split_train_test(n_samples, train_ratio=0.7, val_ratio=0.15)
+
+    for name, indices in [("train", train_idx), ("validation", val_idx), ("test", test_idx)]:
+        if len(indices) < lookback + 1:
+            raise ValueError(f"{name} split needs at least {lookback + 1} rows; increase dataset length or reduce lookback/gaps")
+    if target_timestamps[train_idx[-1]] >= timestamps[val_idx[0]] or target_timestamps[val_idx[-1]] >= timestamps[test_idx[0]]:
+        raise ValueError("Label horizon overlaps a later split")
 
     # Scale using train statistics
     scaler = FeatureScaler()
@@ -187,6 +193,8 @@ def main():
 
     # Export complete model artifact package
     onnx_out_dir = f"models/{model_id}"
+    if os.path.exists(onnx_out_dir):
+        raise FileExistsError(f"Model artifact already exists: {onnx_out_dir}; choose a new model_id")
     export_artifact_package(
         model=model,
         scaler=scaler,
@@ -212,6 +220,47 @@ def main():
             else None
         ),
     )
+    # Persist exact split windows, units, and an artifact-specific numerical parity check.
+    import onnxruntime as ort
+    import subprocess
+    with torch.no_grad():
+        reference = model(torch.from_numpy(x_te[:1].astype(np.float32))).numpy()
+    session = ort.InferenceSession(os.path.join(onnx_out_dir, "model.onnx"), providers=["CPUExecutionProvider"])
+    exported = session.run(None, {session.get_inputs()[0].name: x_te[:1].astype(np.float32)})[0]
+    parity_error = float(np.max(np.abs(reference - exported)))
+    if parity_error > 1e-5:
+        raise ValueError(f"ONNX parity failed: {parity_error}")
+    periods = {name: [str(timestamps[idx[lookback-1]]), str(target_timestamps[idx[-1]])]
+               for name, idx in [("train", train_idx), ("validation", val_idx), ("test", test_idx)]}
+    segments = []
+    n_train_raw = int(n_samples * 0.7)
+    n_val_end = n_train_raw + int(n_samples * 0.15)
+    for name, begin, end in [("train", 0, int(train_idx[-1])+1),
+                             ("purge", int(train_idx[-1])+1, n_train_raw),
+                             ("embargo", n_train_raw, int(val_idx[0])),
+                             ("validation", int(val_idx[0]), int(val_idx[-1])+1),
+                             ("purge", int(val_idx[-1])+1, n_val_end),
+                             ("embargo", n_val_end, int(test_idx[0])),
+                             ("test", int(test_idx[0]), n_samples)]:
+        segments.append({"kind": name, "start_row": begin, "end_row": end,
+                         "start_ms": int(timestamps[min(begin, n_samples-1)]) // 1000000,
+                         "end_ms": int(timestamps[min(max(begin, end-1), n_samples-1)]) // 1000000})
+    validation = {"schema_version": 1, "data_version": cfg.get("data", {}).get("dataset_version", "unknown"),
+                  "timestamp_unit": "nanoseconds", "periods": periods, "pit_passed": True,
+                  "scaler_train_only": True, "purge_bars": splitter.purge_bars,
+                  "embargo_bars": splitter.embargo_bars, "folds": [{"fold": 1, "segments": segments}],
+                  "onnx_parity": {"passed": True, "max_abs_error": parity_error, "tolerance": 1e-5},
+                  "evaluation": "single chronological holdout; rolling walk-forward retraining is not orchestrated"}
+    with open(os.path.join(onnx_out_dir, "validation.json"), "w") as output:
+        json.dump(validation, output, indent=2)
+    meta_path = os.path.join(onnx_out_dir, "metadata.json")
+    with open(meta_path) as source:
+        metadata = json.load(source)
+    metadata.update(training_dataset_version=validation["data_version"], feature_set_version=feature_set_version,
+                    target_definition={"horizon": target_horizon, "transformation": "log_return"})
+    metadata["git_commit"] = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip() or "unknown"
+    with open(meta_path, "w") as output:
+        json.dump(metadata, output, indent=2)
     onnx_path = os.path.join(onnx_out_dir, "model.onnx")
 
     report = {

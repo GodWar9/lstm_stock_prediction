@@ -24,6 +24,16 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+    /// Serve the local read-only research inspector
+    Serve {
+        #[arg(long, default_value_t = 8787)]
+        port: u16,
+        #[arg(long, default_value = ".")]
+        root: PathBuf,
+    },
+    /// Print the generated OpenAPI contract
+    Openapi,
+
     /// Configuration management and validation
     Config(ConfigArgs),
 

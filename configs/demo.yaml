@@ -1,0 +1,54 @@
+# Explicit synthetic data for reproducible demonstrations, not trading evidence.
+env: development
+
+data:
+  symbols:
+    - AAPL
+  start_date: "2020-01-01"
+  end_date: "2023-01-01"
+  provider: synthetic
+  exchange: NYSE
+  dataset_version: inspector_demo
+
+features:
+  feature_set: baseline_v1
+  feature_set_version: 1
+  lookback: 12
+  target_horizon: 1
+  target_transformation: log_return
+
+training:
+  model_id: inspector_demo
+  hidden_size: 8
+  num_layers: 1
+  dropout: 0.3
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  batch_size: 64
+  epochs: 2
+  random_seed: 42
+  purge_gap: 5
+  embargo_gap: 12
+
+inference:
+  model_version: inspector_demo
+  intra_op_threads: 2
+  inter_op_threads: 1
+  batch_size: 64
+
+portfolio:
+  max_gross_exposure: 1.0
+  max_net_exposure: 0.5
+  max_position_pct: 0.2
+  volatility_target: 0.15
+  long_short_mode: LongOnly
+
+execution:
+  fixed_commission: 0.001
+  half_spread_bps: 2.0
+  slippage_factor: 0.1
+  participation_cap: 0.05
+
+backtest:
+  initial_cash: 100000.0
+  risk_free_rate: 0.04

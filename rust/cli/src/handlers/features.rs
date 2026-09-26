@@ -2,15 +2,13 @@
 
 use crate::commands::FeaturesSubcommands;
 use anyhow::{Context, Result};
-use chrono::NaiveDate;
+
 use quant_config::load_config;
-use quant_data::adapters::mock::SyntheticDataProvider;
-use quant_data::MarketDataProvider;
+
 use quant_features::{
     export::{FeatureArrowExporter, FeatureDatasetManifest},
     targets::TargetGenerator,
-    Atr, BollingerBands, Ema, FeatureGraph, FeatureStore, LogReturn, Macd, RollingVolatility, Rsi,
-    Sma, TrainingDatasetManifest,
+    FeatureStore, TrainingDatasetManifest,
 };
 use std::path::Path;
 use tracing::info;
@@ -23,37 +21,20 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
             let app_config =
                 load_config(config_path).context("Failed to load application configuration")?;
 
-            let start_date = NaiveDate::parse_from_str(&app_config.data.start_date, "%Y-%m-%d")
-                .unwrap_or_else(|_| NaiveDate::from_ymd_opt(2023, 1, 1).unwrap());
-            let end_date = NaiveDate::parse_from_str(&app_config.data.end_date, "%Y-%m-%d")
-                .unwrap_or_else(|_| NaiveDate::from_ymd_opt(2023, 12, 31).unwrap());
-
-            // Setup deterministic synthetic data provider
-            let provider = SyntheticDataProvider::new(100.0, 0.015, 42);
             let symbols = &app_config.data.symbols;
 
             let store = FeatureStore::new();
 
             for symbol in symbols {
                 info!(symbol = %symbol, "Processing symbol for features");
-                let bars = provider.fetch_ohlcv(symbol, start_date, end_date)?;
+                let bars = super::pipeline::bars(config_path, symbol)?;
                 if bars.is_empty() {
                     info!(symbol = %symbol, "No bars returned, skipping");
                     continue;
                 }
 
                 // Build standard feature suite
-                let mut graph = FeatureGraph::new(vec![
-                    Box::new(Sma::new(5)),
-                    Box::new(Sma::new(20)),
-                    Box::new(Ema::new(12)),
-                    Box::new(Rsi::new(14)),
-                    Box::new(Macd::standard()),
-                    Box::new(BollingerBands::standard()),
-                    Box::new(Atr::new(14)),
-                    Box::new(RollingVolatility::daily(20)),
-                    Box::new(LogReturn::new(1)),
-                ]);
+                let mut graph = super::pipeline::graph();
 
                 let rows = graph.compute_batch(&bars);
                 let row_count = rows.len();

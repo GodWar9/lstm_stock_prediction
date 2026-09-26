@@ -34,18 +34,36 @@ pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
             )
         });
 
-    // Resolve target Python interpreter in python/.venv (or fallback to python on PATH)
-    let venv_candidates = [
-        work_dir.join("python/.venv/Scripts/python.exe"),
-        work_dir.join("python/.venv/bin/python"),
-        PathBuf::from("python/.venv/Scripts/python.exe"),
-        PathBuf::from("python/.venv/bin/python"),
-    ];
-
-    let python_bin = venv_candidates
-        .iter()
-        .find(|p| p.exists())
-        .cloned()
+    // Resolve target Python interpreter: QUANTCTL_PYTHON > VIRTUAL_ENV > python/.venv > PATH
+    let python_bin = std::env::var("QUANTCTL_PYTHON")
+        .map(PathBuf::from)
+        .ok()
+        .or_else(|| {
+            if let Ok(venv) = std::env::var("VIRTUAL_ENV") {
+                let venv_dir = PathBuf::from(venv);
+                let candidates = [
+                    venv_dir.join("bin/python"),
+                    venv_dir.join("Scripts/python.exe"),
+                ];
+                if let Some(p) = candidates.iter().find(|p| p.exists()) {
+                    return Some(p.clone());
+                }
+            }
+            None
+        })
+        .or_else(|| {
+            let venv_candidates = [
+                work_dir.join("python/.venv/Scripts/python.exe"),
+                work_dir.join("python/.venv/bin/python"),
+                PathBuf::from("python/.venv/Scripts/python.exe"),
+                PathBuf::from("python/.venv/bin/python"),
+                PathBuf::from("../python/.venv/Scripts/python.exe"),
+                PathBuf::from("../python/.venv/bin/python"),
+                PathBuf::from("../../python/.venv/Scripts/python.exe"),
+                PathBuf::from("../../python/.venv/bin/python"),
+            ];
+            venv_candidates.iter().find(|p| p.exists()).cloned()
+        })
         .unwrap_or_else(|| PathBuf::from("python"));
 
     info!(
