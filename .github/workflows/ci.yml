@@ -50,6 +50,19 @@ jobs:
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Set up Python
+        run: uv python install 3.14
+
+      - name: Install Python dependencies
+        working-directory: python
+        run: uv sync
+
+      - name: Use project venv in PATH
+        run: echo "${{ github.workspace }}/python/.venv/bin" >> $GITHUB_PATH
+
       - name: Cache Cargo registry and build
         uses: actions/cache@v4
         with:
@@ -62,7 +75,9 @@ jobs:
 
       - name: Run workspace tests
         working-directory: rust
-        run: cargo test --workspace
+        env:
+          QUANTCTL_PYTHON: ${{ github.workspace }}/python/.venv/bin/python
+        run: cargo test --workspace -- --nocapture
 
   python-test:
     name: Python Tests
@@ -84,17 +99,90 @@ jobs:
         working-directory: python
         run: uv run pytest tests -v
 
+  bench-gate:
+    name: Benchmark Compilation & Execution Gate
+    runs-on: ubuntu-latest
+    needs: rust-check
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo registry and build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/target
+          key: ${{ runner.os }}-cargo-bench-${{ hashFiles('rust/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-bench-
+
+      - name: Compile benchmarks
+        working-directory: rust
+        run: cargo bench --no-run
+
+      - name: Run benchmark execution gate
+        working-directory: rust
+        run: cargo bench --bench feature_benchmarks --bench simulation_benchmarks -- --test
+
+  web-test:
+    name: Frontend, Contract and Browser Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/target
+          key: web-cargo-${{ hashFiles('rust/Cargo.lock') }}
+      - name: Install frontend dependencies
+        working-directory: web
+        run: npm ci
+      - name: Check generated contract
+        working-directory: web
+        run: npm run contract:check
+      - name: Frontend unit tests and production build
+        working-directory: web
+        run: |
+          npm test
+          npm run build
+      - name: Build embedded application
+        run: cargo build --manifest-path rust/Cargo.toml --bin quantctl --locked
+      - name: Install browser
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: Desktop and mobile browser tests
+        working-directory: web
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-test-results
+          path: web/test-results
+
   all-checks:
     name: All Checks Passed
     runs-on: ubuntu-latest
-    needs: [rust-check, rust-test, python-test]
+    needs: [rust-check, rust-test, python-test, bench-gate, web-test]
     if: always()
     steps:
       - name: Verify all jobs succeeded
         run: |
           if [[ "${{ needs.rust-check.result }}" != "success" ]] || \
              [[ "${{ needs.rust-test.result }}" != "success" ]] || \
-             [[ "${{ needs.python-test.result }}" != "success" ]]; then
+             [[ "${{ needs.python-test.result }}" != "success" ]] || \
+             [[ "${{ needs.bench-gate.result }}" != "success" ]] || \
+             [[ "${{ needs.web-test.result }}" != "success" ]]; then
             echo "One or more CI jobs failed"
             exit 1
           fi
