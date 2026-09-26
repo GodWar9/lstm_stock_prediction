@@ -62,6 +62,8 @@ Edit a copy of `configs/default.yaml` with distinct dataset/model versions and t
 
 Legacy `lstm_v1` metadata references synthetic feature names. Retrain on the Rust Arrow dataset; unavailable model features are rejected, never replaced with fabricated values.
 
+New training runs publish `integrity.json` with SHA-256 hashes for every model-package file. Rust verifies the manifest before prediction or backtesting. Missing manifests and modified files are rejected; retrain older models to produce a verified package. Hashes detect accidental changes relative to the manifest, not deliberate replacement of the manifest itself.
+
 ## Inspector
 
 Overview, Backtest, Data and validation, Models, Signals, Risk and simulation, and Run activity share a run selector and copyable provenance footer. Rust supplies metrics, Arrow series and split records. The browser formats and plots them without recomputing financial metrics. Unsupported capabilities have explicit empty states. Desktop/mobile layouts, keyboard focus, accessible tables and browser tests are included.

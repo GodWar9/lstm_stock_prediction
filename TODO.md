@@ -5,7 +5,8 @@
 ## Current integration priorities
 
 - [x] Publish trained models atomically after complete export and finite parity validation; reject duplicate writers and clean up failed attempts.
-- [ ] Hash market datasets and model/scaler bundles and verify content before replay.
+- [x] Hash all model-package files and verify their exact bytes before loading the Rust prediction provider.
+- [ ] Hash market/training datasets and bind those hashes to model provenance before replay.
 - [ ] Gate every model package on PyTorch/ONNX Runtime/tract parity.
 - [ ] Orchestrate rolling walk-forward training with independently recorded folds.
 - [ ] Persist benchmark, positions, realized targets and risk evidence for the inspector.

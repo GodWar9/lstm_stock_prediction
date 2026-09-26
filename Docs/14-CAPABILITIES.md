@@ -117,6 +117,16 @@ lock: confirm no training process owns that ID before removing its leftovers.
 This provides atomic visibility, not power-loss durability or protection against
 external manual edits. Legacy checked-in metadata may reference absent weights.
 
+New packages include `integrity.json`, a versioned SHA-256 manifest covering
+the exact bytes and sizes of the ONNX model, PyTorch checkpoint, scaler,
+metadata, training log and validation evidence. The Rust model provider verifies
+every member before loading metadata or executing inference; missing files,
+changed bytes, unexpected manifest entries and unsupported manifest versions
+fail. Unsealed legacy packages must be retrained. These hashes detect changes
+relative to the manifest; they are not signatures and do not authenticate a
+manifest rewritten along with its files. Keep packages immutable during use.
+Market-data content hashes and verification of training inputs remain future work.
+
 ## Inference and signals
 
 The runtime uses tract-onnx with a fixed batch-one input shape, typed graph

@@ -8,7 +8,7 @@ aspirations until measured on a named machine and workload.
 
 | Priority | Improvement | Why / acceptance evidence |
 |---|---|---|
-| P0 | Content-address market datasets and model/scaler bundles | Detect changed data under an existing version; reject backtests if hashes differ |
+| P0 | Content-address market datasets and bind them to model provenance | Model bundles now have verified SHA-256 manifests; market/training input hashes and dataset identity checks remain |
 | P0 | Expand accounting/property tests for partial fills, shorts, splits, dividends and borrow fees | Compare NAV, cash and realized P&L to hand-calculated ledgers |
 | P0 | Walk-forward orchestration with a model per fold | Record exact train/purge/embargo/test timestamps and pooled OOS metrics without reusing test data for selection |
 | P0 | Rust-runtime parity gate for every exported model | Compare PyTorch, ONNX Runtime and tract over representative held-out tensors before publication |
@@ -78,7 +78,7 @@ Choose based on measured bottlenecks rather than spending on an assumed one.
 
 ## Suggested next delivery sequence
 
-1. Artifact hashes and model-runtime parity; atomic model publication is implemented.
+1. Market/training dataset hashes and model-runtime parity; atomic model publication and model-bundle integrity checks are implemented.
 2. Rolling walk-forward runs with a trustworthy OOS comparison report.
 3. Persist missing portfolio/risk/signal evidence and complete the related UI.
 4. Profile one representative production-size dataset and optimize its largest

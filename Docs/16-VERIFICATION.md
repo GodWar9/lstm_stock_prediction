@@ -5,6 +5,26 @@ Node 24.12.0, Python 3.14.4. Commands ran from the repository root unless
 otherwise stated. CI uses Ubuntu and Node 22; local results do not establish
 that a remote CI run has passed.
 
+## Model integrity follow-up
+
+New packages now include SHA-256 manifests, verified before Rust provider loading.
+Follow-up checks on 2026-09-26:
+
+- Python suite: **39 passed**, including independent recomputation of all six
+  published file hashes and byte counts.
+- Rust inference/CLI suites: **18 passed**. The inference suite retains two
+  conditional legacy-artifact checks; the CLI integration always trains and
+  loads a fresh sealed model, predicts, backtests and simulates, then changes
+  the scaler bytes and verifies that subsequent prediction fails.
+- Dedicated integrity tests reject same-size mutations, missing package members,
+  absent manifests, incomplete/extra file entries, unsupported schemas/algorithms
+  and invalid digests.
+- Clippy passed for all inference and CLI targets; Rust formatting completed.
+
+No new claim is made about market/training data integrity, manifest authenticity,
+or concurrent manual edits after verification. Legacy unsealed packages require
+retraining for prediction/backtesting; historical inspector fixtures remain readable.
+
 ## Atomic model publication follow-up
 
 The training orchestrator now reserves IDs before training and publishes only

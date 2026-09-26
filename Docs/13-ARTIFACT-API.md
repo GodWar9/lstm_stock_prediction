@@ -20,6 +20,22 @@ and whitelisted filenames can be read. Canonical paths must remain inside the
 configured root. Model files are mutable legacy resources and are not given
 immutable cache headers. New training runs refuse to overwrite existing models.
 
+## Model integrity manifest
+
+New models are staged and atomically published with `integrity.json`. Its
+`schema_version` is 1, `algorithm` is `sha256`, and `model_id` must match metadata.
+The `files` object contains exactly six keys: `model.onnx`, `model.pt`,
+`scaler.json`, `metadata.json`, `training_log.json`, and `validation.json`.
+Each value contains `sha256` (64 lowercase hexadecimal characters) and
+`size_bytes` (the positive byte count). The manifest itself is not hashed.
+
+The Rust prediction provider checks every file before loading the model. Legacy
+packages without this manifest must be retrained; the read-only inspector can
+still display historical metadata. The manifest detects byte changes but is not
+a signature or an authenticated source identity. Keep model files immutable
+during loading and use. Dataset-version identity is still separate from model
+file integrity.
+
 ## Series schema
 
 Arrow IPC **file** format, non-null Float64 columns. UTC timestamp milliseconds
