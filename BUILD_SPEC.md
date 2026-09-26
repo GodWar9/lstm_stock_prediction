@@ -1,3 +1,5 @@
+> Current behavior: see the [capability guide](Docs/14-CAPABILITIES.md) and [verification report](Docs/16-VERIFICATION.md). Historical checkboxes and latency targets below do not establish CLI integration or measured SLA compliance.
+
 # Quantitative Research Platform: Technical Build Specification (BUILD_SPEC)
 
 ## 1. System Architecture & Language Boundary
@@ -81,7 +83,47 @@ $$M_{1, k} = M_{1, k-1} + \frac{x_k - M_{1, k-1}}{k}$$
 $$M_{2, k} = M_{2, k-1} + (x_k - M_{1, k-1})(x_k - M_{1, k})$$
 $$\sigma_N^2 = \frac{M_{2, N}}{N - 1}$$
 
+### 3.6 Fractionally Differentiated Stationarity (FracDiff)
+To achieve stationarity without destroying long-term memory (de Prado):
+$$(1 - B)^d = \sum_{k=0}^{\infty} (-1)^k \binom{d}{k} B^k = 1 - d B + \frac{d(d-1)}{2!} B^2 - \dots$$
+Weights are computed iteratively and truncated at $|\omega_k| < \tau$:
+$$\omega_0 = 1, \quad \omega_k = -\omega_{k-1} \times \frac{d - k + 1}{k}, \quad y_t = \sum_{k=0}^{K} \omega_k x_{t-k}$$
+
+### 3.7 Cross-Sectional Z-Score Normalization
+For universe $U_t$ of instruments $i \in \{1, \dots, N_t\}$:
+$$\mu_t = \frac{1}{N_t} \sum_{i=1}^{N_t} x_{i, t}, \quad \sigma_t = \sqrt{\frac{1}{N_t - 1} \sum_{i=1}^{N_t} (x_{i, t} - \mu_t)^2}$$
+$$z_{i, t} = \frac{x_{i, t} - \mu_t}{\max(\sigma_t, 10^{-12})}$$
+
+### 3.8 Conformal Prediction Uncertainty Intervals
+Given calibration non-conformity scores $s_i = |y_i - \hat{y}_i|$ (or adaptive $s_i = |y_i - \hat{y}_i| / \hat{\sigma}_i$):
+$$\hat{q} = \text{Quantile}\left(\{s_i\}_{i=1}^n, \frac{\lceil(n+1)(1-\alpha)\rceil}{n}\right)$$
+Prediction interval with finite-sample coverage guarantee $P(Y \in C(X)) \ge 1 - \alpha$:
+$$C(X_{t}) = [\hat{y}_t - \hat{q} \cdot \hat{\sigma}_t, \;\hat{y}_t + \hat{q} \cdot \hat{\sigma}_t]$$
+Signal confidence modulation discounting uncertain zero-crossing bands:
+$$\text{confidence} = \text{clip}\left(\frac{|\hat{y}_t|}{|\hat{y}_t| + \text{half\_width}} \times \mathbf{1}_{\{0 \notin C(X_t)\} + 0.5 \cdot \mathbf{1}_{\{0 \in C(X_t)\}}}, 0.0, 1.0\right)$$
+
+### 3.9 Multi-Horizon Return Forecasting & Loss
+Joint prediction of forward returns over multiple horizons $H = \{1, 5, 20\}$ days:
+$$\hat{\mathbf{y}}_t = [\hat{y}_t^{(1)}, \hat{y}_t^{(5)}, \hat{y}_t^{(20)}] = g_\theta(\mathbf{h}_t)$$
+$$\mathcal{L}_{\text{multi}} = \sum_{h \in H} w_h \cdot \mathcal{L}_{\text{asym}}(\hat{y}_t^{(h)}, y_t^{(h)})$$
+
+### 3.10 Almgren-Chriss Nonlinear Market Impact
+Separating market execution impact into permanent and temporary components:
+$$\Delta P_{\text{perm}} = \gamma \cdot \sigma_t \cdot P_t \cdot \left(\frac{V_{\text{order}}}{\text{ADV}}\right)^\alpha$$
+$$\Delta P_{\text{temp}} = \eta \cdot \sigma_t \cdot P_t \cdot \left(\frac{V_{\text{order}}}{V_{\text{bar}}}\right)^\beta$$
+Where typically $\alpha = 1.0$ and $\beta = 0.5$ (empirical square-root law of market impact).
+
+### 3.11 Variable Tiered Fee Schedule & Maker/Taker Pricing
+$$\text{Fee}(V, P, \text{is\_maker}) = \begin{cases} V \cdot r_{\text{maker}}(V_{\text{cumul}}) + V \cdot P \cdot \text{bps}_{\text{tier}}, & \text{if maker (limit)} \\ \max\left(C_{\text{min}}, V \cdot r_{\text{taker}}(V_{\text{cumul}}) + V \cdot P \cdot \text{bps}_{\text{tier}}\right), & \text{if taker (market)} \end{cases}$$
+Short overnight borrow cost: $\text{Fee}_{\text{short}} = \text{Notional}_{\text{short}} \times \frac{r_{\text{borrow}}}{365.25}$.
+
+### 3.12 Dynamic Regime-Switching Risk Guardrails
+Portfolio constraints transition across detected market regimes $R_t \in \{\text{Bull}, \text{Bear}, \text{Crisis}, \text{HighVol}, \text{LowVol}\}$:
+$$w_i^* = \text{clamp}\left(w_i \times M_{\text{regime}}(R_t), -w_{\text{max}}(R_t), w_{\text{max}}(R_t)\right)$$
+Where $M_{\text{regime}}(\text{Crisis}) = 0.0$, halting new allocations during market crashes.
+
 ---
+
 
 ## 4. Contract Specifications & File Formats
 

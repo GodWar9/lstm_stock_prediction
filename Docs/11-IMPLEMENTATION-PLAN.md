@@ -1,3 +1,5 @@
+> Current behavior: see the [capability guide](14-CAPABILITIES.md) and [verification report](16-VERIFICATION.md). Historical checkboxes and latency targets below do not establish CLI integration or measured SLA compliance.
+
 # 11 - Implementation Plan
 
 ## Objective

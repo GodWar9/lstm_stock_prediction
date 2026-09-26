@@ -1,0 +1,60 @@
+# Verification report
+
+Verification date: 2026-09-26. Environment: Windows, Rust 1.96.0,
+Node 24.12.0, Python 3.14.4. Commands ran from the repository root unless
+otherwise stated. CI uses Ubuntu and Node 22; local results do not establish
+that a remote CI run has passed.
+
+## Checks
+
+| Check | Command | Result |
+|---|---|---|
+| Rust formatting | `cargo fmt --manifest-path rust/Cargo.toml --all -- --check` | Passed |
+| Rust lint, all targets | `cargo clippy --manifest-path rust/Cargo.toml --workspace --all-targets -- -D warnings` | Passed |
+| Rust workspace tests | `cargo test --manifest-path rust/Cargo.toml --workspace` | 149 passed; 0 failed; 0 ignored |
+| Python units and ONNX parity | `python/.venv/Scripts/python.exe -m pytest python/tests -q` | 15 passed; 30 exporter/deprecation warnings |
+| Generated OpenAPI/TypeScript contract | In `web`: `npm run contract:check` | Passed |
+| Frontend units | In `web`: `npm test` | 4 passed |
+| Production frontend | In `web`: `npm run build` | Passed |
+| Desktop/mobile browser suite | In `web`: `npm run test:e2e` | 22 passed |
+| Final chart layout recheck | In `web`: `npm run test:e2e -- --grep 'captures chart timing'` | 2 passed after mobile date-spacing adjustment |
+| Release benchmark smoke run | `cargo bench --manifest-path rust/Cargo.toml --bench feature_benchmarks --bench simulation_benchmarks -- --test` | Both benchmark targets compiled and all workloads passed |
+
+The Python suite includes multi-horizon output/loss behavior, conformal
+calibration, chronological splitting, scaler boundaries and PyTorch/ONNX
+numerical parity. ONNX exporter warnings remain visible; a passing Python
+parity check alone does not certify every possible tract input shape.
+
+## Integration and visual coverage
+
+The Rust CLI integration test ingests explicit synthetic data, validates and
+persists it, builds real features, trains a small model, predicts, backtests,
+simulates and reads a report. It checks rejection of missing data and reused
+test splits, and verifies published provenance. Other Rust checks cover API
+contracts, Arrow series, accounting, indicator properties and a deterministic
+2,520-bar backtest fixture.
+
+Playwright runs against the Rust server and recorded synthetic fixtures on
+desktop Chromium and a Pixel 7 viewport. Coverage includes all seven routes,
+backend metrics, chart tables, the unverified-simulation toggle, empty/error
+states and screenshots. Visual inspection found clipped equity labels and
+crowded mobile date ticks; the chart now reserves more axis space.
+
+Fixtures are synthetic test evidence, not measurements of trading performance.
+Tests attach navigation-to-visible-canvas timing, which is a smoke measurement
+and does not establish a production chart latency SLA. Browser screenshots and
+raw logs remain ignored local outputs.
+
+## Reproduction and limits
+
+Use `scripts/verify.ps1` for the main Windows checks after installing the
+documented dependencies and Playwright Chromium. Run Rust executable builds
+and the browser server sequentially on Windows to avoid executable file locks.
+This session required execution outside the restricted sandbox for Python
+launches and esbuild filesystem access; the final results use those reruns.
+
+No live Yahoo download, remote deployment, live orders, GPU acceleration,
+production-size load test or numeric performance regression threshold was
+verified. Criterion smoke execution checks workload viability, not a latency
+target. See [capabilities](14-CAPABILITIES.md) and the
+[improvement roadmap](15-IMPROVEMENTS.md) for integration and statistical limits.
