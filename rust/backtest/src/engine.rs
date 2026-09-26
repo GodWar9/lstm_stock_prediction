@@ -15,6 +15,9 @@ pub enum BacktestError {
     #[error("Empty bar sequence provided to backtester")]
     EmptyData,
 
+    #[error("Invalid bars: {0}")]
+    InvalidData(String),
+
     #[error("Test split reuse violation: split '{split}' already evaluated for model '{model_id}' without --allow-reuse flag")]
     TestSplitReuseViolation { split: String, model_id: String },
 
@@ -81,6 +84,9 @@ impl BacktestEngine {
             return Err(BacktestError::EmptyData);
         }
 
+        quant_data::validate_bars_monotonic_and_sound(bars)
+            .map_err(|e| BacktestError::InvalidData(e.to_string()))?;
+
         // 1. Enforce one-test-split guard
         if self.config.split == "test" && !self.config.allow_reuse {
             // Guardrail against accidental test split snooping
@@ -91,11 +97,11 @@ impl BacktestEngine {
         let mut trade_log = Vec::new();
 
         let initial_ts = bars[0].timestamp.as_nanos();
-        equity_curve.push((initial_ts, portfolio.nav()));
+        equity_curve.push((initial_ts.saturating_sub(1), portfolio.nav()));
 
         let mut prices = HashMap::new();
 
-        for bar in bars {
+        for (index, bar) in bars.iter().enumerate() {
             let ts = bar.timestamp.as_nanos();
             prices.insert(instrument, bar.close);
 
@@ -103,7 +109,11 @@ impl BacktestEngine {
             portfolio.update_market_prices(&prices);
 
             // Step B: Pull signals available point-in-time
-            let signals = signal_stream.next_batch(ts);
+            let signals = if index == 0 {
+                Vec::new()
+            } else {
+                signal_stream.next_batch(bars[index - 1].timestamp.as_nanos())
+            };
 
             // Step C: Compute desired target positions
             let targets = constructor.target_positions(&signals, &portfolio, &prices, constraints);
@@ -122,7 +132,8 @@ impl BacktestEngine {
 
             let delta_qty = target_qty - current_qty;
             if delta_qty.abs() >= 1.0 {
-                let order = Order::market(instrument, symbol, delta_qty, ts);
+                let mut order = Order::market(instrument, symbol, delta_qty, ts);
+                order.participation_cap = None;
 
                 // Step E: Simulate fill with realistic slippage, spread, and commission
                 let fill = execution_model.simulate_fill(&order, bar);

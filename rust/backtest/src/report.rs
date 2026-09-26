@@ -151,22 +151,54 @@ impl BacktestReport {
         let mut win_returns = Vec::new();
         let mut loss_returns = Vec::new();
 
+        // Average-cost realized PnL, with entry fees allocated proportionally on close.
+        let mut holdings: std::collections::HashMap<_, (f64, f64, f64)> =
+            std::collections::HashMap::new();
+        let mut closed_trades = 0usize;
         for f in &trade_log {
-            // Approximate trade outcome based on slippage/commission vs notional
-            let est_pnl = f.fill_quantity * (f.fill_price * 0.005) - f.commission;
-            if est_pnl > 0.0 {
-                winning_trades += 1;
-                gross_profits += est_pnl;
-                win_returns.push(est_pnl / f.notional().max(1.0));
-            } else if est_pnl < 0.0 {
-                losing_trades += 1;
-                gross_losses += est_pnl.abs();
-                loss_returns.push(est_pnl / f.notional().max(1.0));
+            let state = holdings.entry(f.instrument).or_insert((0.0, 0.0, 0.0));
+            let (qty, price, fees) = *state;
+            if qty.abs() < 1e-8 || qty.signum() == f.fill_quantity.signum() {
+                let next = qty + f.fill_quantity;
+                if next.abs() > 1e-8 {
+                    *state = (
+                        next,
+                        (qty.abs() * price + f.fill_quantity.abs() * f.fill_price) / next.abs(),
+                        fees + f.commission,
+                    );
+                }
+                continue;
             }
+            let closed = qty.abs().min(f.fill_quantity.abs());
+            let exit_fee = f.commission * closed / f.fill_quantity.abs();
+            let entry_fee = fees * closed / qty.abs();
+            let pnl = closed * qty.signum() * (f.fill_price - price) - entry_fee - exit_fee;
+            closed_trades += 1;
+            if pnl > 0.0 {
+                winning_trades += 1;
+                gross_profits += pnl;
+                win_returns.push(pnl / (closed * price));
+            } else if pnl < 0.0 {
+                losing_trades += 1;
+                gross_losses -= pnl;
+                loss_returns.push(pnl / (closed * price));
+            }
+            let next = qty + f.fill_quantity;
+            *state = if next.abs() < 1e-8 {
+                (0.0, 0.0, 0.0)
+            } else if next.signum() == qty.signum() {
+                (next, price, fees - entry_fee)
+            } else {
+                (next, f.fill_price, f.commission - exit_fee)
+            };
         }
-
-        let hit_rate = if total_trades > 0 {
-            winning_trades as f64 / total_trades as f64
+        let turnover = if initial_cash > 0.0 {
+            trade_log.iter().map(|f| f.notional()).sum::<f64>() / initial_cash
+        } else {
+            0.0
+        };
+        let hit_rate = if closed_trades > 0 {
+            winning_trades as f64 / closed_trades as f64
         } else {
             0.0
         };
@@ -207,7 +239,7 @@ impl BacktestReport {
             calmar,
             max_drawdown: max_dd,
             profit_factor,
-            turnover: 0.0,
+            turnover,
             hit_rate,
             avg_win,
             avg_loss,
