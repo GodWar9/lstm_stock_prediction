@@ -140,6 +140,7 @@ fn persisted_pipeline_training_prediction_backtest_simulation() {
         "metadata.json",
         "training_log.json",
         "validation.json",
+        "integrity.json",
     ] {
         assert!(model_dir.join(name).is_file(), "Missing published {name}");
     }
@@ -181,4 +182,18 @@ fn persisted_pipeline_training_prediction_backtest_simulation() {
         .expect("published run manifest");
     assert_eq!(manifest["split"], "test");
     assert_eq!(manifest["provenance"]["source"], "synthetic");
+    // A byte-level change must fail before model loading, even if JSON remains valid.
+    let scaler_path = model_dir.join("scaler.json");
+    let mut scaler_bytes = std::fs::read(&scaler_path).unwrap();
+    scaler_bytes.push(b' ');
+    std::fs::write(&scaler_path, scaler_bytes).unwrap();
+    let changed = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .current_dir(&root)
+        .arg("--config")
+        .arg(&path)
+        .args(["predict", "--model", &unique, "--symbol", "AAPL"])
+        .output()
+        .unwrap();
+    assert!(!changed.status.success());
+    assert!(String::from_utf8_lossy(&changed.stderr).contains("integrity verification failed"));
 }

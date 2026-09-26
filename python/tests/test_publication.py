@@ -1,6 +1,7 @@
 """Failure, visibility and collision guarantees for model publication."""
 
 import json
+import hashlib
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -30,6 +31,14 @@ def test_model_only_visible_after_success(tmp_path):
         assert not (tmp_path / "example").exists()
         assert not any((p / "metadata.json").exists() for p in tmp_path.iterdir())
     assert (tmp_path / "example" / "model.onnx").read_bytes() == b"test fixture"
+    manifest = json.loads((tmp_path / "example" / "integrity.json").read_text())
+    assert manifest["schema_version"] == 1
+    assert manifest["algorithm"] == "sha256"
+    assert manifest["model_id"] == "example"
+    assert len(manifest["files"]) == 6
+    for name, entry in manifest["files"].items():
+        payload = (tmp_path / "example" / name).read_bytes()
+        assert entry == {"sha256": hashlib.sha256(payload).hexdigest(), "size_bytes": len(payload)}
     assert list((tmp_path / ".staging").iterdir()) == []
 
 

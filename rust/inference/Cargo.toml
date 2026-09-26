@@ -13,4 +13,7 @@ thiserror.workspace = true
 anyhow.workspace = true
 ndarray.workspace = true
 tract-onnx = "0.21"
+sha2 = "0.10"
 
+[dev-dependencies]
+tempfile.workspace = true

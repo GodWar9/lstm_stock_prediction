@@ -1,6 +1,7 @@
 """Publish complete model directories without exposing an in-progress export."""
 
 from contextlib import contextmanager
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -12,6 +13,25 @@ REQUIRED_FILES = (
     "model.onnx", "model.pt", "scaler.json", "metadata.json",
     "training_log.json", "validation.json",
 )
+
+
+def seal_package(directory: Path, model_id: str) -> None:
+    """Record byte-level hashes after all validation and metadata writes."""
+    files = {}
+    for name in REQUIRED_FILES:
+        path = directory / name
+        if path.is_symlink():
+            raise ValueError(f"Model package cannot contain symlinks: {name}")
+        with path.open("rb") as source:
+            digest = hashlib.file_digest(source, "sha256").hexdigest()
+        files[name] = {"sha256": digest, "size_bytes": path.stat().st_size}
+    manifest = {
+        "schema_version": 1, "algorithm": "sha256", "model_id": model_id,
+        "files": files,
+    }
+    (directory / "integrity.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
 
 
 def validate_package(directory: Path, model_id: str) -> None:
@@ -79,6 +99,7 @@ def staged_model(models_root: Path, model_id: str):
             stage = Path(temporary)
             yield stage
             validate_package(stage, model_id)
+            seal_package(stage, model_id)
             if destination.exists() or destination.is_symlink():
                 raise FileExistsError(f"Model artifact already exists: {destination}")
             stage.rename(destination)

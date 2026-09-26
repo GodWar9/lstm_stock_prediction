@@ -8,6 +8,8 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum InferenceError {
+    #[error("Model integrity verification failed: {0}")]
+    IntegrityFailed(String),
     #[error("Model not loaded: {0}")]
     ModelNotLoaded(String),
 
@@ -112,6 +114,7 @@ impl OnnxLstmProvider {
             )));
         }
 
+        let verified_id = crate::integrity::verify_package(dir)?;
         let metadata_path = dir.join("metadata.json");
         let scaler_path = dir.join("scaler.json");
         let model_path = dir.join("model.onnx");
@@ -125,6 +128,11 @@ impl OnnxLstmProvider {
 
         // 1. Load and validate metadata
         let metadata = ModelMetadata::load(&metadata_path)?;
+        if metadata.model_id != verified_id {
+            return Err(InferenceError::IntegrityFailed(
+                "Manifest model ID differs from metadata".into(),
+            ));
+        }
 
         // 2. Load and validate scaler
         let scaler = FittedScaler::load(&scaler_path)?;
@@ -239,7 +247,7 @@ mod tests {
     #[test]
     fn test_onnx_lstm_provider_load_and_predict() {
         let dir = find_artifact_dir();
-        if !dir.join("model.onnx").exists() || !dir.join("metadata.json").exists() {
+        if !dir.join("integrity.json").exists() {
             eprintln!(
                 "Skipping test: model artifact directory not found at {:?}",
                 dir
@@ -266,7 +274,7 @@ mod tests {
     #[test]
     fn test_onnx_lstm_provider_batch_predict() {
         let dir = find_artifact_dir();
-        if !dir.join("model.onnx").exists() {
+        if !dir.join("integrity.json").exists() {
             return;
         }
 
