@@ -24,6 +24,11 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+    /// Check staged model predictions against saved PyTorch reference windows
+    VerifyModel {
+        #[arg(long)]
+        artifact_dir: PathBuf,
+    },
     /// Serve the local read-only research inspector
     Serve {
         #[arg(long, default_value_t = 8787)]
@@ -141,6 +146,9 @@ pub struct ExportModelArgs {
     /// Model version identifier to export (e.g. lstm_v1)
     #[arg(long)]
     pub model_version: String,
+    /// New artifact ID; the source checkpoint is never overwritten
+    #[arg(long)]
+    pub output_model: String,
 }
 
 #[derive(Args, Debug)]
@@ -199,4 +207,9 @@ pub struct BenchmarkArgs {
     /// Benchmark suite name (e.g. inference, features, backtest)
     #[arg(long, default_value = "inference")]
     pub suite: String,
+    /// Model to measure for inference or backtest
+    #[arg(long)]
+    pub model: Option<String>,
+    #[arg(long, default_value_t = 20, value_parser = clap::value_parser!(u32).range(1..=1000))]
+    pub iterations: u32,
 }

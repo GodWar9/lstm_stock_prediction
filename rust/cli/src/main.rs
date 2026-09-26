@@ -16,6 +16,10 @@ async fn main() -> anyhow::Result<()> {
     info!(version = env!("CARGO_PKG_VERSION"), "quantctl initialized");
 
     match &cli.command {
+        Commands::VerifyModel { artifact_dir } => println!(
+            "{}",
+            quant_inference::parity::verify_runtime_parity(artifact_dir)?
+        ),
         Commands::Serve { port, root } => quant_api::serve(root.clone(), *port).await?,
         Commands::Openapi => println!("{}", quant_api::openapi()),
         Commands::Config(args) => {
@@ -45,9 +49,7 @@ async fn main() -> anyhow::Result<()> {
         Commands::Report(args) => {
             handlers::report::handle_report(args, &cli.config)?;
         }
-        Commands::Benchmark(_) => {
-            println!("Executing benchmark command...");
-        }
+        Commands::Benchmark(args) => handlers::benchmark::handle_benchmark(args, &cli.config)?,
         Commands::Env => {
             handlers::env::handle_env(&cli.config);
         }

@@ -1,4 +1,5 @@
 pub mod backtest;
+pub mod benchmark;
 pub mod config;
 pub mod data;
 pub mod env;

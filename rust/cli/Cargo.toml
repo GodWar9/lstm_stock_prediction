@@ -8,6 +8,7 @@ name = "quantctl"
 path = "src/main.rs"
 
 [dependencies]
+uuid.workspace = true
 quant_config.workspace = true
 quant_instruments.workspace = true
 quant_data.workspace = true
