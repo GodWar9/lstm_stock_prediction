@@ -9,6 +9,12 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: "-D warnings"
+  # Bound peak compilation/linking memory on hosted runners.
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  # CI does not need debug symbols; omit them to reduce linker memory and disk use.
+  CARGO_PROFILE_DEV_DEBUG: "0"
+  CARGO_PROFILE_TEST_DEBUG: "0"
 
 jobs:
   rust-check:
@@ -29,8 +35,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             rust/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('rust/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
+          key: ${{ runner.os }}-cargo-check-v2-${{ hashFiles('rust/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-check-v2-
 
       - name: Check formatting
         working-directory: rust
@@ -70,14 +76,26 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             rust/target
-          key: ${{ runner.os }}-cargo-test-${{ hashFiles('rust/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-test-
+          key: ${{ runner.os }}-cargo-test-v2-${{ hashFiles('rust/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-test-v2-
+
+      - name: Compile workspace tests
+        working-directory: rust
+        run: cargo test --workspace --locked --no-run
 
       - name: Run workspace tests
         working-directory: rust
         env:
           QUANTCTL_PYTHON: ${{ github.workspace }}/python/.venv/bin/python
-        run: cargo test --workspace -- --nocapture
+        run: cargo test --workspace --locked -- --nocapture
+
+      - name: Report runner resources on failure
+        if: failure()
+        run: |
+          free -h
+          df -h
+          df -i
+          du -sh rust/target ~/.cargo/registry ~/.cargo/git 2>/dev/null || true
 
   python-test:
     name: Python Tests
@@ -121,8 +139,8 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             rust/target
-          key: ${{ runner.os }}-cargo-bench-${{ hashFiles('rust/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-bench-
+          key: ${{ runner.os }}-cargo-bench-v2-${{ hashFiles('rust/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-bench-v2-
 
       - name: Compile benchmarks
         working-directory: rust
@@ -149,7 +167,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             rust/target
-          key: web-cargo-${{ hashFiles('rust/Cargo.lock') }}
+          key: ${{ runner.os }}-web-cargo-v2-${{ hashFiles('rust/Cargo.lock') }}
       - name: Install frontend dependencies
         working-directory: web
         run: npm ci
