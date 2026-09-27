@@ -12,7 +12,7 @@ acceptance criteria. Each item requires runnable behavior and relevant tests.
 - [x] Inspector displays those evidence artifacts with honest empty states for legacy runs.
 - [x] Rolling walk-forward orchestration with per-fold models and held-out results.
 - [x] Full test/build checks and corrected documentation.
-- [ ] Push completion commit to origin/main (automatic approval review requires destination authorization).
+- [x] Push completion commit to origin/main (6bdd414, with explicit destination authorization).
 
 Not part of current-product acceptance: new alpha research, new architecture or
 loss experiments, derivatives, multi-asset portfolio research, GPU providers,
