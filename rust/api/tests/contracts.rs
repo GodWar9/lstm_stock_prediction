@@ -24,6 +24,7 @@ async fn real_report_roundtrip_arrow_schema_and_errors() {
     );
     let provenance = Provenance {
         git_commit: "test".into(),
+        source_snapshot: None,
         config_hash: "test".into(),
         data_version: "fixture".into(),
         model_artifact_id: "test".into(),
@@ -129,6 +130,7 @@ async fn test_benchmark_positions_signal_outcomes_and_risk_endpoints() {
     );
     let provenance = Provenance {
         git_commit: "test".into(),
+        source_snapshot: None,
         config_hash: "test".into(),
         data_version: "fixture".into(),
         model_artifact_id: "test".into(),
@@ -199,4 +201,103 @@ async fn test_benchmark_positions_signal_outcomes_and_risk_endpoints() {
             .unwrap();
         assert_eq!(response.status(), 200, "Artifact {suffix} failed");
     }
+}
+
+#[tokio::test]
+async fn complete_pages_filters_and_size_limits() {
+    let temp = tempfile::tempdir().unwrap();
+    let report = BacktestReport::compute(1000.0, vec![(0, 1000.0), (1, 1001.0)], vec![], 0.0, 1);
+    let provenance = Provenance {
+        git_commit: "test".into(),
+        source_snapshot: None,
+        config_hash: "test".into(),
+        data_version: "test".into(),
+        model_artifact_id: "test".into(),
+        source: "synthetic".into(),
+    };
+    let m = publish_backtest(
+        &temp.path().join("reports/runs"),
+        &report,
+        provenance,
+        "TEST",
+        "test",
+    )
+    .unwrap();
+    let dir = temp.path().join("reports/runs").join(&m.run_id);
+    let data = quant_api::artifacts::arrow_bytes(&[
+        ("timestamp_ms", (0..2505).map(|i| (i / 2) as f64).collect()),
+        ("quantity", (0..2505).map(f64::from).collect()),
+    ])
+    .unwrap();
+    std::fs::write(dir.join("trades.arrow"), data).unwrap();
+    write_manifest(&dir, &m).unwrap();
+    let app = router(temp.path().into());
+    let mut quantities = Vec::new();
+    for offset in [0, 1000, 2000] {
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!(
+                        "/api/runs/{}/trades.arrow?offset={offset}&limit=1000",
+                        m.run_id
+                    ))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), 200);
+        assert_eq!(response.headers()["x-total-count"], "2505");
+        assert_eq!(response.headers()["x-sampled"], "false");
+        let bytes = response.into_body().collect().await.unwrap().to_bytes();
+        let mut cursor = std::io::Cursor::new(bytes);
+        let metadata = arrow2::io::ipc::read::read_file_metadata(&mut cursor).unwrap();
+        for batch in arrow2::io::ipc::read::FileReader::new(cursor, metadata, None, None) {
+            let batch = batch.unwrap();
+            let array = batch.arrays()[1]
+                .as_any()
+                .downcast_ref::<arrow2::array::Float64Array>()
+                .unwrap();
+            quantities.extend(array.values().iter().copied());
+        }
+    }
+    assert_eq!(quantities, (0..2505).map(f64::from).collect::<Vec<_>>());
+    for (query, status, total, returned) in [
+        ("limit=10&asof=4", 200, "10", "10"),
+        ("limit=10&instrument=OTHER", 200, "0", "0"),
+        ("offset=999999&limit=10", 200, "2505", "0"),
+        ("offset=10", 400, "", ""),
+        ("limit=1001", 400, "", ""),
+        ("limit=0", 400, "", ""),
+        ("limit=10&max_points=100", 400, "", ""),
+    ] {
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runs/{}/trades.arrow?{query}", m.run_id))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status().as_u16(), status, "{query}");
+        if status == 200 {
+            assert_eq!(response.headers()["x-total-count"], total);
+            assert_eq!(response.headers()["x-returned-count"], returned);
+        }
+    }
+    let file = std::fs::File::create(dir.join("report.json")).unwrap();
+    file.set_len(8 * 1024 * 1024 + 1).unwrap();
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri(format!("/api/runs/{}/report.json", m.run_id))
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), 413);
 }

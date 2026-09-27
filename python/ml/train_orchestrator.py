@@ -332,7 +332,12 @@ def train_and_export(args, cfg, model_id, stage):
         metadata = json.load(source)
     metadata.update(training_dataset_version=validation["data_version"], feature_set_version=feature_set_version,
                     target_definition={"horizon": target_horizon, "transformation": "log_return"})
-    metadata["git_commit"] = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip() or "unknown"
+    executable = os.environ.get("QUANTCTL_EXECUTABLE")
+    if not executable:
+        raise RuntimeError("Set QUANTCTL_EXECUTABLE to record source provenance")
+    snapshot = subprocess.run([executable, "source-snapshot"], capture_output=True, text=True, check=True)
+    metadata["source_snapshot"] = json.loads(snapshot.stdout.strip().splitlines()[-1])
+    metadata["git_commit"] = metadata["source_snapshot"]["git_commit"]
     with open(meta_path, "w") as output:
         json.dump(metadata, output, indent=2)
     raw_windows, _ = create_sliding_windows(raw_features[test_idx], raw_targets[test_idx], lookback)

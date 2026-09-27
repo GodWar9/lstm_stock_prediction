@@ -181,6 +181,13 @@ fn persisted_pipeline_training_prediction_backtest_simulation() {
         })
         .expect("published run manifest");
     assert_eq!(manifest["split"], "test");
+    assert_eq!(
+        manifest["provenance"]["source_snapshot"]["content_sha256"]
+            .as_str()
+            .unwrap()
+            .len(),
+        64
+    );
     assert_eq!(manifest["provenance"]["source"], "synthetic");
     let report_json: serde_json::Value =
         serde_json::from_slice(&std::fs::read(root.join(&report)).unwrap()).unwrap();

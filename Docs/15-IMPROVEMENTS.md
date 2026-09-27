@@ -8,19 +8,19 @@ aspirations until measured on a named machine and workload.
 
 | Priority | Improvement | Why / acceptance evidence |
 |---|---|---|
-| P0 | Content-address market datasets and bind them to model provenance | Model bundles now have verified SHA-256 manifests; market/training input hashes and dataset identity checks remain |
+| Done | Bind market/training bytes to model provenance | SHA-256 market/training manifests, replay identity checks and sealed model packages |
 | P0 | Expand accounting/property tests for partial fills, shorts, splits, dividends and borrow fees | Compare NAV, cash and realized P&L to hand-calculated ledgers |
-| P0 | Walk-forward orchestration with a model per fold | Record exact train/purge/embargo/test timestamps and pooled OOS metrics without reusing test data for selection |
-| P0 | Rust-runtime parity gate for every exported model | Compare PyTorch, ONNX Runtime and tract over representative held-out tensors before publication |
+| Done | Walk-forward orchestration with a model per fold | Per-fold packages, separated windows, train-only scaling and pooled held-out prediction metrics |
+| Done | Rust-runtime parity gate for every exported model | PyTorch/ONNX Runtime/tract checks on held-out windows before publication |
 | Done | Atomic model staging and directory rename | Training reserves the ID, validates the staged package and parity evidence, then publishes it; failure, collision and real CLI integration tests cover the lifecycle |
 | P1 | Replace finite profit-factor sentinel and heuristic deflated Sharpe | Represent undefined ratios explicitly; implement and validate statistical definitions |
-| P1 | Persist benchmark, positions, realized signal targets and risk reports | Complete cost sensitivity, rolling IC, regime and portfolio inspector views from backend evidence |
+| Done | Persist benchmark, positions, realized signal targets and risk reports | Backend evidence and inspector panels implemented; cost sensitivity/rolling IC/regime remain research extensions |
 | P1 | Proper risk integration and constrained optimizer certification | Enforce sector, turnover and regime limits in the actual replay; test constraints after rounding and partial fills |
 | P1 | Native Rust market acquisition and reliable corporate-action provenance | Remove the legacy Python acquisition exception; test adjusted histories and calendars |
 | P1 | Model selection baselines and uncertainty calibration | Compare naive, linear and LSTM models using identical folds and costs; assess conformal coverage under dependence |
-| P2 | Bounded API work queues, async file reads and artifact limits | Large local runs must not monopolize Tokio workers; measure concurrent request p95/RSS |
-| P2 | Full-blotter pagination and multi-instrument Arrow schema | Never confuse extrema sampling with a complete trade audit; stable order and total-count metadata |
-| P2 | True file-content hashing and provenance snapshot of dirty trees | A git HEAD alone does not identify uncommitted source changes |
+| Done | Bounded API artifact workers and size limits | Four blocking workers, bounded file/list sizes, explicit overload errors; production p95/RSS measurement remains optional profiling |
+| Done | Full-blotter pagination | Complete stable pages with counts and desktop/mobile controls; multi-instrument schemas remain outside the single-asset product |
+| Done | Working-source fingerprint and dirty-tree provenance | Model metadata and replay provenance include source SHA-256, file count and dirty status |
 
 ### Software performance work
 
@@ -76,11 +76,17 @@ folds/symbols until bandwidth saturates; a faster SSD helps cold artifact reads;
 a GPU helps large training workloads that amortize transfer and launch overhead.
 Choose based on measured bottlenecks rather than spending on an assumed one.
 
-## Suggested next delivery sequence
+## Optional next delivery sequence
 
-1. Market/training dataset hashes and model-runtime parity; atomic model publication and model-bundle integrity checks are implemented.
-2. Rolling walk-forward runs with a trustworthy OOS comparison report.
-3. Persist missing portfolio/risk/signal evidence and complete the related UI.
-4. Profile one representative production-size dataset and optimize its largest
-   bottleneck. Attach before/after benchmark evidence to each optimization.
-5. Add hardware-specific providers only after the portable baseline is correct.
+The current product now includes dataset hashes, model/runtime parity, per-fold
+walk-forward packages, portfolio/risk/signal evidence, complete audit pages,
+bounded API artifact work and working-source fingerprints. Remaining rows above
+are broader accounting/research/integration or performance extensions, not hidden
+stubs in those delivered workflows.
+
+1. Certify additional corporate-action, short-borrow and constraint scenarios
+   before exposing those library extensions as supported replay modes.
+2. Profile a representative large dataset and optimize the measured bottleneck.
+3. Add pooled trading replay, multi-asset research or model-selection experiments
+   only with explicit scope and acceptance criteria.
+4. Consider hardware-specific providers after measuring the portable baseline.

@@ -1,3 +1,22 @@
+# Engineering follow-up verification - 2026-09-27
+
+Complete audit-table pagination, bounded artifact workers and working-source
+provenance pass 156 Rust tests, 42 Python tests (39 ONNX-related warnings), four
+frontend units and 26 desktop/mobile browser checks. Workspace Clippy, formatting,
+production frontend build and generated API-contract checks pass.
+
+New API tests reconstruct all 2,505 records across pages, including tied timestamps,
+filter before counting, reject invalid pagination and oversized JSON, and preserve
+worker permits after request cancellation. Source tests detect modified, untracked
+and deleted code. Browser tests traverse 205 test records on desktop and mobile.
+Training and replay integration tests verify stored source fingerprints.
+
+An initial browser startup encountered a Windows executable lock while Python
+parity checks were active; the successful run followed their completion. No numeric
+performance SLA, production concurrency/RSS benchmark or remote CI result is claimed.
+
+---
+
 # Current-product completion verification — 2026-09-27
 
 The resumed implementation passes 153 Rust tests (including documentation tests),

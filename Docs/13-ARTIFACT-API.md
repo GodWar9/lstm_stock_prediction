@@ -53,11 +53,15 @@ declared in the manifest; multi-instrument export needs a new schema version.
 | positions.arrow | timestamp_ms, quantity, market_value | UTC ms, shares, account currency |
 | signal_outcomes.arrow | timestamp_ms, prediction_timestamp_ms, expected_return, realized_return, residual | UTC ms, return, return, return |
 
-Series requests accept `max_points=32..100000` (default 2000). Bucket extrema
-selection preserves endpoints and value-column extrema. Downsampled trades are
-an inspection sample, not the full audit log; request sufficient points or use
-the saved report for a complete audit. Signals require `asof` in UTC milliseconds
-and optionally `instrument`; filtering happens before downsampling in Rust.
+Chart requests accept `max_points=32..100000` (default 2000). Bucket extrema
+selection preserves endpoints and value-column extrema. Audit tables instead use
+`offset=0&limit=100` (limit 1..1000): contiguous rows in recorded order, never
+sampled. Pagination and `max_points` cannot be combined. Responses include
+`X-Total-Count`, `X-Returned-Count`, `X-Offset` and `X-Sampled`. Counts refer to the
+filtered dataset. Out-of-range offsets return an empty page. Signals require
+`asof` in UTC milliseconds; optional instrument/as-of filters apply before both
+sampling and pagination. The inspector uses complete pages for every audit table;
+column sorting is explicitly limited to the current page.
 
 ## HTTP
 
@@ -100,3 +104,26 @@ honest empty states for legacy runs.
 Signal outcome `timestamp_ms` is the target realization time; `prediction_timestamp_ms` is the signal time. Returns use the model target horizon and log-return transformation. As-of filtering uses realization time.
 
 Walk-forward packages retain sealed `folds/fold_N` models, validation evidence and held-out predictions. Root inference/replay uses the final fold only; `pooled_oos_metrics` summarizes prediction accuracy across folds, not trading performance.
+
+## Resource bounds and working-source provenance
+
+File reads, Arrow conversion, listing scans and event scans run in blocking workers
+behind four shared permits. Requests beyond that budget return `503 busy` without
+an unbounded wait queue; SSE skips a busy tick. Cancelling an HTTP request retains
+its permit until the underlying work finishes. Individual JSON files are limited
+to 8 MiB, Arrow files to 64 MiB, decoded numeric values to four million and columns
+to 32. Listings stop at 10,000 entries or 16 MiB of source JSON metadata. Oversized
+artifacts return `413`; these are workload guards, not a measured RSS/SLA guarantee.
+Symbolic-link artifact files are rejected.
+
+New provenance optionally includes `source_snapshot` with `git_commit`,
+`working_tree_dirty`, `content_sha256` and `file_count`. `quantctl source-snapshot`
+prints the same structure. The digest hashes a sorted map of repository-relative
+source filenames to SHA-256 content hashes (null for tracked deletions), including
+untracked non-ignored source. It covers code, build/dependency manifests and config
+in rust/python/web/configs/scripts/.github; generated data, browser fixtures and
+legacy research are excluded. The dirty flag covers the working repository.
+This records files at snapshot time, not a rebuild attestation or a snapshot of
+installed dependencies/binary bytes. Run from a Git checkout. Legacy artifacts omit
+this field. Training metadata records its own snapshot; backtests record the replay
+snapshot, and report-derived simulations retain the source report provenance.

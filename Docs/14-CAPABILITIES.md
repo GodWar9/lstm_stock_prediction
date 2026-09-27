@@ -45,6 +45,8 @@ override for every field. Python reads the YAML training configuration directly.
 | `serve --root . --port 8787` | Serve embedded frontend and read-only localhost API |
 | `openapi` | Print generated HTTP contract |
 | `env` | Build/environment diagnostic information |
+| `source-snapshot` | Hash working source content and record Git/dirty status |
+| `verify-model --artifact-dir PATH` | Check saved references through Rust inference |
 
 Operate from the repository root so datasets, model artifacts and reports have
 one unambiguous location. Choose a new model ID for every training run. Test
@@ -64,8 +66,8 @@ workspaces or manual deletion of the ledger.
   the data library. Corporate-action adjustment utilities and US equity
   calendar abstractions are available, but the default pipeline does not
   promise a complete survivorship-free institutional dataset.
-- Data artifacts are local version-named files. Dataset version names alone
-  are not content hashes or a guarantee against later file changes.
+- Data artifacts are local version-named files with content hashes. Reload and
+  replay checks reject changed market/training content.
 
 ## Features and datasets
 
@@ -128,7 +130,7 @@ changed bytes, unexpected manifest entries and unsupported manifest versions
 fail. Unsealed legacy packages must be retrained. These hashes detect changes
 relative to the manifest; they are not signatures and do not authenticate a
 manifest rewritten along with its files. Keep packages immutable during use.
-Market-data content hashes and verification of training inputs remain future work.
+Market and Arrow training content hashes are verified and bound to replay provenance.
 
 ## Inference and signals
 
@@ -193,7 +195,7 @@ for larger buffers and uPlot canvas charts. A common canvas renderer is used
 for equity and dense series rather than maintaining separate chart libraries.
 
 - Overview: active run, source, split, available metrics and equity.
-- Backtest: NAV, drawdown, sortable virtualized fills and accessible tables.
+- Backtest: NAV, drawdown, benchmark, positions and complete paginated fill tables.
 - Data and validation: recorded dataset, PIT/scaler checks, fold timeline,
   purge/embargo explanations and exact JSON evidence.
 - Models: artifact availability, metadata, losses, measured export parity,
@@ -226,3 +228,12 @@ tests cover Arrow decoding/formatting and desktop/mobile browser routes. CI
 checks formatting, clippy, Rust/Python tests, benchmark execution, frontend
 build/tests and generated-contract drift. See `16-VERIFICATION.md` for measured
 results from this implementation session.
+
+## Audit completeness and source identity
+
+Audit tables page through every recorded row, with total counts and stable recorded
+order. Chart sampling remains separate; sorting a table sorts only that page.
+Artifact API work runs in bounded workers with explicit size/overload errors. The
+provenance footer exposes a working-source content fingerprint and dirty status for
+new runs. Training metadata also records a source snapshot. See the API contract
+for exact coverage, resource bounds and legacy behavior.

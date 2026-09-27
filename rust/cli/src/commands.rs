@@ -24,6 +24,8 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+    /// Print a content fingerprint of the current working source tree
+    SourceSnapshot,
     /// Check staged model predictions against saved PyTorch reference windows
     VerifyModel {
         #[arg(long)]

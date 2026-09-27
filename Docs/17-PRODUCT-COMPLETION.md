@@ -22,3 +22,11 @@ broker execution.
 Walk-forward acceptance covers per-fold training packages and held-out prediction
 metrics. Root replay uses the final fold; pooled trading replay remains outside
 this implementation. See [verification](16-VERIFICATION.md) for current evidence.
+
+## Remaining engineering follow-up
+
+- [x] Complete paginated audit tables with total counts and stable row order.
+- [x] Bounded blocking API workers, artifact/list size limits and explicit overload errors.
+- [x] Working-source content fingerprints in training/replay provenance and inspector.
+- [x] Refresh stale roadmap and capability claims.
+- [x] Verify and push the engineering follow-up.

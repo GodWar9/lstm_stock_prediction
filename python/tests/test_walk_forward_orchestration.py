@@ -105,3 +105,5 @@ def test_walk_forward_orchestrator_synthetic(monkeypatch):
         assert len(val["folds"]) == 3
         root_metadata = json.loads((published_dir / "metadata.json").read_text())
         assert root_metadata["model_id"] == "test_wf_model"
+        assert len(root_metadata["source_snapshot"]["content_sha256"]) == 64
+        assert root_metadata["source_snapshot"]["file_count"] > 0

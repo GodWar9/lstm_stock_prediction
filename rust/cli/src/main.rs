@@ -16,6 +16,10 @@ async fn main() -> anyhow::Result<()> {
     info!(version = env!("CARGO_PKG_VERSION"), "quantctl initialized");
 
     match &cli.command {
+        Commands::SourceSnapshot => println!(
+            "{}",
+            serde_json::to_string(&quant_api::provenance::snapshot(std::path::Path::new("."))?)?
+        ),
         Commands::VerifyModel { artifact_dir } => println!(
             "{}",
             quant_inference::parity::verify_runtime_parity(artifact_dir)?

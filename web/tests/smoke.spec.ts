@@ -1,3 +1,4 @@
+import { tableFromArrays, tableToIPC } from 'apache-arrow';
 import { test, expect } from '@playwright/test';
 const pages = [
   ['/', 'A run, with its evidence'], ['/backtest', 'Backtest inspection'],
@@ -72,4 +73,34 @@ test('new runs expose benchmark, positions, signal outcomes and risk', async ({ 
   await page.screenshot({ path: testInfo.outputPath('risk-evidence.png'), fullPage: true });
   await expect(page.getByRole('alert')).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+});
+
+
+test('complete audit table navigates without skipping rows', async ({ page, request }) => {
+  const runs = await (await request.get('/api/runs')).json();
+  const run = runs.find((r: { capabilities: string[] }) => r.capabilities.includes('trades'));
+  const offsets: number[] = [];
+  await page.route('**/trades.arrow?*', async route => {
+    const url = new URL(route.request().url());
+    expect(url.searchParams.has('max_points')).toBeFalsy();
+    const offset = Number(url.searchParams.get('offset'));
+    const limit = Number(url.searchParams.get('limit'));
+    offsets.push(offset);
+    const count = Math.min(limit, 205 - offset);
+    const rows = Array.from({ length: count }, (_, i) => offset + i);
+    const bytes = tableToIPC(tableFromArrays({ timestamp_ms: Float64Array.from(rows), quantity: Float64Array.from(rows) }), 'file');
+    await route.fulfill({ contentType: 'application/vnd.apache.arrow.file', body: Buffer.from(bytes), headers: {
+      'x-total-count': '205', 'x-offset': String(offset), 'x-returned-count': String(count), 'x-sampled': 'false',
+    } });
+  });
+  await page.goto(`/backtest?run=${run.run_id}`);
+  await expect(page.getByText('Records 1-100 of 205', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'Next page', exact: true }).click();
+  await expect(page.getByText('Records 101-200 of 205', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'Next page', exact: true }).click();
+  await expect(page.getByText('Records 201-205 of 205', { exact: false })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Next page', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Previous page', exact: true }).click();
+  await expect(page.getByText('Records 101-200 of 205', { exact: false })).toBeVisible();
+  expect(offsets).toEqual([0, 100, 200]);
 });

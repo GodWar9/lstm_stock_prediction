@@ -1,6 +1,6 @@
 use crate::{artifacts::arrow_bytes, contract::*};
 use arrow2::{
-    array::Float64Array,
+    array::{Array, Float64Array},
     io::ipc::read::{read_file_metadata, FileReader},
 };
 use axum::{
@@ -18,8 +18,9 @@ use std::{
     collections::BTreeSet,
     convert::Infallible,
     fs,
-    io::Cursor,
+    io::{Cursor, Read},
     path::{Path as FsPath, PathBuf},
+    sync::Arc,
     time::Duration,
 };
 use tokio_stream::StreamExt;
@@ -28,6 +29,72 @@ use utoipa::OpenApi;
 #[derive(Clone)]
 pub struct AppState {
     root: PathBuf,
+    workers: Arc<tokio::sync::Semaphore>,
+}
+
+const MAX_ARTIFACT_BYTES: u64 = 64 * 1024 * 1024;
+const MAX_JSON_BYTES: u64 = 8 * 1024 * 1024;
+const MAX_VALUES: usize = 4_000_000;
+const MAX_ENTRIES: usize = 10_000;
+const MAX_LIST_BYTES: u64 = 16 * 1024 * 1024;
+
+async fn blocking<T: Send + 'static>(
+    s: AppState,
+    work: impl FnOnce(AppState) -> ApiResult<T> + Send + 'static,
+) -> ApiResult<T> {
+    let permit = s.workers.clone().try_acquire_owned().map_err(|_| {
+        error(
+            StatusCode::SERVICE_UNAVAILABLE,
+            "busy",
+            "Artifact workers are busy; retry shortly",
+        )
+    })?;
+    tokio::task::spawn_blocking(move || {
+        let _permit = permit;
+        work(s)
+    })
+    .await
+    .map_err(|_| {
+        error(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "worker_failed",
+            "Artifact worker failed",
+        )
+    })?
+}
+
+fn bounded_read(path: &FsPath, limit: u64) -> ApiResult<Vec<u8>> {
+    if fs::symlink_metadata(path).is_ok_and(|m| m.file_type().is_symlink()) {
+        return Err(error(
+            StatusCode::BAD_REQUEST,
+            "invalid_path",
+            "Artifact symlinks are unsupported",
+        ));
+    }
+    let file = fs::File::open(path)
+        .map_err(|_| error(StatusCode::NOT_FOUND, "not_found", "Artifact not available"))?;
+    let metadata = file
+        .metadata()
+        .map_err(|e| error(StatusCode::UNPROCESSABLE_ENTITY, "invalid_artifact", e))?;
+    if !metadata.is_file() || metadata.len() > limit {
+        return Err(error(
+            StatusCode::PAYLOAD_TOO_LARGE,
+            "artifact_too_large",
+            "Artifact exceeds the local inspector size limit",
+        ));
+    }
+    let mut bytes = Vec::new();
+    file.take(limit + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|e| error(StatusCode::UNPROCESSABLE_ENTITY, "invalid_artifact", e))?;
+    if bytes.len() as u64 > limit {
+        return Err(error(
+            StatusCode::PAYLOAD_TOO_LARGE,
+            "artifact_too_large",
+            "Artifact grew beyond the size limit",
+        ));
+    }
+    Ok(bytes)
 }
 
 type ApiResult<T> = Result<T, (StatusCode, Json<ApiError>)>;
@@ -75,9 +142,19 @@ fn safe_path(root: &FsPath, id: &str) -> ApiResult<PathBuf> {
     }
     Ok(path)
 }
+fn list_budget(path: &FsPath, bytes: &mut u64) -> ApiResult<()> {
+    *bytes = bytes.saturating_add(fs::metadata(path).map_or(0, |m| m.len()));
+    if *bytes > MAX_LIST_BYTES {
+        return Err(error(
+            StatusCode::PAYLOAD_TOO_LARGE,
+            "listing_too_large",
+            "Listing exceeds 16 MiB of metadata; archive older artifacts",
+        ));
+    }
+    Ok(())
+}
 fn json_file<T: serde::de::DeserializeOwned>(path: &FsPath) -> ApiResult<T> {
-    let bytes = fs::read(path)
-        .map_err(|_| error(StatusCode::NOT_FOUND, "not_found", "Artifact not available"))?;
+    let bytes = bounded_read(path, MAX_JSON_BYTES)?;
     serde_json::from_slice(&bytes).map_err(|_| {
         error(
             StatusCode::UNPROCESSABLE_ENTITY,
@@ -101,10 +178,22 @@ fn read_manifest(state: &AppState, id: &str) -> ApiResult<RunManifest> {
 
 #[utoipa::path(get, path = "/api/runs", responses((status = 200, body = [RunManifest]), (status = 422, body = ApiError)))]
 async fn runs(State(s): State<AppState>) -> ApiResult<Json<Vec<RunManifest>>> {
+    blocking(s, runs_sync).await
+}
+fn runs_sync(s: AppState) -> ApiResult<Json<Vec<RunManifest>>> {
     let mut result = Vec::new();
+    let mut bytes = 0u64;
     if let Ok(entries) = fs::read_dir(s.root.join("reports/runs")) {
-        for entry in entries.flatten() {
+        for (index, entry) in entries.flatten().enumerate() {
+            if index >= MAX_ENTRIES {
+                return Err(error(
+                    StatusCode::PAYLOAD_TOO_LARGE,
+                    "too_many_artifacts",
+                    "Archive older runs before listing more than 10000 entries",
+                ));
+            }
             if entry.path().join("manifest.json").is_file() {
+                list_budget(&entry.path().join("manifest.json"), &mut bytes)?;
                 result.push(read_manifest(&s, &entry.file_name().to_string_lossy())?);
             }
         }
@@ -115,6 +204,9 @@ async fn runs(State(s): State<AppState>) -> ApiResult<Json<Vec<RunManifest>>> {
 
 #[utoipa::path(get, path = "/api/runs/{run_id}/manifest", params(("run_id" = String, Path)), responses((status = 200, body = RunManifest), (status = 404, body = ApiError)))]
 async fn manifest(State(s): State<AppState>, Path(id): Path<String>) -> ApiResult<Response> {
+    blocking(s, move |s| manifest_sync(s, id)).await
+}
+fn manifest_sync(s: AppState, id: String) -> ApiResult<Response> {
     Ok((
         [(header::CACHE_CONTROL, "public, max-age=31536000, immutable")],
         Json(read_manifest(&s, &id)?),
@@ -125,6 +217,8 @@ async fn manifest(State(s): State<AppState>, Path(id): Path<String>) -> ApiResul
 #[derive(Deserialize, Default)]
 struct SeriesQuery {
     max_points: Option<usize>,
+    offset: Option<usize>,
+    limit: Option<usize>,
     asof: Option<i64>,
     instrument: Option<String>,
 }
@@ -153,13 +247,17 @@ fn selected_indices(columns: &[(String, Vec<f64>)], limit: usize) -> Vec<usize> 
     selected.into_iter().collect()
 }
 
-#[utoipa::path(get, path = "/api/runs/{run_id}/{artifact}", params(("run_id" = String, Path), ("artifact" = String, Path), ("max_points" = Option<usize>, Query), ("asof" = Option<i64>, Query), ("instrument" = Option<String>, Query)), responses((status = 200, description = "Arrow IPC or JSON artifact"), (status = 400, body = ApiError), (status = 404, body = ApiError)))]
+#[utoipa::path(get, path = "/api/runs/{run_id}/{artifact}", params(("run_id" = String, Path), ("artifact" = String, Path), ("max_points" = Option<usize>, Query), ("asof" = Option<i64>, Query), ("instrument" = Option<String>, Query), ("offset" = Option<usize>, Query), ("limit" = Option<usize>, Query)), responses((status = 200, description = "Arrow IPC or JSON artifact"), (status = 400, body = ApiError), (status = 404, body = ApiError)))]
 async fn artifact(
     State(s): State<AppState>,
     Path((id, name)): Path<(String, String)>,
     query: Result<Query<SeriesQuery>, axum::extract::rejection::QueryRejection>,
 ) -> ApiResult<Response> {
     let Query(q) = query.map_err(|e| error(StatusCode::BAD_REQUEST, "invalid_query", e))?;
+    blocking(s, move |s| artifact_sync(s, id, name, q)).await
+}
+
+fn artifact_sync(s: AppState, id: String, name: String, q: SeriesQuery) -> ApiResult<Response> {
     let m = read_manifest(&s, &id)?;
     let allowed = [
         "equity.arrow",
@@ -207,8 +305,14 @@ async fn artifact(
             "Artifact escapes run directory",
         ));
     }
-    let bytes = fs::read(file)
-        .map_err(|_| error(StatusCode::NOT_FOUND, "not_found", "Cannot read artifact"))?;
+    let bytes = bounded_read(
+        &file,
+        if filename.ends_with(".arrow") {
+            MAX_ARTIFACT_BYTES
+        } else {
+            MAX_JSON_BYTES
+        },
+    )?;
     if !filename.ends_with(".arrow") {
         return Ok((
             [
@@ -218,6 +322,16 @@ async fn artifact(
             bytes,
         )
             .into_response());
+    }
+    let paginated = q.limit.is_some() || q.offset.is_some();
+    if paginated
+        && (q.limit.is_none() || q.max_points.is_some() || !matches!(q.limit, Some(1..=1000)))
+    {
+        return Err(error(
+            StatusCode::BAD_REQUEST,
+            "invalid_query",
+            "Pagination requires limit=1..1000 and cannot use max_points",
+        ));
     }
     let limit = q.max_points.unwrap_or(2000);
     if !(32..=100_000).contains(&limit) {
@@ -237,6 +351,14 @@ async fn artifact(
     let mut cursor = Cursor::new(bytes);
     let metadata = read_file_metadata(&mut cursor)
         .map_err(|e| error(StatusCode::UNPROCESSABLE_ENTITY, "invalid_arrow", e))?;
+    if metadata.schema.fields.is_empty() || metadata.schema.fields.len() > 32 {
+        return Err(error(
+            StatusCode::UNPROCESSABLE_ENTITY,
+            "invalid_arrow",
+            "Expected 1..32 numeric columns",
+        ));
+    }
+    let mut values = 0usize;
     let mut columns: Vec<(String, Vec<f64>)> = metadata
         .schema
         .fields
@@ -246,6 +368,14 @@ async fn artifact(
     for batch in FileReader::new(cursor, metadata, None, None) {
         let batch =
             batch.map_err(|e| error(StatusCode::UNPROCESSABLE_ENTITY, "invalid_arrow", e))?;
+        values = values.saturating_add(batch.len().saturating_mul(columns.len()));
+        if values > MAX_VALUES {
+            return Err(error(
+                StatusCode::PAYLOAD_TOO_LARGE,
+                "artifact_too_large",
+                "Arrow exceeds four million numeric values",
+            ));
+        }
         for (i, array) in batch.arrays().iter().enumerate() {
             let a = array
                 .as_any()
@@ -257,6 +387,13 @@ async fn artifact(
                         "Expected Float64 series",
                     )
                 })?;
+            if a.null_count() > 0 || a.values().iter().any(|value| !value.is_finite()) {
+                return Err(error(
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                    "invalid_arrow",
+                    "Null or nonfinite observations are unsupported",
+                ));
+            }
             columns[i].1.extend(a.values().iter().copied());
         }
     }
@@ -283,21 +420,44 @@ async fn artifact(
             *v = indices.iter().map(|&i| v[i]).collect();
         }
     }
-    let indices = selected_indices(&columns, limit);
+    let total = columns.first().map_or(0, |(_, v)| v.len());
+    let offset = q.offset.unwrap_or(0).min(total);
+    let indices = if paginated {
+        (offset..offset.saturating_add(q.limit.unwrap()).min(total)).collect()
+    } else {
+        selected_indices(&columns, limit)
+    };
+    let returned = indices.len();
     let reduced: Vec<_> = columns
         .iter()
         .map(|(name, v)| (name.as_str(), indices.iter().map(|&i| v[i]).collect()))
         .collect();
     let output = arrow_bytes(&reduced)
         .map_err(|e| error(StatusCode::INTERNAL_SERVER_ERROR, "encode_failed", e))?;
-    Ok((
+    let mut response = (
         [
             (header::CONTENT_TYPE, "application/vnd.apache.arrow.file"),
             (header::CACHE_CONTROL, "public, max-age=31536000, immutable"),
         ],
         output,
     )
-        .into_response())
+        .into_response();
+    for (name, value) in [
+        ("x-total-count", total),
+        ("x-returned-count", returned),
+        ("x-offset", offset),
+    ] {
+        response
+            .headers_mut()
+            .insert(name, value.to_string().parse().unwrap());
+    }
+    response.headers_mut().insert(
+        "x-sampled",
+        ((!paginated && returned < total).to_string())
+            .parse()
+            .unwrap(),
+    );
+    Ok(response)
 }
 
 fn read_model(s: &AppState, id: &str) -> ApiResult<ModelArtifact> {
@@ -320,10 +480,24 @@ fn read_model(s: &AppState, id: &str) -> ApiResult<ModelArtifact> {
 }
 #[utoipa::path(get, path = "/api/models", responses((status = 200, body = [ModelArtifact])))]
 async fn models(State(s): State<AppState>) -> ApiResult<Json<Vec<ModelArtifact>>> {
+    blocking(s, models_sync).await
+}
+fn models_sync(s: AppState) -> ApiResult<Json<Vec<ModelArtifact>>> {
     let mut result = Vec::new();
+    let mut bytes = 0u64;
     if let Ok(entries) = fs::read_dir(s.root.join("models")) {
-        for e in entries.flatten() {
+        for (index, e) in entries.flatten().enumerate() {
+            if index >= MAX_ENTRIES {
+                return Err(error(
+                    StatusCode::PAYLOAD_TOO_LARGE,
+                    "too_many_artifacts",
+                    "Archive older models before listing more than 10000 entries",
+                ));
+            }
             if e.path().join("metadata.json").exists() {
+                for name in ["metadata.json", "training_log.json", "validation.json"] {
+                    list_budget(&e.path().join(name), &mut bytes)?;
+                }
                 result.push(read_model(&s, &e.file_name().to_string_lossy())?);
             }
         }
@@ -336,7 +510,7 @@ async fn model(
     State(s): State<AppState>,
     Path(id): Path<String>,
 ) -> ApiResult<Json<ModelArtifact>> {
-    Ok(Json(read_model(&s, &id)?))
+    blocking(s, move |s| Ok(Json(read_model(&s, &id)?))).await
 }
 
 #[utoipa::path(get, path = "/api/events", responses((status = 200, description = "SSE completed artifact snapshots; no job launcher")))]
@@ -345,18 +519,31 @@ async fn events(
 ) -> Sse<impl tokio_stream::Stream<Item = Result<Event, Infallible>>> {
     let stream =
         tokio_stream::wrappers::IntervalStream::new(tokio::time::interval(Duration::from_secs(3)))
-            .map(move |_| {
-                let completed = fs::read_dir(s.root.join("reports/runs"))
-                    .map(|entries| {
-                        entries
-                            .flatten()
-                            .filter(|e| e.path().join("manifest.json").exists())
-                            .count()
+            .then(move |_| {
+                let state = s.clone();
+                async move {
+                    let snapshot = blocking(state, |s| {
+                        let completed = fs::read_dir(s.root.join("reports/runs"))
+                            .map(|entries| {
+                                entries
+                                    .flatten()
+                                    .take(MAX_ENTRIES)
+                                    .filter(|e| e.path().join("manifest.json").is_file())
+                                    .count()
+                            })
+                            .unwrap_or(0);
+                        Ok(completed)
                     })
-                    .unwrap_or(0);
-                Ok(Event::default()
-                    .event("artifacts")
-                    .data(serde_json::json!({"completed_runs":completed}).to_string()))
+                    .await;
+                    Ok(match snapshot {
+                        Ok(completed) => Event::default()
+                            .event("artifacts")
+                            .data(serde_json::json!({"completed_runs":completed}).to_string()),
+                        Err(_) => {
+                            Event::default().comment("Artifact workers busy; retry on next tick")
+                        }
+                    })
+                }
             });
     Sse::new(stream).keep_alive(KeepAlive::default())
 }
@@ -406,7 +593,14 @@ async fn spa(uri: Uri) -> Response {
 #[derive(OpenApi)]
 #[openapi(
     paths(runs, manifest, artifact, models, model, events),
-    components(schemas(RunManifest, Provenance, Instrument, ApiError, ModelArtifact))
+    components(schemas(
+        RunManifest,
+        Provenance,
+        SourceSnapshot,
+        Instrument,
+        ApiError,
+        ModelArtifact
+    ))
 )]
 struct ApiDoc;
 pub fn openapi() -> String {
@@ -428,7 +622,10 @@ pub fn router(root: PathBuf) -> Router {
             get(|| async { ([(header::CONTENT_TYPE, "application/json")], openapi()) }),
         )
         .fallback(spa)
-        .with_state(AppState { root })
+        .with_state(AppState {
+            root,
+            workers: Arc::new(tokio::sync::Semaphore::new(4)),
+        })
 }
 pub async fn serve(root: PathBuf, port: u16) -> anyhow::Result<()> {
     let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, port)).await?;
@@ -468,6 +665,26 @@ mod tests {
                 .unwrap();
             assert_eq!(response.status().as_u16(), status, "{method} {path}");
         }
+    }
+    #[tokio::test]
+    async fn cancelled_requests_keep_worker_permits_until_work_finishes() {
+        let temp = tempfile::tempdir().unwrap();
+        let state = AppState {
+            root: temp.path().into(),
+            workers: Arc::new(tokio::sync::Semaphore::new(1)),
+        };
+        let (started, ready) = tokio::sync::oneshot::channel();
+        let (release, finish) = std::sync::mpsc::channel();
+        let task = tokio::spawn(blocking(state.clone(), move |_| {
+            started.send(()).unwrap();
+            finish.recv().unwrap();
+            Ok(())
+        }));
+        ready.await.unwrap();
+        task.abort();
+        let result = blocking(state, |_| Ok(())).await;
+        assert_eq!(result.unwrap_err().0, StatusCode::SERVICE_UNAVAILABLE);
+        release.send(()).unwrap();
     }
     #[test]
     fn rejects_paths_and_preserves_extremes() {

@@ -45,6 +45,7 @@ pub fn handle_simulate(args: &SimulateArgs, _config_path: &Path) -> Result<()> {
     } else {
         quant_api::contract::Provenance {
             git_commit: "unknown".into(),
+            source_snapshot: None,
             config_hash: "unknown".into(),
             data_version: "unknown".into(),
             model_artifact_id: "unknown".into(),

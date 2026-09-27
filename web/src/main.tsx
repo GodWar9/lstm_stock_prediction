@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createRootRoute, createRoute, createRouter, RouterProvider, Link, Outlet, useNavigate } from '@tanstack/react-router';
 import { json, object, numbers, type Run, type Model } from './api/client';
-import { loadSeries } from './arrow/decode';
+import { loadSeries, loadPage } from './arrow/decode';
 import { Chart, DataTable } from './components/Chart';
 import { number, percent } from './lib/format';
 import './style.css';
@@ -16,7 +16,7 @@ function Notice({ title, children, error = false }: { title: string; children?: 
 }
 function Provenance({ run }: { run?: Run }) {
   const [copied, setCopied] = useState('');
-  const values = run ? { 'Run ID': run.run_id, 'Data version': run.provenance.data_version, 'Model artifact': run.provenance.model_artifact_id, 'Git commit': run.provenance.git_commit, 'Config hash': run.provenance.config_hash } : {};
+  const values: Record<string, string> = run ? { 'Run ID': run.run_id, 'Data version': run.provenance.data_version, 'Model artifact': run.provenance.model_artifact_id, 'Git commit': run.provenance.git_commit, 'Config hash': run.provenance.config_hash, ...(run.provenance.source_snapshot ? { 'Source fingerprint': run.provenance.source_snapshot.content_sha256, 'Working source': run.provenance.source_snapshot.working_tree_dirty ? 'Contains uncommitted changes' : 'Clean' } : {}) } : {};
   return <footer className="provenance"><strong>Evidence trail</strong>{Object.entries(values).map(([label, value]) => <button title={value} key={label} onClick={() => { void navigator.clipboard.writeText(value).then(() => setCopied(label)).catch(() => setCopied('Copy unavailable; select the ID')); }}><span>{label}</span><code>{value}</code></button>)}<span aria-live="polite">{copied ? `${copied}${copied.includes('unavailable') ? '' : ' copied'}` : !run ? 'Select a run to inspect its provenance.' : ''}</span></footer>;
 }
 function Shell() {
@@ -59,12 +59,29 @@ function Overview() {
 }
 function SeriesPanel({ capability, file, title, x, ys, time = false, params = '', table = false }: { capability: string; file: string; title: string; x: string; ys: string[]; time?: boolean; params?: string; table?: boolean }) {
   const run = useContext(RunContext);
-  const query = useQuery({ queryKey: ['series', run?.run_id, file, params], enabled: !!run?.capabilities.includes(capability), queryFn: () => loadSeries(`/api/runs/${run!.run_id}/${file}?max_points=2000${params}`) });
+  const query = useQuery({ queryKey: ['series', run?.run_id, file, params], enabled: !table && !!run?.capabilities.includes(capability), queryFn: () => loadSeries(`/api/runs/${run!.run_id}/${file}?max_points=2000${params}`) });
   if (!run?.capabilities.includes(capability)) return <Notice title={`${title} is not recorded`}>This run does not include {capability.replaceAll('_', ' ')}. Generate the corresponding backtest or simulation artifact.</Notice>;
+  if (table && run) return <PagedTable key={`${run.run_id}/${file}/${params}`} run={run} file={file} params={params} title={title} />;
   if (query.isPending) return <Notice title={`Loading ${title.toLowerCase()}`}>Reading the backend Arrow series.</Notice>;
   if (query.error) return <Notice title={`Cannot load ${title.toLowerCase()}`} error>{query.error.message}<button onClick={() => void query.refetch()}>Retry</button></Notice>;
-  if (table) return <section className="panel"><h2>{title}</h2><DataTable data={query.data} /></section>;
   return <Chart title={title} data={query.data} x={x} ys={ys} time={time} />;
+}
+function PagedTable({ run, file, params, title }: { run: Run; file: string; params: string; title: string }) {
+  const [offset, setOffset] = useState(0);
+  const limit = 100;
+  const query = useQuery({ queryKey: ['table', run.run_id, file, params, offset],
+    queryFn: () => loadPage(`/api/runs/${run.run_id}/${file}?offset=${offset}&limit=${limit}${params}`) });
+  const page = query.data;
+  return <section className="panel"><h2>{title}</h2>
+    {query.isPending ? <p role="status">Loading complete records...</p> : query.error ? <div role="alert">{query.error.message}<button onClick={() => void query.refetch()}>Retry</button></div> : page && <>
+      <p role="status">{page.total ? `Records ${page.offset + 1}-${page.offset + page.count} of ${page.total}` : 'No records in this range.'} - No rows sampled.</p>
+      <DataTable key={offset} data={page.columns} paginated />
+    </>}
+    <div className="pagination" aria-label={`${title} pagination`}>
+      <button disabled={offset === 0 || query.isFetching} onClick={() => setOffset(Math.max(0, offset - limit))}>Previous page</button>
+      <button disabled={!page || page.offset + page.count >= page.total || query.isFetching} onClick={() => setOffset(offset + limit)}>Next page</button>
+    </div>
+  </section>;
 }
 function Backtest() {
   const run = useContext(RunContext);

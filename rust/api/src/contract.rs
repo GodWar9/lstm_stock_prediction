@@ -9,6 +9,8 @@ pub struct Provenance {
     pub data_version: String,
     pub model_artifact_id: String,
     pub source: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_snapshot: Option<SourceSnapshot>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
@@ -46,4 +48,12 @@ pub struct ModelArtifact {
     pub training_log: Option<serde_json::Value>,
     pub validation: Option<serde_json::Value>,
     pub onnx_present: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema)]
+pub struct SourceSnapshot {
+    pub git_commit: String,
+    pub working_tree_dirty: bool,
+    pub content_sha256: String,
+    pub file_count: usize,
 }

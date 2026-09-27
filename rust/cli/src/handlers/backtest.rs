@@ -128,6 +128,7 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
             .unwrap_or_else(|| "unknown".into());
         let provenance = Provenance {
             git_commit: git,
+            source_snapshot: Some(quant_api::provenance::snapshot(Path::new("."))?),
             config_hash: format!("{:x}", Sha256::digest(serde_json::to_vec(&cfg)?)),
             data_version: cfg.data.dataset_version.clone(),
             model_artifact_id: model.clone(),

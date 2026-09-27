@@ -120,6 +120,7 @@ export interface components {
             git_commit: string;
             model_artifact_id: string;
             source: string;
+            source_snapshot?: null | components["schemas"]["SourceSnapshot"];
         };
         RunManifest: {
             artifacts: {
@@ -139,6 +140,12 @@ export interface components {
             /** @description test, validation, train, or unverified. A label alone is not proof of OOS. */
             split: string;
             warnings: string[];
+        };
+        SourceSnapshot: {
+            content_sha256: string;
+            file_count: number;
+            git_commit: string;
+            working_tree_dirty: boolean;
         };
     };
     responses: never;
@@ -277,6 +284,8 @@ export interface operations {
                 max_points?: number;
                 asof?: number;
                 instrument?: string;
+                offset?: number;
+                limit?: number;
             };
             header?: never;
             path: {

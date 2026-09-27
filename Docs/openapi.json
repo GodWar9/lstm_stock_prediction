@@ -194,6 +194,24 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
           }
         ],
         "responses": {
@@ -299,6 +317,16 @@
           },
           "source": {
             "type": "string"
+          },
+          "source_snapshot": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SourceSnapshot"
+              }
+            ]
           }
         }
       },
@@ -375,6 +403,30 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "SourceSnapshot": {
+        "type": "object",
+        "required": [
+          "git_commit",
+          "working_tree_dirty",
+          "content_sha256",
+          "file_count"
+        ],
+        "properties": {
+          "content_sha256": {
+            "type": "string"
+          },
+          "file_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "git_commit": {
+            "type": "string"
+          },
+          "working_tree_dirty": {
+            "type": "boolean"
           }
         }
       }
