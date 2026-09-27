@@ -182,6 +182,30 @@ fn persisted_pipeline_training_prediction_backtest_simulation() {
         .expect("published run manifest");
     assert_eq!(manifest["split"], "test");
     assert_eq!(manifest["provenance"]["source"], "synthetic");
+    let report_json: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join(&report)).unwrap()).unwrap();
+    assert_eq!(
+        report_json["returns"].as_array().unwrap().len(),
+        report_json["benchmark_returns"].as_array().unwrap().len()
+    );
+    assert_eq!(report_json["benchmark_returns"][0], 0.0);
+    let run_dir = root
+        .join("reports/runs")
+        .join(manifest["run_id"].as_str().unwrap());
+    for capability in ["benchmark", "positions", "signal_outcomes", "risk"] {
+        assert!(manifest["capabilities"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|c| c == capability));
+        assert!(run_dir
+            .join(manifest["artifacts"][capability].as_str().unwrap())
+            .is_file());
+    }
+    let risk: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(run_dir.join("risk.json")).unwrap()).unwrap();
+    assert_eq!(risk["max_drawdown"], report_json["max_drawdown"]);
+    assert_eq!(risk["turnover"], report_json["turnover"]);
     // A byte-level change must fail before model loading, even if JSON remains valid.
     let scaler_path = model_dir.join("scaler.json");
     let mut scaler_bytes = std::fs::read(&scaler_path).unwrap();

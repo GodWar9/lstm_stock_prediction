@@ -46,6 +46,18 @@ pub struct BacktestReport {
     pub deflated_sharpe: f64,
     /// Detailed audit log of every simulated fill.
     pub trade_log: Vec<Fill>,
+    /// Position snapshots: (timestamp_nanos, quantity, market_value).
+    #[serde(default)]
+    pub positions_curve: Vec<(i64, f64, f64)>,
+    /// Benchmark equity curve: (timestamp_nanos, nav).
+    #[serde(default)]
+    pub benchmark_curve: Vec<(i64, f64)>,
+    /// Benchmark period returns.
+    #[serde(default)]
+    pub benchmark_returns: Vec<f64>,
+    /// Benchmark total return.
+    #[serde(default)]
+    pub benchmark_total_return: f64,
 }
 
 impl BacktestReport {
@@ -248,6 +260,25 @@ impl BacktestReport {
             losing_trades,
             deflated_sharpe,
             trade_log,
+            positions_curve: Vec::new(),
+            benchmark_curve: Vec::new(),
+            benchmark_returns: Vec::new(),
+            benchmark_total_return: 0.0,
         }
+    }
+
+    /// Attach benchmark and position histories to the computed report.
+    pub fn with_benchmark_and_positions(
+        mut self,
+        benchmark_curve: Vec<(i64, f64)>,
+        benchmark_returns: Vec<f64>,
+        benchmark_total_return: f64,
+        positions_curve: Vec<(i64, f64, f64)>,
+    ) -> Self {
+        self.benchmark_curve = benchmark_curve;
+        self.benchmark_returns = benchmark_returns;
+        self.benchmark_total_return = benchmark_total_return;
+        self.positions_curve = positions_curve;
+        self
     }
 }

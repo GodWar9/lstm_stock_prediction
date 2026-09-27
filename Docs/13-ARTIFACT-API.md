@@ -49,6 +49,9 @@ declared in the manifest; multi-instrument export needs a new schema version.
 | trades.arrow | timestamp_ms, fill_price, quantity, commission, slippage | UTC ms, currency/share, signed shares, currency, currency/share |
 | signals.arrow | timestamp_ms, expected_return, confidence | UTC ms, forward log return, fraction |
 | bands.arrow | step, p5, p50, p95 | bar index, account currency |
+| benchmark.arrow | timestamp_ms, nav, drawdown | UTC ms, account currency, fraction |
+| positions.arrow | timestamp_ms, quantity, market_value | UTC ms, shares, account currency |
+| signal_outcomes.arrow | timestamp_ms, prediction_timestamp_ms, expected_return, realized_return, residual | UTC ms, return, return, return |
 
 Series requests accept `max_points=32..100000` (default 2000). Bucket extrema
 selection preserves endpoints and value-column extrema. Downsampled trades are
@@ -63,7 +66,8 @@ endpoints are GET-only. JSON errors have `code` and `message`.
 
 - `/api/runs`, `/api/runs/{id}/manifest`
 - `/api/runs/{id}/equity.arrow`, `trades.arrow`, `signals.arrow`
-- `/api/runs/{id}/simulation/bands.arrow`, `simulation.json`
+- `/api/runs/{id}/benchmark.arrow`, `positions.arrow`, `signal_outcomes.arrow`
+- `/api/runs/{id}/simulation/bands.arrow`, `simulation.json`, `risk.json`
 - `/api/runs/{id}/validation`, `report.json`
 - `/api/models`, `/api/models/{id}`
 - `/api/openapi.json`
@@ -80,14 +84,19 @@ contract script regenerates TypeScript with openapi-typescript and checks drift.
 ## Validation and limitations
 
 Training records exact chronological train/validation/test windows, purge and
-embargo segments, scaler isolation, and measured PyTorch/ONNX Runtime parity.
-This is one holdout fold, not a claim of orchestrated rolling retraining.
+embargo segments, scaler isolation, measured PyTorch/ONNX Runtime parity, and
+supports orchestrated rolling walk-forward cross validation with per-fold models.
 The backend refuses split overlap, empty evaluation windows, mismatched dataset
 versions, and unavailable feature schemas. A local model-hash evaluation ledger
 requires explicit `--allow-reuse` to evaluate the same test split again.
 
 Simulation uses seeded stationary bootstrap with expected block length five.
 Pointwise NAV percentile bands are not forecast confidence intervals. Memory is
-bounded at five million path steps. Benchmark, cost sensitivity, position
-history, realized signal targets and regime artifacts are not yet persisted;
-the inspector must not invent them.
+bounded at five million path steps. Benchmark buy-and-hold equity, per-bar
+position histories, realized signal outcomes, and parametric risk reports (VaR,
+CVaR, beta, stress scenarios) are persisted as backend evidence and inspected with
+honest empty states for legacy runs.
+
+Signal outcome `timestamp_ms` is the target realization time; `prediction_timestamp_ms` is the signal time. Returns use the model target horizon and log-return transformation. As-of filtering uses realization time.
+
+Walk-forward packages retain sealed `folds/fold_N` models, validation evidence and held-out predictions. Root inference/replay uses the final fold only; `pooled_oos_metrics` summarizes prediction accuracy across folds, not trading performance.

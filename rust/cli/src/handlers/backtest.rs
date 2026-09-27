@@ -158,6 +158,88 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
                 ("confidence", signals.iter().map(|s| s.confidence).collect()),
             ])?,
         )?;
+
+        // Realized signal outcomes: compare expected return with subsequent bar return
+        let bar_map: std::collections::HashMap<i64, (usize, f64)> = bars
+            .iter()
+            .enumerate()
+            .map(|(i, b)| (b.timestamp.as_nanos(), (i, b.close)))
+            .collect();
+        let mut so_ts = Vec::new();
+        let mut so_prediction_ts = Vec::new();
+        let mut so_exp = Vec::new();
+        let mut so_real = Vec::new();
+        let mut so_res = Vec::new();
+
+        let metadata: serde_json::Value =
+            serde_json::from_slice(&fs::read(artifact_dir.join("metadata.json"))?)?;
+        let horizon = metadata["target_definition"]["horizon"]
+            .as_u64()
+            .context("Missing target horizon")? as usize;
+        for s in &signals {
+            if let Some(&(idx, current_close)) = bar_map.get(&s.as_of) {
+                if idx + horizon < bars.len() {
+                    let next_close = bars[idx + horizon].close;
+                    if current_close > 1e-8 {
+                        let realized = (next_close / current_close).ln();
+                        let residual = s.expected_return - realized;
+                        so_ts.push((bars[idx + horizon].timestamp.as_nanos() / 1_000_000) as f64);
+                        so_prediction_ts.push((s.as_of / 1_000_000) as f64);
+                        so_exp.push(s.expected_return);
+                        so_real.push(realized);
+                        so_res.push(residual);
+                    }
+                }
+            }
+        }
+
+        if !so_ts.is_empty() {
+            fs::write(
+                dir.join("signal_outcomes.arrow"),
+                arrow_bytes(&[
+                    ("timestamp_ms", so_ts),
+                    ("prediction_timestamp_ms", so_prediction_ts),
+                    ("expected_return", so_exp),
+                    ("realized_return", so_real),
+                    ("residual", so_res),
+                ])?,
+            )?;
+            manifest.capabilities.push("signal_outcomes".into());
+            manifest
+                .artifacts
+                .insert("signal_outcomes".into(), "signal_outcomes.arrow".into());
+        }
+
+        // Point-in-time portfolio risk evaluation
+        let mut risk_portfolio = quant_portfolio::Portfolio::new(cfg.backtest.initial_cash);
+        for fill in &report.trade_log {
+            risk_portfolio.apply_trade(
+                fill.instrument,
+                &fill.symbol,
+                fill.fill_price,
+                fill.fill_quantity,
+                fill.commission,
+            );
+        }
+        if let Some(last_bar) = bars.last() {
+            let mut last_prices = std::collections::HashMap::new();
+            last_prices.insert(InstrumentId(1), last_bar.close);
+            risk_portfolio.update_market_prices(&last_prices);
+        }
+        let mut risk_report = quant_risk::RiskEngine::new().evaluate(
+            &risk_portfolio,
+            &report.returns,
+            &report.benchmark_returns,
+        );
+        risk_report.max_drawdown = report.max_drawdown;
+        risk_report.turnover = report.turnover;
+        fs::write(
+            dir.join("risk.json"),
+            serde_json::to_vec_pretty(&risk_report)?,
+        )?;
+        manifest.capabilities.push("risk".into());
+        manifest.artifacts.insert("risk".into(), "risk.json".into());
+
         fs::write(
             dir.join("validation.json"),
             serde_json::to_vec_pretty(&validation)?,

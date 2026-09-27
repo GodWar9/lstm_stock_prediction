@@ -36,7 +36,7 @@ class WalkForwardCV:
             if test_start <= self.purge_gap:
                 continue
 
-            raw_train_end = test_start - self.purge_gap
+            raw_train_end = test_start - self.purge_gap - self.embargo_gap
 
             if self.expanding:
                 train_start = 0

@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "run_id": "c47dab5f-fe0a-41fd-85da-a54e951f7766",
+  "created_at": "2026-09-27T09:08:53.871218800+00:00",
+  "kind": "backtest",
+  "split": "test",
+  "provenance": {
+    "git_commit": "653adbd2eade5152d264c50153b50b840f63bc4c",
+    "config_hash": "09d37e89df8f1e22538f59727f4191e5697d826d03e0dd2d2ed1487eb867f5bf",
+    "data_version": "test_1790500120718267700",
+    "model_artifact_id": "test_1790500120718267700",
+    "source": "synthetic"
+  },
+  "instruments": [
+    {
+      "id": "AAPL",
+      "kind": "equity"
+    }
+  ],
+  "capabilities": [
+    "equity_curve",
+    "drawdown",
+    "trades",
+    "benchmark",
+    "positions",
+    "signal_outcomes",
+    "risk",
+    "signals",
+    "validation"
+  ],
+  "artifacts": {
+    "benchmark": "benchmark.arrow",
+    "equity": "equity.arrow",
+    "positions": "positions.arrow",
+    "report": "report.json",
+    "risk": "risk.json",
+    "signal_outcomes": "signal_outcomes.arrow",
+    "signals": "signals.arrow",
+    "trades": "trades.arrow",
+    "validation": "validation.json"
+  },
+  "metrics": {
+    "benchmark_total_return": -0.007046315571473096,
+    "final_nav": 100791.52610497872,
+    "hit_rate": 0.8333333333333334,
+    "max_drawdown": 0.014417922220442662,
+    "sharpe": -0.8700707873628741,
+    "sortino": -1.2306256060418521,
+    "total_return": 0.007915261049787223,
+    "turnover": 0.8513995188265759
+  },
+  "warnings": [
+    "Daily-bar annualization uses 252 periods per year. Deflated Sharpe is a heuristic, not a significance test.",
+    "Synthetic market data: these results do not demonstrate trading performance."
+  ]
+}

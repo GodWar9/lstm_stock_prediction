@@ -1,3 +1,26 @@
+# Current-product completion verification — 2026-09-27
+
+The resumed implementation passes 153 Rust tests (including documentation tests),
+42 Python tests, 4 frontend unit tests and 24 desktop/mobile Playwright checks.
+Rust formatting, workspace/all-target Clippy, generated API-contract checks and
+the production frontend build pass. Python reports 39 existing ONNX exporter,
+tracing and deprecation warnings.
+
+New regression coverage verifies three independently exported walk-forward folds,
+train-only scaler statistics, separated train/validation/test boundaries, embargo
+application, per-fold ONNX/tract parity, benchmark return alignment and the new
+benchmark/position/signal-outcome/risk artifacts. Browser fixtures include an actual
+synthetic CLI backtest. Desktop and mobile risk screenshots were visually checked.
+CI now builds the Rust verifier before running Python orchestration tests.
+
+Python execution, esbuild and browser launching required runs outside the Windows
+sandbox; the results above come from successful reruns. No remote CI result,
+live-market download, pooled walk-forward trading replay, live orders or performance
+SLA is claimed. Root walk-forward inference/replay uses the final fold, while pooled
+out-of-sample prediction metrics are saved separately.
+
+---
+
 # Verification report
 
 Verification date: 2026-09-26. Environment: Windows, Rust 1.96.0,

@@ -36,6 +36,10 @@ fn generate_mock_backtest_report(n_days: usize) -> BacktestReport {
         losing_trades: 21,
         deflated_sharpe: 1.35,
         trade_log: vec![],
+        positions_curve: vec![],
+        benchmark_curve: vec![],
+        benchmark_returns: vec![],
+        benchmark_total_return: 0.0,
     }
 }
 

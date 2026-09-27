@@ -169,6 +169,10 @@ async fn artifact(
         "validation",
         "simulation.json",
         "report.json",
+        "benchmark.arrow",
+        "positions.arrow",
+        "signal_outcomes.arrow",
+        "risk.json",
     ];
     if !allowed.contains(&name.as_str()) {
         return Err(error(

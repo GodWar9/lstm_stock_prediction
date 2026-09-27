@@ -99,8 +99,11 @@ the present IPC reader still allocates record-batch buffers.
 - ONNX export and measured parity against PyTorch on an evaluation window.
   The Python suite additionally tests several batch/sequence shapes.
 - `validation.json` records the actual split timeline and parity error. The
-  orchestrator performs **one chronological holdout**, not repeated rolling
-  walk-forward training. Walk-forward utilities exist separately.
+  orchestrator defaults to **one chronological holdout**. `train --walk-forward
+  --folds 3` retrains and exports every rolling fold with separate train-only
+  scaling, purged validation, embargo gaps and ONNX/tract parity. The root
+  model and replay periods refer to the final fold; pooled prediction metrics
+  are recorded separately and are not a pooled trading backtest.
 - Multi-horizon LSTM, multi-horizon loss, Sortino-aware loss, Sharpe-aware loss,
   conformal calibration and quantization are research modules. They are not
   selected automatically by the standard training CLI or single-head Rust
@@ -206,8 +209,12 @@ source labels and warnings remain visible. Missing capabilities have actionable
 empty states. Charts have tabular alternatives; layouts support mobile and
 keyboard navigation with reduced motion respected.
 
-Not yet exported: benchmark equity, per-bar positions, realized signal targets,
-calibration/rolling IC, cost sensitivity, regime breakdown and derivative Greeks.
+New backtests export buy-and-hold benchmark equity, per-bar positions, realized
+log-return signal outcomes and terminal portfolio risk/stress estimates. Signal
+outcomes are dated when their target becomes observable, so the as-of filter
+does not reveal future returns. Risk uses aligned strategy/benchmark returns.
+Not yet exported: calibration/rolling IC, cost sensitivity, regime breakdown
+and derivative Greeks (research extensions outside current-product scope).
 Their absence is visible instead of being fabricated in the browser.
 
 ## Verification

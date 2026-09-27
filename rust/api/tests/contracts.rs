@@ -98,3 +98,105 @@ async fn real_report_roundtrip_arrow_schema_and_errors() {
         .unwrap();
     assert_eq!(response.status(), 422);
 }
+
+#[tokio::test]
+async fn test_benchmark_positions_signal_outcomes_and_risk_endpoints() {
+    let temp = tempfile::tempdir().unwrap();
+    let report = BacktestReport::compute(
+        1000.0,
+        vec![
+            (0, 1000.0),
+            (86_400_000_000_000, 990.0),
+            (172_800_000_000_000, 1010.0),
+        ],
+        vec![],
+        0.0,
+        1,
+    )
+    .with_benchmark_and_positions(
+        vec![
+            (0, 1000.0),
+            (86_400_000_000_000, 1005.0),
+            (172_800_000_000_000, 1020.0),
+        ],
+        vec![0.005, 0.015],
+        0.02,
+        vec![
+            (0, 10.0, 1000.0),
+            (86_400_000_000_000, 10.0, 990.0),
+            (172_800_000_000_000, 10.0, 1010.0),
+        ],
+    );
+    let provenance = Provenance {
+        git_commit: "test".into(),
+        config_hash: "test".into(),
+        data_version: "fixture".into(),
+        model_artifact_id: "test".into(),
+        source: "synthetic".into(),
+    };
+    let mut m = publish_backtest(
+        &temp.path().join("reports/runs"),
+        &report,
+        provenance,
+        "TEST",
+        "test",
+    )
+    .unwrap();
+    let dir = temp.path().join("reports/runs").join(&m.run_id);
+
+    // Write signal_outcomes.arrow
+    let so_bytes = quant_api::artifacts::arrow_bytes(&[
+        ("timestamp_ms", vec![0.0, 86_400_000.0]),
+        ("expected_return", vec![0.01, 0.02]),
+        ("realized_return", vec![0.005, 0.015]),
+        ("residual", vec![0.005, 0.005]),
+    ])
+    .unwrap();
+    std::fs::write(dir.join("signal_outcomes.arrow"), so_bytes).unwrap();
+    m.capabilities.push("signal_outcomes".into());
+    m.artifacts
+        .insert("signal_outcomes".into(), "signal_outcomes.arrow".into());
+
+    // Write risk.json
+    let risk_json = serde_json::json!({
+        "var_95": 15.2,
+        "cvar_95": 22.1,
+        "volatility": 0.18,
+        "max_drawdown": 0.05,
+        "beta": 1.05,
+        "gross_exposure": 1.0,
+        "net_exposure": 1.0,
+        "turnover": 0.5,
+        "factor_exposure": {"market": 1.05},
+        "stress_scenarios": [{"scenario_name": "MarketCrash_10Pct", "estimated_pnl": -100.0, "estimated_pnl_pct": -0.10}]
+    });
+    std::fs::write(
+        dir.join("risk.json"),
+        serde_json::to_vec_pretty(&risk_json).unwrap(),
+    )
+    .unwrap();
+    m.capabilities.push("risk".into());
+    m.artifacts.insert("risk".into(), "risk.json".into());
+
+    write_manifest(&dir, &m).unwrap();
+
+    let app = router(temp.path().into());
+    for suffix in [
+        "benchmark.arrow",
+        "positions.arrow",
+        "signal_outcomes.arrow",
+        "risk.json",
+    ] {
+        let response = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .uri(format!("/api/runs/{}/{suffix}", m.run_id))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), 200, "Artifact {suffix} failed");
+    }
+}

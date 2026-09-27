@@ -1,0 +1,31 @@
+{
+  "var_95": 194.5346753391931,
+  "cvar_95": 277.1750597410988,
+  "volatility": 0.019508968434446165,
+  "max_drawdown": 0.014417922220442662,
+  "beta": 0.09671625017133109,
+  "gross_exposure": 0.0,
+  "net_exposure": 0.0,
+  "turnover": 0.8513995188265759,
+  "factor_exposure": {
+    "market": 0.09671625017133109,
+    "gross_leverage": 0.0
+  },
+  "stress_scenarios": [
+    {
+      "scenario_name": "MarketCrash_10Pct",
+      "estimated_pnl": -0.0,
+      "estimated_pnl_pct": -0.0
+    },
+    {
+      "scenario_name": "MarketRally_10Pct",
+      "estimated_pnl": 0.0,
+      "estimated_pnl_pct": 0.0
+    },
+    {
+      "scenario_name": "SevereCrisis_20Pct",
+      "estimated_pnl": -0.0,
+      "estimated_pnl_pct": -0.0
+    }
+  ]
+}

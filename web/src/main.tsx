@@ -69,7 +69,21 @@ function SeriesPanel({ capability, file, title, x, ys, time = false, params = ''
 function Backtest() {
   const run = useContext(RunContext);
   if (!run) return <NoRun />;
-  return <><PageTitle title="Backtest inspection">Prior-bar signals drive next-bar execution. Read the simulated fills alongside the account history.</PageTitle><SeriesPanel capability="equity_curve" file="equity.arrow" title="Equity curve · account currency" x="timestamp_ms" ys={['nav']} time /><SeriesPanel capability="drawdown" file="equity.arrow" title="Drawdown · fraction below peak" x="timestamp_ms" ys={['drawdown']} time /><SeriesPanel capability="trades" file="trades.arrow" title="Trade blotter · signed shares and currency" x="timestamp_ms" ys={[]} table /><p className="method-note">Benchmark, position history and cost sensitivity are not recorded by this pipeline. Use the original report for a complete, unsampled fill audit.</p></>;
+  return (
+    <>
+      <PageTitle title="Backtest inspection">
+        Prior-bar signals drive next-bar execution. Read the simulated fills alongside the account history.
+      </PageTitle>
+      <SeriesPanel capability="equity_curve" file="equity.arrow" title="Equity curve · account currency" x="timestamp_ms" ys={['nav']} time />
+      <SeriesPanel capability="benchmark" file="benchmark.arrow" title="Benchmark buy-and-hold · account currency" x="timestamp_ms" ys={['nav']} time />
+      <SeriesPanel capability="drawdown" file="equity.arrow" title="Drawdown · fraction below peak" x="timestamp_ms" ys={['drawdown']} time />
+      <SeriesPanel capability="positions" file="positions.arrow" title="Position history · shares" x="timestamp_ms" ys={['quantity']} time />
+      <SeriesPanel capability="trades" file="trades.arrow" title="Trade blotter · signed shares and currency" x="timestamp_ms" ys={[]} table />
+      {(!run.capabilities.includes('benchmark') || !run.capabilities.includes('positions')) && (
+        <p className="method-note">Legacy runs do not record benchmark or position history. Retrain and rerun to produce complete evidence.</p>
+      )}
+    </>
+  );
 }
 function Validation() {
   const run = useContext(RunContext);
@@ -109,18 +123,115 @@ function Signals() {
   if (!run) return <NoRun />;
   const timestamp = asof ? Date.parse(`${asof}T23:59:59Z`) : Date.now();
   const params = `&asof=${timestamp}&instrument=${encodeURIComponent(run.instruments[0]?.id ?? '')}`;
-  return <><PageTitle title="Signal inspection">Predictions available as of the selected UTC date. Expected returns are model outputs, not realized outcomes.</PageTitle><label className="asof">As of (UTC)<input type="date" value={asof} onChange={e => setAsof(e.target.value)} /></label><SeriesPanel capability="signals" file="signals.arrow" title="Expected forward log return" x="timestamp_ms" ys={['expected_return']} time params={params} /><SeriesPanel capability="signals" file="signals.arrow" title="Signal confidence · fraction" x="timestamp_ms" ys={['confidence']} time params={params} /><SeriesPanel capability="signals" file="signals.arrow" title="Signal observations" x="timestamp_ms" ys={[]} table params={params} /><p className="method-note">Realized targets, calibration and rolling IC are not exported yet. Confidence is a model signal score, not a calibrated probability.</p></>;
+  return (
+    <>
+      <PageTitle title="Signal inspection">
+        Predictions available as of the selected UTC date. Expected returns are model outputs, not realized outcomes.
+      </PageTitle>
+      <label className="asof">As of (UTC)<input type="date" value={asof} onChange={e => setAsof(e.target.value)} /></label>
+      <SeriesPanel capability="signals" file="signals.arrow" title="Expected forward log return" x="timestamp_ms" ys={['expected_return']} time params={params} />
+      <SeriesPanel capability="signals" file="signals.arrow" title="Signal confidence · fraction" x="timestamp_ms" ys={['confidence']} time params={params} />
+      <SeriesPanel capability="signals" file="signals.arrow" title="Signal observations" x="timestamp_ms" ys={[]} table params={params} />
+      <SeriesPanel capability="signal_outcomes" file="signal_outcomes.arrow" title="Signal outcomes · expected vs realized return" x="timestamp_ms" ys={['expected_return', 'realized_return']} time params={params} />
+      <SeriesPanel capability="signal_outcomes" file="signal_outcomes.arrow" title="Signal outcome table" x="timestamp_ms" ys={[]} table params={params} />
+      {!run.capabilities.includes('signal_outcomes') && (
+        <p className="method-note">Realized targets, calibration and rolling IC are not exported yet for legacy runs. Confidence is a model signal score, not a calibrated probability.</p>
+      )}
+    </>
+  );
 }
 function Risk() {
   const run = useContext(RunContext);
   const q = useQuery({ queryKey: ['simulation', run?.run_id], enabled: !!run?.capabilities.includes('monte_carlo'), queryFn: () => json<unknown>(`/api/runs/${run!.run_id}/simulation.json`) });
+  const riskQuery = useQuery({ queryKey: ['risk', run?.run_id], enabled: !!run?.capabilities.includes('risk'), queryFn: () => json<unknown>(`/api/runs/${run!.run_id}/risk.json`) });
   if (!run) return <NoRun />;
   const result = object(q.data);
-  return <><PageTitle title="Risk and simulation">Inspect a range of resampled outcomes. Bootstrap scenarios preserve short blocks of observed returns.</PageTitle><SeriesPanel capability="monte_carlo" file="simulation/bands.arrow" title="Portfolio scenarios · p5 / median / p95" x="step" ys={['p5', 'p50', 'p95']} />
-    {!run.capabilities.includes('monte_carlo') && <p className="method-note">Run <code>quantctl simulate --report reports/runs/{run.run_id}/report.json --paths 1000</code>, then include unverified runs and select the new simulation.</p>}
-    {q.error && <Notice title="Simulation summary unavailable" error>{q.error.message}</Notice>}
-    {q.data !== undefined && <section className="panel"><h2>Outcome distributions</h2><p>{String(result.num_paths)} paths. Probability of 50% drawdown: {typeof result.prob_of_ruin === 'number' ? percent(result.prob_of_ruin) : 'Not recorded'}.</p><table><thead><tr><th>Metric</th><th>5th percentile</th><th>Median</th><th>95th percentile</th></tr></thead><tbody>{['sharpe_distribution', 'drawdown_distribution', 'cagr_distribution'].map(key => { const d = object(result[key]); return <tr key={key}><td>{key.replaceAll('_', ' ')}</td>{['p5', 'p50', 'p95'].map(p => <td key={p}>{typeof d[p] === 'number' ? key === 'sharpe_distribution' ? number(d[p]) : percent(d[p]) : 'Not recorded'}</td>)}</tr>; })}</tbody></table></section>}
-  </>;
+  const riskData = object(riskQuery.data);
+  const stressScenarios = Array.isArray(riskData.stress_scenarios) ? riskData.stress_scenarios.map(object) : [];
+  const factorExposure = object(riskData.factor_exposure);
+
+  return (
+    <>
+      <PageTitle title="Risk and simulation">Inspect a range of resampled outcomes and point-in-time parametric risk metrics.</PageTitle>
+
+      {riskQuery.error && <Notice title="Risk report could not be loaded" error>{String(riskQuery.error)}</Notice>}
+      {run.capabilities.includes('risk') && (
+        <section className="panel">
+          <h2>Point-in-time risk evaluation</h2>
+          <div className="facts">
+            <div><span>VaR (95% 1-day)</span><strong>{typeof riskData.var_95 === 'number' ? number(riskData.var_95) : 'Not recorded'}</strong></div>
+            <div><span>CVaR (95% 1-day)</span><strong>{typeof riskData.cvar_95 === 'number' ? number(riskData.cvar_95) : 'Not recorded'}</strong></div>
+            <div><span>Realized Volatility (ann.)</span><strong>{typeof riskData.volatility === 'number' ? percent(riskData.volatility) : 'Not recorded'}</strong></div>
+            <div><span>Market Beta</span><strong>{typeof riskData.beta === 'number' ? number(riskData.beta) : 'Not recorded'}</strong></div>
+            <div><span>Gross Exposure</span><strong>{typeof riskData.gross_exposure === 'number' ? percent(riskData.gross_exposure) : 'Not recorded'}</strong></div>
+            <div><span>Net Exposure</span><strong>{typeof riskData.net_exposure === 'number' ? percent(riskData.net_exposure) : 'Not recorded'}</strong></div>
+          </div>
+          {stressScenarios.length > 0 && (
+            <>
+              <h3>Stress testing scenarios</h3>
+              <table>
+                <thead><tr><th>Scenario</th><th>Estimated PnL</th><th>Estimated Return</th></tr></thead>
+                <tbody>
+                  {stressScenarios.map((s, i) => (
+                    <tr key={i}>
+                      <td>{String(s.scenario_name)}</td>
+                      <td>{typeof s.estimated_pnl === 'number' ? number(s.estimated_pnl) : 'N/A'}</td>
+                      <td>{typeof s.estimated_pnl_pct === 'number' ? percent(s.estimated_pnl_pct) : 'N/A'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+          {Object.keys(factorExposure).length > 0 && (
+            <>
+              <h3>Factor exposures</h3>
+              <table>
+                <thead><tr><th>Factor</th><th>Exposure</th></tr></thead>
+                <tbody>
+                  {Object.entries(factorExposure).map(([k, v]) => (
+                    <tr key={k}><td>{k}</td><td>{typeof v === 'number' ? number(v) : String(v)}</td></tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+        </section>
+      )}
+
+      {!run.capabilities.includes('risk') && (
+        <Notice title="Point-in-time risk evaluation is not recorded">
+          Legacy runs do not include point-in-time parametric risk reports. Re-run backtest to generate risk metrics.
+        </Notice>
+      )}
+
+      <SeriesPanel capability="monte_carlo" file="simulation/bands.arrow" title="Portfolio scenarios · p5 / median / p95" x="step" ys={['p5', 'p50', 'p95']} />
+      {!run.capabilities.includes('monte_carlo') && <p className="method-note">Run <code>quantctl simulate --report reports/runs/{run.run_id}/report.json --paths 1000</code>, then include unverified runs and select the new simulation.</p>}
+      {q.error && <Notice title="Simulation summary unavailable" error>{q.error.message}</Notice>}
+      {q.data !== undefined && (
+        <section className="panel">
+          <h2>Outcome distributions</h2>
+          <p>{String(result.num_paths)} paths. Probability of 50% drawdown: {typeof result.prob_of_ruin === 'number' ? percent(result.prob_of_ruin) : 'Not recorded'}.</p>
+          <table>
+            <thead><tr><th>Metric</th><th>5th percentile</th><th>Median</th><th>95th percentile</th></tr></thead>
+            <tbody>
+              {['sharpe_distribution', 'drawdown_distribution', 'cagr_distribution'].map(key => {
+                const d = object(result[key]);
+                return (
+                  <tr key={key}>
+                    <td>{key.replaceAll('_', ' ')}</td>
+                    {['p5', 'p50', 'p95'].map(p => (
+                      <td key={p}>{typeof d[p] === 'number' ? key === 'sharpe_distribution' ? number(d[p]) : percent(d[p]) : 'Not recorded'}</td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </section>
+      )}
+    </>
+  );
 }
 function Jobs() {
   const q = useQuery({ queryKey: ['runs'], queryFn: () => json<Run[]>('/api/runs'), staleTime: 0 });

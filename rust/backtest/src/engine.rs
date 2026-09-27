@@ -95,15 +95,38 @@ impl BacktestEngine {
         let mut portfolio = Portfolio::new(self.config.initial_cash);
         let mut equity_curve = Vec::with_capacity(bars.len() + 1);
         let mut trade_log = Vec::new();
+        let mut positions_curve = Vec::with_capacity(bars.len());
+        let mut benchmark_curve = Vec::with_capacity(bars.len() + 1);
+        let mut benchmark_returns = Vec::with_capacity(bars.len());
 
         let initial_ts = bars[0].timestamp.as_nanos();
         equity_curve.push((initial_ts.saturating_sub(1), portfolio.nav()));
+        benchmark_curve.push((initial_ts.saturating_sub(1), self.config.initial_cash));
+
+        let benchmark_shares = if bars[0].close > 1e-8 {
+            self.config.initial_cash / bars[0].close
+        } else {
+            0.0
+        };
 
         let mut prices = HashMap::new();
 
         for (index, bar) in bars.iter().enumerate() {
             let ts = bar.timestamp.as_nanos();
             prices.insert(instrument, bar.close);
+
+            let b_nav = benchmark_shares * bar.close;
+            benchmark_curve.push((ts, b_nav));
+            if index == 0 {
+                benchmark_returns.push(0.0);
+            } else {
+                let prev_close = bars[index - 1].close;
+                if prev_close > 1e-8 {
+                    benchmark_returns.push((bar.close - prev_close) / prev_close);
+                } else {
+                    benchmark_returns.push(0.0);
+                }
+            }
 
             // Step A: Mark-to-market portfolio with current close
             portfolio.update_market_prices(&prices);
@@ -149,10 +172,24 @@ impl BacktestEngine {
                 }
             }
 
-            // Step F: Record NAV point
+            // Step F: Record NAV point and position snapshot
             portfolio.update_market_prices(&prices);
             equity_curve.push((ts, portfolio.nav()));
+            let recorded_qty = portfolio
+                .positions
+                .get(&instrument)
+                .map(|p| p.quantity)
+                .unwrap_or(0.0);
+            positions_curve.push((ts, recorded_qty, recorded_qty * bar.close));
         }
+
+        let benchmark_total_return =
+            if self.config.initial_cash > 1e-8 && !benchmark_curve.is_empty() {
+                (benchmark_curve.last().unwrap().1 - self.config.initial_cash)
+                    / self.config.initial_cash
+            } else {
+                0.0
+            };
 
         let report = BacktestReport::compute(
             self.config.initial_cash,
@@ -160,6 +197,12 @@ impl BacktestEngine {
             trade_log,
             self.config.risk_free_rate,
             self.config.num_prior_trials,
+        )
+        .with_benchmark_and_positions(
+            benchmark_curve,
+            benchmark_returns,
+            benchmark_total_return,
+            positions_curve,
         );
 
         Ok(report)

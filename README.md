@@ -98,6 +98,10 @@ Compare benchmarks on the same machine and workload. Compilation and smoke tests
 
 ## Scope
 
-Advanced libraries such as multi-horizon training, conformal calibration, Kelly/sector-neutral optimization, nonlinear impact, regime overlays and derivatives are not all selected by the default CLI. Rolling retraining, full multi-asset replay and additional inspector datasets remain future work. The capability guide distinguishes operational integration from library availability and lists statistical limitations.
+Advanced libraries such as multi-horizon training, conformal calibration, Kelly/sector-neutral optimization, nonlinear impact, regime overlays and derivatives are not all selected by the default CLI. Full multi-asset replay and research inspector datasets remain future work. The capability guide distinguishes operational integration from library availability and lists statistical limitations.
 
 License: MIT OR Apache-2.0.
+
+## Rolling evaluation
+
+Use `quantctl --config configs/demo.yaml train --walk-forward --folds 3` with a new model ID and enough rows for every train/validation/test window. Each fold has an exported model and Rust parity evidence. The root model is the last fold; `backtest run` replays that fold, while pooled prediction metrics are recorded separately in `validation.json`. New backtests also supply benchmark, positions, realized signal outcomes and terminal risk evidence to the inspector.

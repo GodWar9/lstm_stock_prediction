@@ -139,6 +139,14 @@ pub struct TrainArgs {
     /// Use deterministic synthetic data for development smoke tests
     #[arg(long)]
     pub synthetic: bool,
+
+    /// Enable rolling walk-forward cross-validation with per-fold models
+    #[arg(long)]
+    pub walk_forward: bool,
+
+    /// Number of folds for rolling walk-forward CV
+    #[arg(long, default_value = "5")]
+    pub folds: usize,
 }
 
 #[derive(Args, Debug)]

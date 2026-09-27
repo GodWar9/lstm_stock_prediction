@@ -95,6 +95,11 @@ jobs:
         working-directory: python
         run: uv sync
 
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Rust parity verifier
+        run: cargo build --manifest-path rust/Cargo.toml --bin quantctl --locked
+
       - name: Run pytest suite
         working-directory: python
         run: uv run pytest tests -v

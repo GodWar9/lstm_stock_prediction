@@ -259,6 +259,10 @@ mod tests {
             losing_trades: 3,
             deflated_sharpe: 1.3,
             trade_log: Vec::new(),
+            positions_curve: Vec::new(),
+            benchmark_curve: Vec::new(),
+            benchmark_returns: Vec::new(),
+            benchmark_total_return: 0.0,
         };
 
         let resampler = MonteCarloResampler::new(42);

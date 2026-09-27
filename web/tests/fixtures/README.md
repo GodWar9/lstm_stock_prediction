@@ -11,3 +11,5 @@ that the fixture registry contains metadata without deployable weights.
 
 Browser tests copy these outputs into a temporary local workspace and start
 the actual Rust server. Only empty/error state tests intercept API responses.
+
+The `c47dab5f-fe0a-41fd-85da-a54e951f7766` run and matching `test_1790500120718267700` model metadata were captured from the synthetic CLI integration test on 2026-09-27. They cover benchmark, positions, realized log-return outcomes and terminal risk. Model binaries and local test logs are omitted.

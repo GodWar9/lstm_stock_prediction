@@ -1821,6 +1821,7 @@ dependencies = [
  "quant_inference",
  "quant_instruments",
  "quant_portfolio",
+ "quant_risk",
  "quant_signals",
  "quant_simulation",
  "serde_json",

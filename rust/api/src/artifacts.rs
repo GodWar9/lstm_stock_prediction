@@ -128,6 +128,77 @@ pub fn publish_backtest(
     manifest
         .artifacts
         .insert("report".into(), "report.json".into());
+
+    if !report.benchmark_curve.is_empty() {
+        let mut b_peak = report.initial_cash;
+        let b_drawdown: Vec<f64> = report
+            .benchmark_curve
+            .iter()
+            .map(|(_, nav)| {
+                b_peak = b_peak.max(*nav);
+                if b_peak > 0.0 {
+                    (b_peak - nav) / b_peak
+                } else {
+                    0.0
+                }
+            })
+            .collect();
+        fs::write(
+            dir.join("benchmark.arrow"),
+            arrow_bytes(&[
+                (
+                    "timestamp_ms",
+                    report
+                        .benchmark_curve
+                        .iter()
+                        .map(|(ts, _)| (*ts / 1_000_000) as f64)
+                        .collect(),
+                ),
+                (
+                    "nav",
+                    report.benchmark_curve.iter().map(|(_, nav)| *nav).collect(),
+                ),
+                ("drawdown", b_drawdown),
+            ])?,
+        )?;
+        manifest.capabilities.push("benchmark".into());
+        manifest
+            .artifacts
+            .insert("benchmark".into(), "benchmark.arrow".into());
+        manifest.metrics.insert(
+            "benchmark_total_return".into(),
+            report.benchmark_total_return,
+        );
+    }
+
+    if !report.positions_curve.is_empty() {
+        fs::write(
+            dir.join("positions.arrow"),
+            arrow_bytes(&[
+                (
+                    "timestamp_ms",
+                    report
+                        .positions_curve
+                        .iter()
+                        .map(|(ts, _, _)| (*ts / 1_000_000) as f64)
+                        .collect(),
+                ),
+                (
+                    "quantity",
+                    report.positions_curve.iter().map(|(_, q, _)| *q).collect(),
+                ),
+                (
+                    "market_value",
+                    report.positions_curve.iter().map(|(_, _, v)| *v).collect(),
+                ),
+            ])?,
+        )?;
+        manifest.capabilities.push("positions".into());
+        manifest
+            .artifacts
+            .insert("positions".into(), "positions.arrow".into());
+    }
+
     Ok(manifest)
 }
 

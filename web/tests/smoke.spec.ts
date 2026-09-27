@@ -54,3 +54,22 @@ test('captures chart timing and workspace appearance', async ({ page, request },
   await testInfo.attach('chart-performance', { body: JSON.stringify({ payload_bytes: bytes, navigation_to_first_chart_ms: elapsed, run_id: run.run_id }), contentType: 'application/json' });
   await page.screenshot({ path: testInfo.outputPath('backtest.png'), fullPage: true });
 });
+
+test('new runs expose benchmark, positions, signal outcomes and risk', async ({ page, request }, testInfo) => {
+  const runs = await (await request.get('/api/runs')).json();
+  const run = runs.find((r: { capabilities: string[] }) => r.capabilities.includes('risk'));
+  expect(run).toBeTruthy();
+  await page.goto(`/backtest?run=${run.run_id}`);
+  await expect(page.getByRole('heading', { name: 'Benchmark buy-and-hold · account currency' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Position history · shares' })).toBeVisible();
+  await expect(page.locator('canvas')).toHaveCount(4);
+  await page.goto(`/signals?run=${run.run_id}`);
+  await expect(page.getByRole('heading', { name: 'Signal outcomes · expected vs realized return' })).toBeVisible();
+  await expect(page.locator('canvas')).toHaveCount(3);
+  await page.goto(`/risk?run=${run.run_id}`);
+  await expect(page.getByRole('heading', { name: 'Point-in-time risk evaluation' })).toBeVisible();
+  await expect(page.getByText('MarketCrash_10Pct', { exact: true })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('risk-evidence.png'), fullPage: true });
+  await expect(page.getByRole('alert')).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+});

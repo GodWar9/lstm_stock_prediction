@@ -88,6 +88,11 @@ pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
     if args.synthetic {
         cmd.arg("--synthetic");
     }
+    if args.walk_forward {
+        cmd.arg("--walk-forward")
+            .arg("--folds")
+            .arg(args.folds.to_string());
+    }
 
     if work_dir.exists() && work_dir != Path::new("") {
         cmd.current_dir(&work_dir);

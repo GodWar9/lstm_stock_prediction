@@ -1,6 +1,7 @@
 """Training orchestrator CLI called by Rust quantctl platform."""
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -43,6 +44,17 @@ def parse_args():
         "--synthetic",
         action="store_true",
         help="Use deterministic synthetic data when no Arrow dataset is available",
+    )
+    parser.add_argument(
+        "--walk-forward",
+        action="store_true",
+        help="Enable rolling walk-forward cross validation with per-fold models",
+    )
+    parser.add_argument(
+        "--folds",
+        type=int,
+        default=None,
+        help="Number of folds for rolling walk-forward CV",
     )
     return parser.parse_args()
 
@@ -156,12 +168,60 @@ def train_and_export(args, cfg, model_id, stage):
     ) = load_training_arrays(args, cfg, lookback)
     n_samples, n_features = raw_features.shape
 
+    purge_gap = max(target_horizon, train_cfg.get("purge_gap", 5))
+    embargo_gap = train_cfg.get("embargo_gap", 10)
+    is_walk_forward = getattr(args, "walk_forward", False) or train_cfg.get("walk_forward", False)
+
+    if is_walk_forward and not hasattr(args, "_indices"):
+        import copy
+        import shutil
+        from python.ml.walk_forward import WalkForwardCV
+        from python.ml.publication import REQUIRED_FILES
+        n_splits = getattr(args, "folds", None) or train_cfg.get("n_folds", 5)
+        folds = list(WalkForwardCV(n_splits=n_splits, purge_gap=purge_gap,
+                                  embargo_gap=embargo_gap, expanding=False).split(n_samples))
+        if len(folds) != n_splits:
+            raise ValueError("Dataset cannot produce the requested walk-forward folds")
+        folds_info, all_preds, all_targets = [], [], []
+        for number, (development, test) in enumerate(folds, 1):
+            boundary = int(len(development) * 0.85)
+            train = development[:max(0, boundary - purge_gap)]
+            val = development[boundary + embargo_gap:]
+            fold_args = copy.copy(args)
+            fold_args._indices = (train, val, test)
+            fold_id = f"fold_{number}"
+            with staged_model(Path(stage) / "folds", fold_id) as fold_stage:
+                report = train_and_export(fold_args, cfg, fold_id, fold_stage)
+            fold_dir = Path(stage) / "folds" / fold_id
+            validation = json.loads((fold_dir / "validation.json").read_text())
+            outcomes = json.loads((fold_dir / "oos_predictions.json").read_text())
+            all_preds.extend(outcomes["predictions"])
+            all_targets.extend(outcomes["targets"])
+            folds_info.append({"fold": number, "artifact_dir": f"folds/{fold_id}",
+                               "segments": validation["folds"][0]["segments"],
+                               "metrics": report["metrics"],
+                               "integrity_sha256": hashlib.sha256((fold_dir / "integrity.json").read_bytes()).hexdigest()})
+        for name in (*REQUIRED_FILES, "oos_predictions.json"):
+            shutil.copyfile(fold_dir / name, Path(stage) / name)
+        metadata_path = Path(stage) / "metadata.json"
+        metadata = json.loads(metadata_path.read_text())
+        metadata["model_id"] = model_id
+        metadata_path.write_text(json.dumps(metadata, indent=2))
+        validation["folds"] = folds_info
+        validation["evaluation"] = "rolling walk-forward; root model and periods are the final fold"
+        validation["pooled_oos_metrics"] = compute_metrics(np.array(all_preds), np.array(all_targets))
+        (Path(stage) / "validation.json").write_text(json.dumps(validation, indent=2))
+        report.update(model_id=model_id, artifact_dir=f"models/{model_id}",
+                      onnx_artifact=f"models/{model_id}/model.onnx",
+                      pooled_oos_metrics=validation["pooled_oos_metrics"])
+        return report
+
     # Split dataset with purge and embargo
     splitter = PurgedWalkForwardSplitter(
-        purge_bars=max(target_horizon, train_cfg.get("purge_gap", 5)),
-        embargo_bars=train_cfg.get("embargo_gap", 10),
+        purge_bars=purge_gap,
+        embargo_bars=embargo_gap,
     )
-    train_idx, val_idx, test_idx = splitter.split_train_test(n_samples, train_ratio=0.7, val_ratio=0.15)
+    train_idx, val_idx, test_idx = getattr(args, "_indices", None) or splitter.split_train_test(n_samples, train_ratio=0.7, val_ratio=0.15)
 
     for name, indices in [("train", train_idx), ("validation", val_idx), ("test", test_idx)]:
         if len(indices) < lookback + 1:
@@ -243,25 +303,28 @@ def train_and_export(args, cfg, model_id, stage):
         raise ValueError(f"ONNX parity failed: {parity_error}")
     periods = {name: [str(timestamps[idx[lookback-1]]), str(target_timestamps[idx[-1]])]
                for name, idx in [("train", train_idx), ("validation", val_idx), ("test", test_idx)]}
+
     segments = []
-    n_train_raw = int(n_samples * 0.7)
-    n_val_end = n_train_raw + int(n_samples * 0.15)
-    for name, begin, end in [("train", 0, int(train_idx[-1])+1),
-                             ("purge", int(train_idx[-1])+1, n_train_raw),
-                             ("embargo", n_train_raw, int(val_idx[0])),
+    for name, begin, end in [("train", int(train_idx[0]), int(train_idx[-1])+1),
+                             ("purge", int(train_idx[-1])+1, int(val_idx[0])-embargo_gap),
+                             ("embargo", int(val_idx[0])-embargo_gap, int(val_idx[0])),
                              ("validation", int(val_idx[0]), int(val_idx[-1])+1),
-                             ("purge", int(val_idx[-1])+1, n_val_end),
-                             ("embargo", n_val_end, int(test_idx[0])),
-                             ("test", int(test_idx[0]), n_samples)]:
-        segments.append({"kind": name, "start_row": begin, "end_row": end,
-                         "start_ms": int(timestamps[min(begin, n_samples-1)]) // 1000000,
-                         "end_ms": int(timestamps[min(max(begin, end-1), n_samples-1)]) // 1000000})
+                             ("purge", int(val_idx[-1])+1, int(test_idx[0])-embargo_gap),
+                             ("embargo", int(test_idx[0])-embargo_gap, int(test_idx[0])),
+                             ("test", int(test_idx[0]), int(test_idx[-1])+1)]:
+        if end > begin:
+            segments.append({"kind": name, "start_row": begin, "end_row": end,
+                             "start_ms": int(timestamps[begin]) // 1000000,
+                             "end_ms": int(timestamps[end-1]) // 1000000})
+    folds_data = [{"fold": 1, "segments": segments}]
+    eval_desc = "single chronological holdout"
+
     validation = {"schema_version": 1, "data_version": cfg.get("data", {}).get("dataset_version", "unknown"),
                   "data_integrity": data_integrity, "timestamp_unit": "nanoseconds", "periods": periods, "pit_passed": True,
-                  "scaler_train_only": True, "purge_bars": splitter.purge_bars,
-                  "embargo_bars": splitter.embargo_bars, "folds": [{"fold": 1, "segments": segments}],
+                  "scaler_train_only": True, "purge_bars": purge_gap,
+                  "embargo_bars": embargo_gap, "folds": folds_data,
                   "onnx_parity": {"passed": True, "max_abs_error": parity_error, "tolerance": 1e-5},
-                  "evaluation": "single chronological holdout; rolling walk-forward retraining is not orchestrated"}
+                  "evaluation": eval_desc}
     with open(os.path.join(onnx_out_dir, "validation.json"), "w") as output:
         json.dump(validation, output, indent=2)
     meta_path = os.path.join(onnx_out_dir, "metadata.json")
@@ -290,6 +353,14 @@ def train_and_export(args, cfg, model_id, stage):
     validation["runtime_parity"].update(json.loads(check.stdout.strip().splitlines()[-1]))
     with open(os.path.join(onnx_out_dir, "validation.json"), "w") as output:
         json.dump(validation, output, indent=2)
+    outcomes_path = Path(stage) / "oos_predictions.json"
+    outcomes_path.write_text(json.dumps({
+        "predictions": preds.reshape(-1).astype(float).tolist(),
+        "targets": y_te.reshape(-1).astype(float).tolist(),
+        "timestamps": [str(t) for t in timestamps[test_idx][lookback-1:]],
+    }))
+    validation["oos_predictions_sha256"] = hashlib.sha256(outcomes_path.read_bytes()).hexdigest()
+    (Path(stage) / "validation.json").write_text(json.dumps(validation, indent=2))
     published_dir = os.path.join("models", model_id)
     onnx_path = os.path.join(published_dir, "model.onnx")
 
