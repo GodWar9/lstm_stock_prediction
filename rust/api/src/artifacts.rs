@@ -46,12 +46,15 @@ pub fn publish_backtest(
         instruments: vec![Instrument { id: symbol.into(), kind: "equity".into() }],
         capabilities: vec!["equity_curve".into(), "drawdown".into(), "trades".into()],
         artifacts: BTreeMap::new(),
-        metrics: BTreeMap::from([("sharpe".into(), report.sharpe), ("sortino".into(), report.sortino),
+        metrics: BTreeMap::from([("periods_per_year".into(), report.periods_per_year), ("sharpe".into(), report.sharpe), ("sortino".into(), report.sortino),
             ("max_drawdown".into(), report.max_drawdown), ("total_return".into(), report.total_return_pct),
             ("turnover".into(), report.turnover), ("hit_rate".into(), report.hit_rate), ("final_nav".into(), report.final_nav)]),
-        warnings: vec!["Daily-bar annualization uses 252 periods per year. Deflated Sharpe is a heuristic, not a significance test.".into()],
+        warnings: vec![format!("Annualization uses {} periods per year. VaR/CVaR use one bar. Deflated Sharpe is a heuristic, not a significance test.", report.periods_per_year)],
     };
-    if manifest.provenance.source == "synthetic" {
+    if report.returns.len() as f64 / report.periods_per_year <= 0.05 {
+        manifest.warnings.push("Sample shorter than 0.05 trading years: CAGR fields show unannualized total return. Annualized Sharpe/volatility are especially unstable on short samples.".into());
+    }
+    if manifest.provenance.source.starts_with("synthetic") {
         manifest.warnings.push(
             "Synthetic market data: these results do not demonstrate trading performance.".into(),
         );

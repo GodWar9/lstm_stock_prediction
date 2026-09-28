@@ -21,6 +21,9 @@ fn default_env() -> String {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DataConfig {
+    /// Supported research cadence: daily bars or regular-session one-minute bars.
+    #[serde(default = "default_bar_interval")]
+    pub bar_interval: String,
     pub symbols: Vec<String>,
     pub start_date: String,
     pub end_date: String,
@@ -254,4 +257,17 @@ fn default_initial_cash() -> f64 {
 
 fn default_risk_free_rate() -> f64 {
     0.04
+}
+
+pub fn default_bar_interval() -> String {
+    "1d".into()
+}
+impl DataConfig {
+    pub fn periods_per_year(&self) -> f64 {
+        if self.bar_interval == "1m" {
+            252.0 * 390.0
+        } else {
+            252.0
+        }
+    }
 }

@@ -15,6 +15,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["health"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/live": {
         parameters: {
             query?: never;
@@ -39,6 +55,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["live_events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/live/ready": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["live_ready"];
         put?: never;
         post?: never;
         delete?: never;
@@ -139,6 +171,14 @@ export interface components {
             id: string;
             kind: string;
         };
+        LiveHealth: {
+            capture_ready: boolean;
+            /** Format: int64 */
+            durable_seq: number;
+            fresh_symbols: string[];
+            stale_or_waiting_symbols: string[];
+            status: string;
+        };
         ModelArtifact: {
             artifact_id: string;
             metadata: unknown;
@@ -184,8 +224,16 @@ export interface components {
             warnings: string[];
         };
         Snapshot: {
+            /** Format: int64 */
+            connection_attempts: number;
+            /** Format: int64 */
+            durable_seq: number;
             feed: string;
             journal?: string | null;
+            /** Format: int64 */
+            journal_bytes: number;
+            /** Format: int64 */
+            last_message_at_ms?: number | null;
             message: string;
             prices: {
                 [key: string]: components["schemas"]["Price"];
@@ -232,6 +280,24 @@ export interface operations {
             };
         };
     };
+    health: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description HTTP process liveness only */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     live_snapshot: {
         parameters: {
             query?: never;
@@ -266,6 +332,33 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    live_ready: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LiveHealth"];
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LiveHealth"];
+                };
             };
         };
     };

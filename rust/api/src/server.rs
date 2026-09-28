@@ -20,7 +20,10 @@ use std::{
     fs,
     io::{Cursor, Read},
     path::{Path as FsPath, PathBuf},
-    sync::Arc,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
     time::Duration,
 };
 use tokio_stream::StreamExt;
@@ -31,6 +34,7 @@ pub struct AppState {
     root: PathBuf,
     workers: Arc<tokio::sync::Semaphore>,
     live: crate::live::Live,
+    shutdown: Arc<AtomicBool>,
 }
 
 const MAX_ARTIFACT_BYTES: u64 = 64 * 1024 * 1024;
@@ -518,8 +522,10 @@ async fn model(
 async fn events(
     State(s): State<AppState>,
 ) -> Sse<impl tokio_stream::Stream<Item = Result<Event, Infallible>>> {
+    let shutdown = s.shutdown.clone();
     let stream =
         tokio_stream::wrappers::IntervalStream::new(tokio::time::interval(Duration::from_secs(3)))
+            .take_while(move |_| !shutdown.load(Ordering::Relaxed))
             .then(move |_| {
                 let state = s.clone();
                 async move {
@@ -598,12 +604,67 @@ async fn live_snapshot(State(s): State<AppState>) -> Json<crate::live::Snapshot>
     Json(snapshot)
 }
 
+#[derive(serde::Serialize, utoipa::ToSchema)]
+struct LiveHealth {
+    capture_ready: bool,
+    status: String,
+    fresh_symbols: Vec<String>,
+    stale_or_waiting_symbols: Vec<String>,
+    durable_seq: u64,
+}
+#[utoipa::path(get, path = "/api/health", responses((status = 200, description = "HTTP process liveness only")))]
+async fn health() -> Json<serde_json::Value> {
+    Json(serde_json::json!({"status":"alive"}))
+}
+#[utoipa::path(get, path = "/api/live/ready", responses((status = 200, body = LiveHealth), (status = 503, body = LiveHealth)))]
+async fn live_ready(State(s): State<AppState>) -> (StatusCode, Json<LiveHealth>) {
+    let state = s.live.read().await;
+    let now = chrono::Utc::now().timestamp_millis();
+    let ready = !s.shutdown.load(Ordering::Relaxed)
+        && state.status == "connected"
+        && state.durable_seq > 0
+        && state
+            .last_message_at_ms
+            .is_some_and(|t| (0..=60_000).contains(&(now - t)));
+    let mut fresh = Vec::new();
+    let mut stale = Vec::new();
+    for symbol in &state.symbols {
+        let is_fresh = ready
+            && state.prices.get(symbol).is_some_and(|price| {
+                (0..=30_000).contains(&(now - price.received_at_ms))
+                    && chrono::DateTime::parse_from_rfc3339(&price.exchange_timestamp)
+                        .is_ok_and(|t| (0..=30_000).contains(&(now - t.timestamp_millis())))
+            });
+        if is_fresh {
+            fresh.push(symbol.clone())
+        } else {
+            stale.push(symbol.clone())
+        }
+    }
+    (
+        if ready {
+            StatusCode::OK
+        } else {
+            StatusCode::SERVICE_UNAVAILABLE
+        },
+        Json(LiveHealth {
+            capture_ready: ready,
+            status: state.status.clone(),
+            fresh_symbols: fresh,
+            stale_or_waiting_symbols: stale,
+            durable_seq: state.durable_seq,
+        }),
+    )
+}
+
 #[utoipa::path(get, path = "/api/live/events", responses((status = 200, description = "SSE live snapshots, at most once per second; not a tick replay stream")))]
 async fn live_events(
     State(s): State<AppState>,
 ) -> Sse<impl tokio_stream::Stream<Item = Result<Event, Infallible>>> {
+    let shutdown = s.shutdown.clone();
     let stream =
         tokio_stream::wrappers::IntervalStream::new(tokio::time::interval(Duration::from_secs(1)))
+            .take_while(move |_| !shutdown.load(Ordering::Relaxed))
             .then(move |_| {
                 let state = s.clone();
                 async move {
@@ -626,7 +687,9 @@ async fn live_events(
         model,
         events,
         live_snapshot,
-        live_events
+        live_events,
+        health,
+        live_ready
     ),
     components(schemas(
         RunManifest,
@@ -636,7 +699,8 @@ async fn live_events(
         ApiError,
         ModelArtifact,
         crate::live::Snapshot,
-        crate::live::Price
+        crate::live::Price,
+        LiveHealth
     ))
 )]
 struct ApiDoc;
@@ -650,7 +714,16 @@ pub fn router(root: PathBuf) -> Router {
     router_with_live(root, crate::live::disabled())
 }
 fn router_with_live(root: PathBuf, live: crate::live::Live) -> Router {
+    router_with_shutdown(root, live, Arc::new(AtomicBool::new(false)))
+}
+fn router_with_shutdown(
+    root: PathBuf,
+    live: crate::live::Live,
+    shutdown: Arc<AtomicBool>,
+) -> Router {
     Router::new()
+        .route("/api/health", get(health))
+        .route("/api/live/ready", get(live_ready))
         .route("/api/live", get(live_snapshot))
         .route("/api/live/events", get(live_events))
         .route("/api/runs", get(runs))
@@ -668,6 +741,7 @@ fn router_with_live(root: PathBuf, live: crate::live::Live) -> Router {
         .with_state(AppState {
             root,
             live,
+            shutdown,
             workers: Arc::new(tokio::sync::Semaphore::new(4)),
         })
 }
@@ -694,27 +768,133 @@ async fn local_only(request: axum::extract::Request, next: axum::middleware::Nex
         .headers_mut()
         .insert(header::REFERRER_POLICY, "no-referrer".parse().unwrap());
     response
+        .headers_mut()
+        .entry(header::CACHE_CONTROL)
+        .or_insert("no-store".parse().unwrap());
+    response
 }
 pub async fn serve(root: PathBuf, port: u16) -> anyhow::Result<()> {
     let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, port)).await?;
     let (live, task) = crate::live::start(&root).await;
     println!("Research inspector: http://{}", listener.local_addr()?);
-    let result = axum::serve(listener, router_with_live(root, live))
-        .with_graceful_shutdown(async {
-            let _ = tokio::signal::ctrl_c().await;
+    let shutdown = Arc::new(AtomicBool::new(false));
+    let result = axum::serve(listener, router_with_shutdown(root, live, shutdown.clone()))
+        .with_graceful_shutdown(async move {
+            shutdown_signal().await;
+            shutdown.store(true, Ordering::Relaxed);
+            if let Some(task) = task {
+                task.shutdown().await;
+            }
         })
         .await;
-    if let Some(task) = task {
-        task.abort();
-    }
     result?;
     Ok(())
+}
+
+async fn shutdown_signal() {
+    #[cfg(unix)]
+    {
+        if let Ok(mut terminate) =
+            tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+        {
+            tokio::select! { _ = tokio::signal::ctrl_c() => {}, _ = terminate.recv() => {} }
+            return;
+        }
+    }
+    let _ = tokio::signal::ctrl_c().await;
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use http_body_util::BodyExt;
     use tower::ServiceExt;
+
+    #[tokio::test]
+    async fn readiness_and_sse_clients_follow_state_and_shutdown() {
+        let temp = tempfile::tempdir().unwrap();
+        let live = crate::live::disabled();
+        let stop = Arc::new(AtomicBool::new(false));
+        let app = router_with_shutdown(temp.path().into(), live.clone(), stop.clone());
+        let request = |path: &str| {
+            axum::http::Request::builder()
+                .uri(path)
+                .body(axum::body::Body::empty())
+                .unwrap()
+        };
+        assert_eq!(
+            app.clone()
+                .oneshot(request("/api/health"))
+                .await
+                .unwrap()
+                .status(),
+            StatusCode::OK
+        );
+        assert_eq!(
+            app.clone()
+                .oneshot(request("/api/live/ready"))
+                .await
+                .unwrap()
+                .status(),
+            StatusCode::SERVICE_UNAVAILABLE
+        );
+        let mut clients = Vec::new();
+        for _ in 0..2 {
+            let mut body = app
+                .clone()
+                .oneshot(request("/api/live/events"))
+                .await
+                .unwrap()
+                .into_body();
+            let frame = body.frame().await.unwrap().unwrap().into_data().unwrap();
+            assert!(String::from_utf8_lossy(&frame).contains("disabled"));
+            clients.push(body);
+        }
+        {
+            let mut state = live.write().await;
+            state.status = "connected".into();
+            state.durable_seq = 1;
+            state.last_message_at_ms = Some(chrono::Utc::now().timestamp_millis());
+            state.symbols = vec!["AAPL".into()];
+        }
+        let response = app
+            .clone()
+            .oneshot(request("/api/live/ready"))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let ready: serde_json::Value =
+            serde_json::from_slice(&response.into_body().collect().await.unwrap().to_bytes())
+                .unwrap();
+        assert_eq!(
+            ready["stale_or_waiting_symbols"],
+            serde_json::json!(["AAPL"])
+        );
+        for body in &mut clients {
+            let frame = tokio::time::timeout(Duration::from_secs(2), body.frame())
+                .await
+                .unwrap()
+                .unwrap()
+                .unwrap()
+                .into_data()
+                .unwrap();
+            assert!(String::from_utf8_lossy(&frame).contains("connected"));
+        }
+        stop.store(true, Ordering::Relaxed);
+        for body in &mut clients {
+            assert!(tokio::time::timeout(Duration::from_secs(2), body.frame())
+                .await
+                .unwrap()
+                .is_none());
+        }
+        assert_eq!(
+            app.oneshot(request("/api/live/ready"))
+                .await
+                .unwrap()
+                .status(),
+            StatusCode::SERVICE_UNAVAILABLE
+        );
+    }
     #[tokio::test]
     async fn rejects_remote_hosts_and_restricts_browser_connections() {
         let tmp = tempfile::tempdir().unwrap();
@@ -773,6 +953,7 @@ mod tests {
         let state = AppState {
             root: temp.path().into(),
             live: crate::live::disabled(),
+            shutdown: Arc::new(AtomicBool::new(false)),
             workers: Arc::new(tokio::sync::Semaphore::new(1)),
         };
         let (started, ready) = tokio::sync::oneshot::channel();

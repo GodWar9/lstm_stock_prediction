@@ -40,6 +40,8 @@ pub struct FeatureDatasetManifest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TrainingDatasetManifest {
+    #[serde(default = "default_interval")]
+    pub bar_interval: String,
     pub dataset_version: String,
     pub feature_set: String,
     pub feature_set_version: u32,
@@ -269,6 +271,10 @@ impl FeatureArrowExporter {
     }
 }
 
+fn default_interval() -> String {
+    "1d".into()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -363,6 +369,7 @@ mod tests {
             direction: crate::targets::DirectionLabel::Up,
         }];
         let manifest = TrainingDatasetManifest {
+            bar_interval: "1d".into(),
             dataset_version: "ds_test".to_string(),
             feature_set: "baseline".to_string(),
             feature_set_version: 1,

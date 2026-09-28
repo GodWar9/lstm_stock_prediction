@@ -20,6 +20,15 @@ impl RiskEngine {
         daily_returns: &[f64],
         benchmark_returns: &[f64],
     ) -> RiskReport {
+        self.evaluate_with_periods(portfolio, daily_returns, benchmark_returns, 252.0)
+    }
+    pub fn evaluate_with_periods(
+        &self,
+        portfolio: &Portfolio,
+        daily_returns: &[f64],
+        benchmark_returns: &[f64],
+        periods_per_year: f64,
+    ) -> RiskReport {
         let nav = portfolio.nav();
         let gross_exp = portfolio.gross_exposure();
         let net_exp = portfolio.net_exposure();
@@ -38,7 +47,7 @@ impl RiskEngine {
         } else {
             (0.0, 0.0)
         };
-        let annualized_vol = daily_vol * (252.0_f64).sqrt();
+        let annualized_vol = daily_vol * periods_per_year.sqrt();
 
         // 2. Parametric VaR and CVaR at 95% (Z_0.95 = 1.6449)
         let z_95 = 1.6448536269514722;

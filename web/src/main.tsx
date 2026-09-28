@@ -49,7 +49,7 @@ function Shell() {
 function NoRun() { return <Notice title="Your research starts with a recorded run"><p>Ingest data, build features, train a versioned model, then run a held-out backtest.</p><pre>quantctl --config configs/demo.yaml data ingest{'\n'}quantctl --config configs/demo.yaml features build{'\n'}quantctl --config configs/demo.yaml train{'\n'}quantctl --config configs/demo.yaml backtest run --model inspector_demo</pre><p>The demo configuration explicitly uses synthetic data.</p></Notice>; }
 function PageTitle({ title, children }: { title: string; children: React.ReactNode }) { return <div className="page-title"><h2>{title}</h2><p>{children}</p></div>; }
 const metrics = [
-  ['sharpe', 'Sharpe ratio', 'Return relative to variability, annualized at 252 bars. Short samples and repeated selection can inflate it.', false],
+  ['sharpe', 'Sharpe ratio', 'Return relative to variability, annualized using the recorded bar frequency. Short samples and repeated selection can inflate it.', false],
   ['max_drawdown', 'Max drawdown', 'Largest decline from a previous portfolio peak. History cannot bound future losses.', true],
   ['total_return', 'Total return', 'Change in account value after simulated execution costs over this run.', true],
   ['turnover', 'Turnover', 'Absolute traded notional divided by initial capital. Higher values usually mean greater sensitivity to costs.', true],
@@ -123,7 +123,7 @@ function ModelCard({ model }: { model: Model }) {
   const meta = object(model.metadata), history = object(model.training_log), validation = object(model.validation);
   const train = numbers(history.train_loss), val = numbers(history.val_loss);
   const parity = object(validation.onnx_parity);
-  return <article className="model-card"><h3>{model.artifact_id}</h3><p>{model.onnx_present ? 'ONNX artifact available' : 'ONNX artifact missing'}</p><dl><dt>Architecture</dt><dd>{JSON.stringify(meta.architecture ?? 'Not recorded')}</dd><dt>Training data</dt><dd>{String(meta.training_dataset_version ?? 'Not recorded')}</dd><dt>Numerical parity</dt><dd>{parity.passed === true ? `Passed · max error ${String(parity.max_abs_error)}` : 'Not recorded'}</dd><dt>Evaluation metrics</dt><dd><pre>{JSON.stringify(meta.evaluation_metrics ?? {}, null, 2)}</pre></dd></dl>
+  return <article className="model-card"><h3>{model.artifact_id}</h3><p>{model.onnx_present ? 'ONNX artifact available' : 'ONNX artifact missing'}</p><dl><dt>Bar interval</dt><dd>{String(meta.bar_interval ?? '1d (legacy)')}</dd><dt>Architecture</dt><dd>{JSON.stringify(meta.architecture ?? 'Not recorded')}</dd><dt>Training data</dt><dd>{String(meta.training_dataset_version ?? 'Not recorded')}</dd><dt>Numerical parity</dt><dd>{parity.passed === true ? `Passed · max error ${String(parity.max_abs_error)}` : 'Not recorded'}</dd><dt>Evaluation metrics</dt><dd><pre>{JSON.stringify(meta.evaluation_metrics ?? {}, null, 2)}</pre></dd></dl>
     {train.length > 0 && <Chart title="Training loss" data={{ epoch: train.map((_, i) => i + 1), train_loss: train }} x="epoch" ys={['train_loss']} />}
     {val.length > 0 && <Chart title="Validation loss" data={{ epoch: val.map((_, i) => i + 1), validation_loss: val }} x="epoch" ys={['validation_loss']} />}
   </article>;
@@ -178,8 +178,8 @@ function Risk() {
         <section className="panel">
           <h2>Point-in-time risk evaluation</h2>
           <div className="facts">
-            <div><span>VaR (95% 1-day)</span><strong>{typeof riskData.var_95 === 'number' ? number(riskData.var_95) : 'Not recorded'}</strong></div>
-            <div><span>CVaR (95% 1-day)</span><strong>{typeof riskData.cvar_95 === 'number' ? number(riskData.cvar_95) : 'Not recorded'}</strong></div>
+            <div><span>VaR (95% 1-bar)</span><strong>{typeof riskData.var_95 === 'number' ? number(riskData.var_95) : 'Not recorded'}</strong></div>
+            <div><span>CVaR (95% 1-bar)</span><strong>{typeof riskData.cvar_95 === 'number' ? number(riskData.cvar_95) : 'Not recorded'}</strong></div>
             <div><span>Realized Volatility (ann.)</span><strong>{typeof riskData.volatility === 'number' ? percent(riskData.volatility) : 'Not recorded'}</strong></div>
             <div><span>Market Beta</span><strong>{typeof riskData.beta === 'number' ? number(riskData.beta) : 'Not recorded'}</strong></div>
             <div><span>Gross Exposure</span><strong>{typeof riskData.gross_exposure === 'number' ? percent(riskData.gross_exposure) : 'Not recorded'}</strong></div>

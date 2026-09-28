@@ -14,7 +14,7 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
     let cfg = load_config(config_path)?;
 
     match command {
-        DataSubcommands::Ingest { symbol } => {
+        DataSubcommands::Ingest { symbol, journal } => {
             let start = NaiveDate::parse_from_str(&cfg.data.start_date, "%Y-%m-%d")?;
             let end = NaiveDate::parse_from_str(&cfg.data.end_date, "%Y-%m-%d")?;
 
@@ -31,6 +31,45 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
                 end = %end,
                 "Starting market data ingestion"
             );
+
+            if cfg.data.provider == "alpaca_journal" {
+                let journal = journal.as_ref().ok_or_else(|| {
+                    anyhow::anyhow!("--journal <closed capture directory> is required")
+                })?;
+                for sym in &target_symbols {
+                    let (audit, bars) =
+                        quant_data::capture::import_minutes(journal, sym, start, end)?;
+                    let manifest = DatasetManifest {
+                        bar_interval: "1m".into(),
+                        capture_sha256: Some(audit.content_sha256),
+                        dataset_version: cfg.data.dataset_version.clone(),
+                        symbol: sym.clone(),
+                        start_date: start.to_string(),
+                        end_date: end.to_string(),
+                        bar_count: bars.len(),
+                        source: format!(
+                            "{}alpaca:{}:first_publication",
+                            if audit.synthetic {
+                                "synthetic_capture:"
+                            } else {
+                                ""
+                            },
+                            audit.feed
+                        ),
+                        content_sha256: String::new(),
+                    };
+                    let path = write_dataset("datasets/market", &manifest, &bars)?;
+                    println!(
+                        "Imported {} PIT one-minute bars to {}",
+                        bars.len(),
+                        path.display()
+                    );
+                }
+                return Ok(());
+            }
+            if journal.is_some() {
+                anyhow::bail!("--journal requires provider: alpaca_journal");
+            }
 
             // Synthetic data is opt-in for development and tests; production ingestion must fail
             // instead of silently replacing missing market data.
@@ -54,6 +93,8 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
                 validate_bars_monotonic_and_sound(&bars)?;
                 check_duplicate_timestamps(&bars)?;
                 let manifest = DatasetManifest {
+                    bar_interval: "1d".into(),
+                    capture_sha256: None,
                     dataset_version: cfg.data.dataset_version.clone(),
                     symbol: sym.clone(),
                     start_date: start.to_string(),
@@ -69,6 +110,14 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
                     sym,
                     path.display()
                 );
+            }
+            Ok(())
+        }
+        DataSubcommands::VerifyCapture { journal } => {
+            let audit = quant_data::capture::verify(journal)?;
+            println!("{}", serde_json::to_string_pretty(&audit)?);
+            if !audit.clean_shutdown {
+                anyhow::bail!("Capture is not cleanly closed; not eligible for research import");
             }
             Ok(())
         }

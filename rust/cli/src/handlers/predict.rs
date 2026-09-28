@@ -55,8 +55,10 @@ pub fn handle_predict(args: &PredictArgs, config_path: &Path) -> Result<()> {
         "Model validated successfully"
     );
 
+    let cfg = quant_config::load_config(config_path)?;
+    super::pipeline::check_model_interval(&artifact_dir, &cfg)?;
     let bars = super::pipeline::bars(config_path, &args.symbol)?;
-    let rows = super::pipeline::graph().compute_batch(&bars);
+    let rows = super::pipeline::graph(cfg.data.periods_per_year()).compute_batch(&bars);
     let ordered = super::pipeline::ordered(&rows, provider.feature_schema())?;
     if ordered.len() < lookback {
         bail!("Insufficient feature rows for model lookback");
@@ -73,7 +75,7 @@ pub fn handle_predict(args: &PredictArgs, config_path: &Path) -> Result<()> {
 
     // 2. Calibrate prediction to Signal
     let calibrator = SignalCalibrator::new(SignalConfig::default());
-    let as_of = bars.last().unwrap().timestamp.as_nanos();
+    let as_of = bars.last().unwrap().availability_timestamp.as_nanos();
     let raw_signal = calibrator.calibrate(&prediction, InstrumentId(1), &args.symbol, as_of);
 
     // 3. Apply post-prediction transform (Threshold filter)

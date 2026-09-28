@@ -116,7 +116,7 @@ def load_arrow_training_dataset(
         target_timestamps=target_timestamps,
         feature_set_version=int(feature_set_versions[0]),
         target_horizon=int(horizons[0]),
-        integrity={"training_sha256": digest,
+        integrity={"bar_interval": manifest.get("bar_interval", "1d"), "training_sha256": digest,
                    "market_sha256": manifest.get("source_market_sha256", ""),
                    "symbol": manifest.get("symbol", ""),
                    "dataset_version": manifest.get("dataset_version", "")},

@@ -51,3 +51,5 @@ models/test_*/
 models/inspector_demo/
 /models/.staging/
 !rust/Cargo.lock
+
+/models/research_*/

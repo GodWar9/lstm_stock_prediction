@@ -23,6 +23,13 @@ pub fn handle_simulate(args: &SimulateArgs, _config_path: &Path) -> Result<()> {
     let report: BacktestReport = serde_json::from_str(&report_content)
         .with_context(|| "Failed to parse backtest report JSON")?;
 
+    if !report.periods_per_year.is_finite()
+        || report.periods_per_year <= 0.0
+        || !report.risk_free_rate.is_finite()
+        || report.returns.iter().any(|r| !r.is_finite() || *r < -1.0)
+    {
+        bail!("Report has invalid cadence or returns; cannot simulate");
+    }
     if args.paths == 0
         || args.paths > 100_000
         || report.returns.len().saturating_mul(args.paths) > 5_000_000
@@ -37,8 +44,13 @@ pub fn handle_simulate(args: &SimulateArgs, _config_path: &Path) -> Result<()> {
 
     let bands = resampler.nav_bands(&report, args.paths);
     let root = std::path::Path::new("reports/runs");
+    // Prefer the provenance published alongside the report by `backtest run`.
+    let sidecar = args.report.with_extension("provenance.json");
     let source_dir = args.report.parent().unwrap_or(std::path::Path::new("."));
-    let provenance = if source_dir.join("manifest.json").exists() {
+    let provenance = if sidecar.exists() {
+        serde_json::from_slice(&std::fs::read(&sidecar)?)
+            .context("Failed to read backtest provenance sidecar")?
+    } else if source_dir.join("manifest.json").exists() {
         let source: quant_api::contract::RunManifest =
             serde_json::from_slice(&std::fs::read(source_dir.join("manifest.json"))?)?;
         source.provenance
@@ -57,9 +69,18 @@ pub fn handle_simulate(args: &SimulateArgs, _config_path: &Path) -> Result<()> {
     manifest.kind = "simulation".into();
     manifest.capabilities.push("monte_carlo".into());
     let dir = root.join(&manifest.run_id);
+    let mut simulation = serde_json::to_value(&sim_result)?;
+    simulation["periods_per_year"] = serde_json::json!(report.periods_per_year);
+    simulation["market_regime"] = if report.benchmark_returns.is_empty() {
+        serde_json::Value::Null
+    } else {
+        serde_json::json!(quant_simulation::RuleBasedRegimeDetector::default()
+            .label_with_periods(&report.benchmark_returns, report.periods_per_year)
+            .to_string())
+    };
     std::fs::write(
         dir.join("simulation.json"),
-        serde_json::to_vec_pretty(&sim_result)?,
+        serde_json::to_vec_pretty(&simulation)?,
     )?;
     std::fs::write(
         dir.join("bands.arrow"),

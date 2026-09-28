@@ -66,7 +66,7 @@ impl FeatureGraph {
     /// Ingest a bar and compute features.
     /// Returns `None` if still in warmup period (any feature returns `None`).
     pub fn push_bar(&mut self, bar: Bar) -> Option<FeatureRow> {
-        let ts = bar.timestamp;
+        let ts = bar.availability_timestamp;
         self.window.push(bar);
 
         let mut row_values = HashMap::with_capacity(self.features.len());

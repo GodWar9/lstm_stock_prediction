@@ -1650,6 +1650,7 @@ dependencies = [
  "http-body-util",
  "mime_guess",
  "quant_backtest",
+ "quant_data",
  "quant_simulation",
  "rust-embed",
  "serde",

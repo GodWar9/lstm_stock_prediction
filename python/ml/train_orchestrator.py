@@ -82,6 +82,8 @@ def load_training_arrays(args, cfg, lookback):
         dataset = load_arrow_training_dataset(
             dataset_path, manifest_path if os.path.exists(manifest_path) else None
         )
+        if dataset.integrity.get("bar_interval", "1d") != data_cfg.get("bar_interval", "1d"):
+            raise ValueError("Training config and Arrow dataset bar intervals differ")
         if dataset.features.shape[0] < lookback:
             raise ValueError(
                 f"Training dataset has {dataset.features.shape[0]} rows, "
@@ -167,6 +169,8 @@ def train_and_export(args, cfg, model_id, stage):
         dataset_path,
         data_integrity,
     ) = load_training_arrays(args, cfg, lookback)
+    bar_interval = cfg.get("data", {}).get("bar_interval", "1d")
+    periods_per_year = 252 * 390 if bar_interval == "1m" else 252
     n_samples, n_features = raw_features.shape
 
     purge_gap = max(target_horizon, train_cfg.get("purge_gap", 5))
@@ -210,7 +214,7 @@ def train_and_export(args, cfg, model_id, stage):
         metadata_path.write_text(json.dumps(metadata, indent=2))
         validation["folds"] = folds_info
         validation["evaluation"] = "rolling walk-forward; root model and periods are the final fold"
-        validation["pooled_oos_metrics"] = compute_metrics(np.array(all_preds), np.array(all_targets))
+        validation["pooled_oos_metrics"] = compute_metrics(np.array(all_preds), np.array(all_targets), periods_per_year=periods_per_year)
         (Path(stage) / "validation.json").write_text(json.dumps(validation, indent=2))
         report.update(model_id=model_id, artifact_dir=f"models/{model_id}",
                       onnx_artifact=f"models/{model_id}/model.onnx",
@@ -262,7 +266,7 @@ def train_and_export(args, cfg, model_id, stage):
         x_te_tensor = torch.from_numpy(x_te.astype(np.float32))
         preds = model(x_te_tensor).numpy() if len(x_te) > 0 else np.zeros((1, 1))
 
-    metrics = compute_metrics(preds, y_te if len(y_te) > 0 else np.zeros((1,)))
+    metrics = compute_metrics(preds, y_te if len(y_te) > 0 else np.zeros((1,)), periods_per_year=periods_per_year)
     print(f"[Python ML] OOS Metrics: IC={metrics['ic']:.4f}, DirAcc={metrics['directional_accuracy']:.2%}")
 
     # Export complete model artifact package
@@ -333,7 +337,7 @@ def train_and_export(args, cfg, model_id, stage):
     meta_path = os.path.join(onnx_out_dir, "metadata.json")
     with open(meta_path) as source:
         metadata = json.load(source)
-    metadata.update(training_dataset_version=validation["data_version"], feature_set_version=feature_set_version,
+    metadata.update(bar_interval=bar_interval, periods_per_year=periods_per_year, training_dataset_version=validation["data_version"], feature_set_version=feature_set_version,
                     target_definition={"horizon": target_horizon, "transformation": "log_return"})
     executable = os.environ.get("QUANTCTL_EXECUTABLE")
     if not executable:

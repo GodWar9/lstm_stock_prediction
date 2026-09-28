@@ -112,6 +112,7 @@ fn run_golden_simulation(bars: &[Bar], signals: &[Signal]) -> BacktestReport {
     let instrument = InstrumentId(1);
     let symbol = "GOLDEN_EQ";
     let config = BacktestConfig {
+        periods_per_year: 252.0,
         initial_cash: 1_000_000.0,
         risk_free_rate: 0.03,
         num_prior_trials: 1,

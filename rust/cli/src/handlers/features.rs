@@ -39,7 +39,7 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
                 }
 
                 // Build standard feature suite
-                let mut graph = super::pipeline::graph();
+                let mut graph = super::pipeline::graph(app_config.data.periods_per_year());
 
                 let rows = graph.compute_batch(&bars);
                 let row_count = rows.len();
@@ -80,6 +80,7 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
                     let training_path = FeatureArrowExporter::write_training_ipc(
                         Path::new("datasets/training"),
                         &TrainingDatasetManifest {
+                            bar_interval: app_config.data.bar_interval.clone(),
                             dataset_version: app_config.data.dataset_version.clone(),
                             feature_set: feature_set.clone(),
                             feature_set_version: app_config.features.feature_set_version,

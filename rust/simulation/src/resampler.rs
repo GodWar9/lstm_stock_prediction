@@ -161,13 +161,16 @@ impl SimulationStrategy for MonteCarloResampler {
             };
             let vol = var.sqrt();
             let path_sharpe = if vol > 1e-8 {
-                (mean / vol) * (252.0_f64).sqrt()
+                ((mean - base.risk_free_rate / base.periods_per_year) / vol)
+                    * base.periods_per_year.sqrt()
             } else {
                 0.0
             };
 
-            let years = (path_len as f64 / 252.0).max(0.05);
-            let path_cagr = if nav > 0.0 {
+            let years = path_len as f64 / base.periods_per_year;
+            let path_cagr = if years <= 0.05 {
+                nav - 1.0
+            } else if nav > 0.0 {
                 nav.powf(1.0 / years) - 1.0
             } else {
                 -1.0
@@ -239,6 +242,8 @@ mod tests {
     #[test]
     fn test_monte_carlo_resampler_distribution() {
         let report = BacktestReport {
+            periods_per_year: 252.0,
+            risk_free_rate: 0.0,
             equity_curve: vec![(1000, 100_000.0), (2000, 102_000.0)],
             returns: vec![0.01, 0.02, -0.005, 0.015, -0.01, 0.008, -0.002],
             initial_cash: 100_000.0,

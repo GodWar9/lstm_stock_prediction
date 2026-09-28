@@ -59,6 +59,7 @@ def compute_metrics(
     y_pred: np.ndarray,
     y_true: np.ndarray,
     risk_free_rate: float = 0.04,
+    periods_per_year: int = 252,
 ) -> Dict[str, float]:
     """Compute comprehensive out-of-sample evaluation report."""
     y_p = y_pred.flatten()
@@ -73,8 +74,8 @@ def compute_metrics(
         "ic": information_coefficient(y_p, y_t),
         "rank_ic": rank_information_coefficient(y_p, y_t),
         "directional_accuracy": directional_accuracy(y_p, y_t),
-        "annualized_sharpe": annualized_sharpe_ratio(strat_returns, risk_free_rate),
+        "annualized_sharpe": annualized_sharpe_ratio(strat_returns, risk_free_rate, periods_per_year),
         "max_drawdown": max_drawdown(equity),
         "mean_return": float(np.mean(strat_returns)),
-        "volatility": float(np.std(strat_returns) * np.sqrt(252)),
+        "volatility": float(np.std(strat_returns) * np.sqrt(periods_per_year)),
     }

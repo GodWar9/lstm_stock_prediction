@@ -7,6 +7,7 @@ pub mod export_model;
 pub mod features;
 pub mod predict;
 pub mod report;
+pub mod research;
 pub mod simulate;
 pub mod train;
 

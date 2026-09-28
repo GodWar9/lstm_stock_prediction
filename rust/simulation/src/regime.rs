@@ -52,6 +52,11 @@ impl RuleBasedRegimeDetector {
 
 impl RegimeDetector for RuleBasedRegimeDetector {
     fn label(&self, returns: &[f64]) -> Regime {
+        self.label_with_periods(returns, 252.0)
+    }
+}
+impl RuleBasedRegimeDetector {
+    pub fn label_with_periods(&self, returns: &[f64], periods_per_year: f64) -> Regime {
         if returns.len() < 5 {
             return Regime::MeanReverting;
         }
@@ -59,7 +64,7 @@ impl RegimeDetector for RuleBasedRegimeDetector {
         let n = returns.len() as f64;
         let mean = returns.iter().sum::<f64>() / n;
         let variance = returns.iter().map(|r| (r - mean).powi(2)).sum::<f64>() / (n - 1.0);
-        let annualized_vol = variance.sqrt() * (252.0_f64).sqrt();
+        let annualized_vol = variance.sqrt() * periods_per_year.sqrt();
 
         // Check for acute crisis (large single-day crash)
         let min_return = returns.iter().copied().fold(0.0_f64, f64::min);
@@ -71,9 +76,9 @@ impl RegimeDetector for RuleBasedRegimeDetector {
             return Regime::HighVol;
         }
 
-        if mean > 0.0008 {
+        if mean * periods_per_year > 0.0008 * 252.0 {
             Regime::Bull
-        } else if mean < -0.0008 {
+        } else if mean * periods_per_year < -0.0008 * 252.0 {
             Regime::Bear
         } else if annualized_vol < 0.10 {
             Regime::LowVol

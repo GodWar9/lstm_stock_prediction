@@ -24,7 +24,7 @@ pub fn handle_benchmark(args: &BenchmarkArgs, config_path: &Path) -> Result<()> 
     };
     let mut input = Vec::new();
     if let Some(model) = &provider {
-        let rows = super::pipeline::graph().compute_batch(&bars);
+        let rows = super::pipeline::graph(cfg.data.periods_per_year()).compute_batch(&bars);
         let ordered = super::pipeline::ordered(&rows, model.feature_schema())?;
         if ordered.len() < model.lookback() {
             bail!("Dataset is shorter than model lookback");
@@ -39,7 +39,9 @@ pub fn handle_benchmark(args: &BenchmarkArgs, config_path: &Path) -> Result<()> 
         let start = Instant::now();
         match args.suite.as_str() {
             "features" => {
-                std::hint::black_box(super::pipeline::graph().compute_batch(&bars));
+                std::hint::black_box(
+                    super::pipeline::graph(cfg.data.periods_per_year()).compute_batch(&bars),
+                );
             }
             "inference" => {
                 let model = provider.as_ref().unwrap();

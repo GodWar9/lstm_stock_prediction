@@ -46,6 +46,13 @@ pub enum Commands {
 
     /// Market data ingestion and verification
     Data(DataArgs),
+    /// Import a closed intraday capture, train a new model, backtest, and simulate
+    Research {
+        #[arg(long)]
+        journal: PathBuf,
+        #[arg(long, default_value_t = 1000)]
+        paths: usize,
+    },
 
     /// Feature calculation and dataset preparation
     Features(FeaturesArgs),
@@ -99,8 +106,16 @@ pub struct DataArgs {
 pub enum DataSubcommands {
     /// Ingest historical OHLCV data via configured adapter
     Ingest {
+        /// Closed Alpaca session directory, required for alpaca_journal
+        #[arg(long)]
+        journal: Option<PathBuf>,
         #[arg(long)]
         symbol: Option<String>,
+    },
+    /// Verify checksum chains and clean shutdown of a captured live session
+    VerifyCapture {
+        #[arg(long)]
+        journal: PathBuf,
     },
     /// Validate point-in-time correctness, timestamp monotonicity, and absence of duplicate bars
     Validate {

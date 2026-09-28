@@ -6,3 +6,4 @@
 
 .pagination { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
 button:disabled { opacity: .5; cursor: not-allowed; }
+.panel pre { white-space: pre-wrap; overflow-wrap: anywhere; }

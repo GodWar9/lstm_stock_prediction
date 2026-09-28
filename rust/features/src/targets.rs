@@ -93,8 +93,8 @@ impl TargetGenerator {
             };
 
             targets.push(TargetRow {
-                timestamp: current.timestamp,
-                target_timestamp: future.timestamp,
+                timestamp: current.availability_timestamp,
+                target_timestamp: future.availability_timestamp,
                 forward_return: fwd_return,
                 direction,
             });

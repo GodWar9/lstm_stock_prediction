@@ -6,6 +6,10 @@ use serde::{Deserialize, Serialize};
 /// Comprehensive point-in-time backtest performance report.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct BacktestReport {
+    #[serde(default = "daily_periods")]
+    pub periods_per_year: f64,
+    #[serde(default)]
+    pub risk_free_rate: f64,
     /// Time series of (timestamp_nanos/millis, NAV) points.
     pub equity_curve: Vec<(i64, f64)>,
     /// Daily/bar return series.
@@ -69,6 +73,24 @@ impl BacktestReport {
         risk_free_rate: f64,
         num_prior_trials: usize,
     ) -> Self {
+        Self::compute_with_periods(
+            initial_cash,
+            equity_curve,
+            trade_log,
+            risk_free_rate,
+            num_prior_trials,
+            252.0,
+        )
+    }
+    pub fn compute_with_periods(
+        initial_cash: f64,
+        equity_curve: Vec<(i64, f64)>,
+        trade_log: Vec<Fill>,
+        risk_free_rate: f64,
+        num_prior_trials: usize,
+        periods_per_year: f64,
+    ) -> Self {
+        assert!(periods_per_year.is_finite() && periods_per_year > 0.0);
         let final_nav = equity_curve.last().map(|p| p.1).unwrap_or(initial_cash);
         let total_return_pct = if initial_cash > 1e-8 {
             (final_nav - initial_cash) / initial_cash
@@ -90,7 +112,7 @@ impl BacktestReport {
 
         let n = returns.len() as f64;
         let cagr = if n >= 2.0 && initial_cash > 1e-8 && final_nav > 0.0 {
-            let years = n / 252.0;
+            let years = n / periods_per_year;
             if years > 0.05 {
                 (final_nav / initial_cash).powf(1.0 / years) - 1.0
             } else {
@@ -116,7 +138,7 @@ impl BacktestReport {
         }
 
         // Sharpe & Sortino ratios
-        let daily_rf = risk_free_rate / 252.0;
+        let daily_rf = risk_free_rate / periods_per_year;
         let (sharpe, sortino) = if n >= 2.0 {
             let mean = returns.iter().sum::<f64>() / n;
             let variance = returns.iter().map(|r| (r - mean).powi(2)).sum::<f64>() / (n - 1.0);
@@ -136,13 +158,13 @@ impl BacktestReport {
             let downside_vol = downside_var.sqrt();
 
             let annualized_sharpe = if vol > 1e-8 {
-                ((mean - daily_rf) / vol) * (252.0_f64).sqrt()
+                ((mean - daily_rf) / vol) * periods_per_year.sqrt()
             } else {
                 0.0
             };
 
             let annualized_sortino = if downside_vol > 1e-8 {
-                ((mean - daily_rf) / downside_vol) * (252.0_f64).sqrt()
+                ((mean - daily_rf) / downside_vol) * periods_per_year.sqrt()
             } else {
                 0.0
             };
@@ -240,6 +262,8 @@ impl BacktestReport {
         let deflated_sharpe = (sharpe - trials_penalty).max(-5.0);
 
         Self {
+            periods_per_year,
+            risk_free_rate,
             equity_curve,
             returns,
             initial_cash,
@@ -281,4 +305,8 @@ impl BacktestReport {
         self.positions_curve = positions_curve;
         self
     }
+}
+
+pub fn daily_periods() -> f64 {
+    252.0
 }

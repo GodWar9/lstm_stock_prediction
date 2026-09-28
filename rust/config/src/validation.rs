@@ -63,10 +63,10 @@ impl AppConfig {
         }
         if !matches!(
             self.data.provider.as_str(),
-            "csv" | "synthetic" | "yfinance"
+            "csv" | "synthetic" | "yfinance" | "alpaca_journal"
         ) {
             return Err(ConfigValidationError::Data(
-                "provider must be csv, synthetic or yfinance".into(),
+                "provider must be csv, synthetic, yfinance or alpaca_journal".into(),
             ));
         }
         if self
@@ -88,6 +88,14 @@ impl AppConfig {
                 "start_date ({}) must be strictly before end_date ({})",
                 self.data.start_date, self.data.end_date
             )));
+        }
+
+        if !matches!(self.data.bar_interval.as_str(), "1d" | "1m")
+            || (self.data.bar_interval == "1m") != (self.data.provider == "alpaca_journal")
+        {
+            return Err(ConfigValidationError::Data(
+                "One-minute research requires alpaca_journal; other providers require 1d".into(),
+            ));
         }
 
         // Features constraints

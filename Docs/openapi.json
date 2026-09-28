@@ -20,6 +20,17 @@
         }
       }
     },
+    "/api/health": {
+      "get": {
+        "tags": [],
+        "operationId": "health",
+        "responses": {
+          "200": {
+            "description": "HTTP process liveness only"
+          }
+        }
+      }
+    },
     "/api/live": {
       "get": {
         "tags": [],
@@ -45,6 +56,34 @@
         "responses": {
           "200": {
             "description": "SSE live snapshots, at most once per second; not a tick replay stream"
+          }
+        }
+      }
+    },
+    "/api/live/ready": {
+      "get": {
+        "tags": [],
+        "operationId": "live_ready",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveHealth"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveHealth"
+                }
+              }
+            }
           }
         }
       }
@@ -303,6 +342,41 @@
           }
         }
       },
+      "LiveHealth": {
+        "type": "object",
+        "required": [
+          "capture_ready",
+          "status",
+          "fresh_symbols",
+          "stale_or_waiting_symbols",
+          "durable_seq"
+        ],
+        "properties": {
+          "capture_ready": {
+            "type": "boolean"
+          },
+          "durable_seq": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "fresh_symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stale_or_waiting_symbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
       "ModelArtifact": {
         "type": "object",
         "required": [
@@ -475,9 +549,22 @@
           "prices",
           "received_events",
           "reconnects",
-          "server_time_ms"
+          "server_time_ms",
+          "connection_attempts",
+          "journal_bytes",
+          "durable_seq"
         ],
         "properties": {
+          "connection_attempts": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "durable_seq": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
           "feed": {
             "type": "string"
           },
@@ -486,6 +573,18 @@
               "string",
               "null"
             ]
+          },
+          "journal_bytes": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "last_message_at_ms": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
           },
           "message": {
             "type": "string"

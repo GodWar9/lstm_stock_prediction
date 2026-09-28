@@ -32,6 +32,9 @@ async fn main() -> anyhow::Result<()> {
         Commands::Data(args) => {
             handlers::data::handle_data(&args.command, &cli.config)?;
         }
+        Commands::Research { journal, paths } => {
+            handlers::research::run(journal, *paths, &cli.config)?
+        }
         Commands::Features(args) => {
             handlers::features::handle_features(&args.command, &cli.config)?;
         }

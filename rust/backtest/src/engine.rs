@@ -28,6 +28,8 @@ pub enum BacktestError {
 /// Backtest runtime configuration parameters.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BacktestConfig {
+    #[serde(default = "crate::report::daily_periods")]
+    pub periods_per_year: f64,
     pub initial_cash: f64,
     pub risk_free_rate: f64,
     pub num_prior_trials: usize,
@@ -38,6 +40,7 @@ pub struct BacktestConfig {
 impl Default for BacktestConfig {
     fn default() -> Self {
         Self {
+            periods_per_year: 252.0,
             initial_cash: 100_000.0,
             risk_free_rate: 0.04,
             num_prior_trials: 1,
@@ -80,6 +83,11 @@ impl BacktestEngine {
         C: PortfolioConstructor,
         E: ExecutionModel,
     {
+        if !self.config.periods_per_year.is_finite() || self.config.periods_per_year <= 0.0 {
+            return Err(BacktestError::InvalidData(
+                "Invalid annualization factor".into(),
+            ));
+        }
         if bars.is_empty() {
             return Err(BacktestError::EmptyData);
         }
@@ -135,7 +143,7 @@ impl BacktestEngine {
             let signals = if index == 0 {
                 Vec::new()
             } else {
-                signal_stream.next_batch(bars[index - 1].timestamp.as_nanos())
+                signal_stream.next_batch(ts.saturating_sub(1))
             };
 
             // Step C: Compute desired target positions
@@ -191,12 +199,13 @@ impl BacktestEngine {
                 0.0
             };
 
-        let report = BacktestReport::compute(
+        let report = BacktestReport::compute_with_periods(
             self.config.initial_cash,
             equity_curve,
             trade_log,
             self.config.risk_free_rate,
             self.config.num_prior_trials,
+            self.config.periods_per_year,
         )
         .with_benchmark_and_positions(
             benchmark_curve,

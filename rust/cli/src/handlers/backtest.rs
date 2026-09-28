@@ -30,6 +30,7 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
     quant_data::validate_storage_id(model)?;
     let symbol = &cfg.data.symbols[0];
     let artifact_dir = Path::new("models").join(model);
+    super::pipeline::check_model_interval(&artifact_dir, &cfg)?;
     let provider = OnnxLstmProvider::load(&artifact_dir)?;
     let validation: serde_json::Value = serde_json::from_slice(
         &fs::read(artifact_dir.join("validation.json"))
@@ -50,11 +51,14 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
     {
         bail!("Market dataset content differs from the model training input; retrain on a new version");
     }
-    let rows = super::pipeline::graph().compute_batch(&all_bars);
+    let rows = super::pipeline::graph(cfg.data.periods_per_year()).compute_batch(&all_bars);
     let ordered = super::pipeline::ordered(&rows, provider.feature_schema())?;
     let bars: Vec<_> = all_bars
         .iter()
-        .filter(|b| b.timestamp.as_nanos() >= start && b.timestamp.as_nanos() <= end)
+        .filter(|b| {
+            b.availability_timestamp.as_nanos() >= start
+                && b.availability_timestamp.as_nanos() <= end
+        })
         .cloned()
         .collect();
     if bars.len() < 2 {
@@ -101,6 +105,7 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
             ..Default::default()
         };
         let report = BacktestEngine::new(BacktestConfig {
+            periods_per_year: cfg.data.periods_per_year(),
             initial_cash: cfg.backtest.initial_cash,
             risk_free_rate: cfg.backtest.risk_free_rate,
             num_prior_trials: 1,
@@ -138,6 +143,13 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
             model_artifact_id: model.clone(),
             source: data_manifest.source,
         };
+        // Publish the provenance beside the report so `simulate` can inherit it
+        // instead of re-deriving provenance from a report that carries none.
+        fs::create_dir_all("reports")?;
+        fs::write(
+            format!("reports/backtest_{model}_{split}.provenance.json"),
+            serde_json::to_vec_pretty(&provenance)?,
+        )?;
         let mut manifest = publish_backtest(
             Path::new("reports/runs"),
             &report,
@@ -168,7 +180,7 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
         let bar_map: std::collections::HashMap<i64, (usize, f64)> = bars
             .iter()
             .enumerate()
-            .map(|(i, b)| (b.timestamp.as_nanos(), (i, b.close)))
+            .map(|(i, b)| (b.availability_timestamp.as_nanos(), (i, b.close)))
             .collect();
         let mut so_ts = Vec::new();
         let mut so_prediction_ts = Vec::new();
@@ -188,7 +200,10 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
                     if current_close > 1e-8 {
                         let realized = (next_close / current_close).ln();
                         let residual = s.expected_return - realized;
-                        so_ts.push((bars[idx + horizon].timestamp.as_nanos() / 1_000_000) as f64);
+                        so_ts.push(
+                            (bars[idx + horizon].availability_timestamp.as_nanos() / 1_000_000)
+                                as f64,
+                        );
                         so_prediction_ts.push((s.as_of / 1_000_000) as f64);
                         so_exp.push(s.expected_return);
                         so_real.push(realized);
@@ -231,10 +246,11 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
             last_prices.insert(InstrumentId(1), last_bar.close);
             risk_portfolio.update_market_prices(&last_prices);
         }
-        let mut risk_report = quant_risk::RiskEngine::new().evaluate(
+        let mut risk_report = quant_risk::RiskEngine::new().evaluate_with_periods(
             &risk_portfolio,
             &report.returns,
             &report.benchmark_returns,
+            cfg.data.periods_per_year(),
         );
         risk_report.max_drawdown = report.max_drawdown;
         risk_report.turnover = report.turnover;

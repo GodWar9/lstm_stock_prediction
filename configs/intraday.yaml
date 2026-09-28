@@ -1,0 +1,50 @@
+# First-published, regular-session minute bars from a clean Alpaca capture.
+# Set dates and symbol to match your capture. The research command creates unique IDs.
+env: development
+data:
+  symbols: [AAPL]
+  start_date: "2026-09-01"
+  end_date: "2026-10-01"
+  provider: alpaca_journal
+  bar_interval: 1m
+  exchange: NYSE
+  dataset_version: intraday_v1
+features:
+  feature_set: baseline_v1
+  feature_set_version: 1
+  lookback: 30
+  target_horizon: 1
+  target_transformation: log_return
+training:
+  model_id: intraday_v1
+  walk_forward: true
+  n_folds: 3
+  hidden_size: 32
+  num_layers: 1
+  dropout: 0.2
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  batch_size: 64
+  epochs: 10
+  random_seed: 42
+  purge_gap: 2
+  embargo_gap: 30
+inference:
+  model_version: intraday_v1
+  intra_op_threads: 2
+  inter_op_threads: 1
+  batch_size: 64
+portfolio:
+  max_gross_exposure: 1.0
+  max_net_exposure: 0.5
+  max_position_pct: 0.2
+  volatility_target: 0.15
+  long_short_mode: LongOnly
+execution:
+  fixed_commission: 0.001
+  half_spread_bps: 2.0
+  slippage_factor: 0.1
+  participation_cap: 0.05
+backtest:
+  initial_cash: 100000.0
+  risk_free_rate: 0.04

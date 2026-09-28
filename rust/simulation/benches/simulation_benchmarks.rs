@@ -16,6 +16,8 @@ fn generate_mock_backtest_report(n_days: usize) -> BacktestReport {
     }
 
     BacktestReport {
+        periods_per_year: 252.0,
+        risk_free_rate: 0.0,
         equity_curve: vec![],
         returns,
         initial_cash: 100_000.0,

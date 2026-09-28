@@ -10,6 +10,10 @@ use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DatasetManifest {
+    #[serde(default = "quant_config::default_bar_interval")]
+    pub bar_interval: String,
+    #[serde(default)]
+    pub capture_sha256: Option<String>,
     pub dataset_version: String,
     pub symbol: String,
     pub start_date: String,
@@ -159,6 +163,8 @@ mod tests {
         let dir = tempdir().unwrap();
         let bars = vec![Bar::same_bar(Timestamp(1), 10.0, 11.0, 9.0, 10.5, 100)];
         let mut manifest = DatasetManifest {
+            bar_interval: "1d".into(),
+            capture_sha256: None,
             dataset_version: "ds_test".to_string(),
             symbol: "TEST".to_string(),
             start_date: "1970-01-01".to_string(),

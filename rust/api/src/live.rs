@@ -5,7 +5,9 @@ use futures_util::{SinkExt, StreamExt};
 use serde::Serialize;
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, path::Path, sync::Arc, time::Duration};
-use tokio::{io::AsyncWriteExt, sync::RwLock};
+use tokio::sync::{watch, RwLock};
+mod journal;
+use journal::Journal;
 use tokio_tungstenite::{
     connect_async_with_config,
     tungstenite::{protocol::WebSocketConfig, Message},
@@ -32,6 +34,10 @@ pub struct Snapshot {
     pub reconnects: u64,
     pub journal: Option<String>,
     pub server_time_ms: i64,
+    pub connection_attempts: u64,
+    pub last_message_at_ms: Option<i64>,
+    pub journal_bytes: u64,
+    pub durable_seq: u64,
 }
 pub type Live = Arc<RwLock<Snapshot>>;
 
@@ -41,6 +47,7 @@ pub fn disabled() -> Live {
         message: "Set QUANTCTL_LIVE_SYMBOLS, APCA_API_KEY_ID and APCA_API_SECRET_KEY in the server environment, then restart quantctl serve.".into(),
         feed: "iex".into(), symbols: vec![], prices: BTreeMap::new(),
         received_events: 0, reconnects: 0, journal: None, server_time_ms: 0,
+        connection_attempts: 0, last_message_at_ms: None, journal_bytes: 0, durable_seq: 0,
     }))
 }
 
@@ -56,7 +63,20 @@ impl Config {
         let Ok(symbols) = std::env::var("QUANTCTL_LIVE_SYMBOLS") else {
             return Ok(None);
         };
-        let feed = std::env::var("QUANTCTL_ALPACA_FEED").unwrap_or_else(|_| "iex".into());
+        Self::parse(
+            symbols,
+            std::env::var("QUANTCTL_ALPACA_FEED").unwrap_or_else(|_| "iex".into()),
+            std::env::var("APCA_API_KEY_ID").unwrap_or_default(),
+            std::env::var("APCA_API_SECRET_KEY").unwrap_or_default(),
+        )
+        .map(Some)
+    }
+    fn parse(
+        symbols: String,
+        feed: String,
+        key: String,
+        secret: String,
+    ) -> Result<Self, &'static str> {
         if !matches!(feed.as_str(), "iex" | "sip" | "delayed_sip" | "test") {
             return Err("QUANTCTL_ALPACA_FEED must be iex, sip, delayed_sip or test");
         }
@@ -81,22 +101,35 @@ impl Config {
         if feed == "test" && symbols != ["FAKEPACA"] {
             return Err("Alpaca test feed requires QUANTCTL_LIVE_SYMBOLS=FAKEPACA");
         }
-        let key = std::env::var("APCA_API_KEY_ID").unwrap_or_default();
-        let secret = std::env::var("APCA_API_SECRET_KEY").unwrap_or_default();
         if key.trim().is_empty() || secret.trim().is_empty() {
             return Err("Missing APCA_API_KEY_ID or APCA_API_SECRET_KEY; configure credentials on the server and restart");
         }
-        Ok(Some(Self {
+        Ok(Self {
             endpoint: format!("wss://stream.data.alpaca.markets/v2/{feed}"),
             feed,
             symbols,
             key,
             secret,
-        }))
+        })
     }
 }
 
-pub async fn start(root: &Path) -> (Live, Option<tokio::task::JoinHandle<()>>) {
+pub struct Controller {
+    stop: watch::Sender<bool>,
+    task: tokio::task::JoinHandle<()>,
+}
+impl Controller {
+    pub async fn shutdown(mut self) {
+        let _ = self.stop.send(true);
+        if tokio::time::timeout(Duration::from_secs(45), &mut self.task)
+            .await
+            .is_err()
+        {
+            self.task.abort();
+        }
+    }
+}
+pub async fn start(root: &Path) -> (Live, Option<Controller>) {
     let live = disabled();
     let config = match Config::from_env() {
         Ok(Some(c)) => c,
@@ -111,71 +144,85 @@ pub async fn start(root: &Path) -> (Live, Option<tokio::task::JoinHandle<()>>) {
         s.feed = config.feed.clone();
         s.symbols = config.symbols.clone();
     }
-    let relative = format!("datasets/live/{}.ndjson", uuid::Uuid::new_v4());
-    let path = root.join(&relative);
-    let file = async {
-        tokio::fs::create_dir_all(path.parent().unwrap()).await?;
-        tokio::fs::OpenOptions::new()
-            .create_new(true)
-            .write(true)
-            .open(path)
-            .await
-    }
-    .await;
-    let file = match file {
-        Ok(file) => file,
-        Err(_) => {
-            set_status(
-                &live,
-                "error",
-                "Cannot create live journal; check workspace disk access",
-            )
-            .await;
+    let journal = match Journal::create(root, &config.feed, &config.symbols).await {
+        Ok(journal) => journal,
+        Err(Failure::Fatal(message)) => {
+            set_status(&live, "error", &message).await;
             return (live, None);
         }
+        Err(_) => unreachable!(),
     };
-    live.write().await.journal = Some(relative);
-    let state = live.clone();
-    let task = tokio::spawn(async move {
-        let mut journal = Journal { file, bytes: 0 };
-        let mut delay = 1;
-        loop {
-            set_status(&state, "connecting", "Connecting to Alpaca").await;
-            let started = tokio::time::Instant::now();
-            let failure = session(&config, &state, &mut journal).await.unwrap_err();
-            if let Failure::Fatal(message) = failure {
-                set_status(&state, "error", &message).await;
-                break;
-            }
-            if started.elapsed() > Duration::from_secs(60) {
-                delay = 1;
-            }
-            state.write().await.reconnects += 1;
+    live.write().await.journal = Some(journal.relative.clone());
+    let (stop, receive) = watch::channel(false);
+    let task = tokio::spawn(run(config, live.clone(), journal, receive));
+    (live, Some(Controller { stop, task }))
+}
+
+async fn run(config: Config, state: Live, mut journal: Journal, mut stop: watch::Receiver<bool>) {
+    let mut delay = 1;
+    loop {
+        if *stop.borrow() {
+            break;
+        }
+        set_status(&state, "connecting", "Connecting to Alpaca").await;
+        state.write().await.connection_attempts += 1;
+        let started = tokio::time::Instant::now();
+        let failure = session(&config, &state, &mut journal, &mut stop)
+            .await
+            .unwrap_err();
+        if matches!(failure, Failure::Shutdown) {
+            break;
+        }
+        if let Failure::Fatal(message) = failure {
+            let _ = journal.finish("fatal").await;
+            set_status(&state, "error", &message).await;
+            return;
+        }
+        if started.elapsed() > Duration::from_secs(60) {
+            delay = 1;
+        }
+        state.write().await.reconnects += 1;
+        set_status(
+            &state,
+            "reconnecting",
+            "Connection interrupted; retrying. Gap recorded; no automatic backfill.",
+        )
+        .await;
+        if journal.append(&json!({"type":"gap"})).await.is_err() || journal.sync().await.is_err() {
             set_status(
                 &state,
-                "reconnecting",
-                "Connection interrupted; retrying. Missed events are not backfilled.",
+                "error",
+                "Live journal unavailable or full; ingestion stopped",
             )
             .await;
-            // A journal gap marker preserves the discontinuity for later replay.
-            if journal
-                .append(&json!({"type":"gap", "received_at_ms":Utc::now().timestamp_millis()}))
-                .await
-                .is_err()
-            {
-                set_status(
-                    &state,
-                    "error",
-                    "Live journal unavailable or full; ingestion stopped",
-                )
-                .await;
-                break;
-            }
-            tokio::time::sleep(Duration::from_secs(delay)).await;
-            delay = (delay * 2).min(30);
+            return;
         }
-    });
-    (live, Some(task))
+        update_storage(&state, &journal).await;
+        // Jitter prevents synchronized reconnects across independent installations.
+        let jitter = u64::from(uuid::Uuid::new_v4().as_bytes()[0]);
+        tokio::select! {
+            _ = stop.changed() => break,
+            _ = tokio::time::sleep(Duration::from_millis(delay * 1000 + jitter)) => {}
+        }
+        delay = (delay * 2).min(30);
+    }
+    match journal.finish("shutdown").await {
+        Ok(()) => set_status(&state, "stopped", "Capture closed and synced").await,
+        Err(_) => {
+            set_status(
+                &state,
+                "error",
+                "Shutdown journal sync failed; capture is not clean",
+            )
+            .await
+        }
+    }
+    update_storage(&state, &journal).await;
+}
+async fn update_storage(live: &Live, journal: &Journal) {
+    let mut state = live.write().await;
+    state.journal_bytes = journal.bytes;
+    state.durable_seq = journal.durable_seq;
 }
 
 async fn set_status(live: &Live, status: &str, message: &str) {
@@ -184,35 +231,19 @@ async fn set_status(live: &Live, status: &str, message: &str) {
     s.message = message.into();
 }
 
-struct Journal {
-    file: tokio::fs::File,
-    bytes: usize,
-}
-impl Journal {
-    async fn append(&mut self, value: &Value) -> Result<(), Failure> {
-        let mut bytes = serde_json::to_vec(value).expect("JSON value");
-        bytes.push(b'\n');
-        // Bound disk use per server session. Stop visibly instead of dropping events.
-        if self.bytes + bytes.len() > 256 * 1024 * 1024 {
-            return Err(Failure::Fatal(
-                "Live journal reached 256 MiB; archive it and restart ingestion".into(),
-            ));
-        }
-        self.file
-            .write_all(&bytes)
-            .await
-            .map_err(|_| Failure::Fatal("Live journal write failed; ingestion stopped".into()))?;
-        self.bytes += bytes.len();
-        Ok(())
-    }
-}
 #[derive(Debug)]
 enum Failure {
+    Shutdown,
     Retry,
     Fatal(String),
 }
 
-async fn session(config: &Config, live: &Live, journal: &mut Journal) -> Result<(), Failure> {
+async fn session(
+    config: &Config,
+    live: &Live,
+    journal: &mut Journal,
+    stop: &mut watch::Receiver<bool>,
+) -> Result<(), Failure> {
     let limits = WebSocketConfig::default()
         .max_message_size(Some(1024 * 1024))
         .max_frame_size(Some(1024 * 1024));
@@ -222,37 +253,46 @@ async fn session(config: &Config, live: &Live, journal: &mut Journal) -> Result<
     )
     .await
     .map_err(|_| Failure::Retry)?
-    .map_err(|_| Failure::Retry)?;
-    socket
-        .send(Message::Text(
+    .map_err(classify_socket_error)?;
+    send(
+        &mut socket,
+        Message::Text(
             json!({"action":"auth", "key":config.key, "secret":config.secret})
                 .to_string()
                 .into(),
-        ))
-        .await
-        .map_err(|_| Failure::Retry)?;
+        ),
+    )
+    .await
+    .map_err(|_| Failure::Retry)?;
     set_status(live, "authenticating", "Authenticating with Alpaca").await;
     let deadline = tokio::time::Instant::now() + Duration::from_secs(10);
     let mut subscribed = false;
+    let mut authenticated = false;
+    let mut checkpoint = tokio::time::interval(Duration::from_secs(1));
     let mut heartbeat = tokio::time::interval(Duration::from_secs(20));
     heartbeat.tick().await;
     let mut last_message = tokio::time::Instant::now();
     loop {
+        if *stop.borrow() {
+            return Err(Failure::Shutdown);
+        }
         let message = tokio::select! {
+            _ = stop.changed() => return Err(Failure::Shutdown),
+            _ = checkpoint.tick() => { journal.sync().await?; update_storage(live, journal).await; continue; },
             _ = tokio::time::sleep_until(deadline), if !subscribed => return Err(Failure::Retry),
             _ = heartbeat.tick() => {
                 if last_message.elapsed() > Duration::from_secs(60) { return Err(Failure::Retry); }
-                socket.send(Message::Ping(vec![].into())).await.map_err(|_| Failure::Retry)?;
+                send(&mut socket, Message::Ping(vec![].into())).await.map_err(|_| Failure::Retry)?;
                 continue;
             }
-            message = socket.next() => message.ok_or(Failure::Retry)?.map_err(|_| Failure::Retry)?,
+            message = socket.next() => message.ok_or(Failure::Retry)?.map_err(classify_socket_error)?,
         };
         last_message = tokio::time::Instant::now();
+        live.write().await.last_message_at_ms = Some(Utc::now().timestamp_millis());
         let text = match message {
             Message::Text(text) => text,
             Message::Ping(data) => {
-                socket
-                    .send(Message::Pong(data))
+                send(&mut socket, Message::Pong(data))
                     .await
                     .map_err(|_| Failure::Retry)?;
                 continue;
@@ -271,15 +311,25 @@ async fn session(config: &Config, live: &Live, journal: &mut Journal) -> Result<
         for event in messages {
             match event["T"].as_str().unwrap_or("") {
                 "success" if event["msg"] == "authenticated" => {
-                    socket.send(Message::Text(json!({"action":"subscribe", "trades":config.symbols, "quotes":config.symbols, "bars":config.symbols, "updatedBars":config.symbols}).to_string().into())).await.map_err(|_| Failure::Retry)?;
+                    if authenticated {
+                        return Err(Failure::Fatal("Duplicate authentication response".into()));
+                    }
+                    authenticated = true;
+                    send(&mut socket, Message::Text(json!({"action":"subscribe", "trades":config.symbols, "quotes":config.symbols, "bars":config.symbols, "updatedBars":config.symbols}).to_string().into())).await.map_err(|_| Failure::Retry)?;
                 }
                 "subscription" => {
-                    let confirmed = event["trades"].as_array().is_some_and(|symbols| {
-                        config.symbols.iter().all(|s| symbols.contains(&json!(s)))
-                    });
+                    let confirmed = authenticated
+                        && ["trades", "quotes", "bars", "updatedBars"]
+                            .iter()
+                            .all(|channel| {
+                                event[*channel].as_array().is_some_and(|symbols| {
+                                    config.symbols.iter().all(|s| symbols.contains(&json!(s)))
+                                })
+                            });
                     if !confirmed {
                         return Err(Failure::Fatal(
-                            "Alpaca did not confirm all requested trade subscriptions".into(),
+                            "Alpaca did not confirm every requested channel after authentication"
+                                .into(),
                         ));
                     }
                     subscribed = true;
@@ -309,13 +359,16 @@ async fn session(config: &Config, live: &Live, journal: &mut Journal) -> Result<
                         ));
                     };
                     let now = Utc::now().timestamp_millis();
+                    quant_data::capture::validate_event(&event, now).map_err(|_| {
+                        Failure::Fatal("Invalid market event; ingestion stopped".into())
+                    })?;
                     let price = if event["T"] == "t" {
                         Some(parse_trade(&event, now)?)
                     } else {
                         None
                     };
                     journal
-                        .append(&json!({"feed":config.feed,"received_at_ms":now,"event":event}))
+                        .append(&json!({"type":"market","feed":config.feed,"received_at_ms":now,"event":event}))
                         .await?;
                     let mut s = live.write().await;
                     s.received_events += 1;
@@ -333,6 +386,37 @@ async fn session(config: &Config, live: &Live, journal: &mut Journal) -> Result<
             }
         }
     }
+}
+
+fn classify_socket_error(error: tokio_tungstenite::tungstenite::Error) -> Failure {
+    use tokio_tungstenite::tungstenite::Error;
+    match error {
+        Error::Http(response) if matches!(response.status().as_u16(), 400 | 401 | 403 | 404) => {
+            Failure::Fatal(format!(
+                "Alpaca HTTP {}: check credentials and feed configuration",
+                response.status().as_u16()
+            ))
+        }
+        Error::Capacity(_) | Error::Protocol(_) | Error::Utf8(_) => {
+            Failure::Fatal("Invalid or oversized provider WebSocket frame".into())
+        }
+        _ => Failure::Retry,
+    }
+}
+async fn send<S>(
+    socket: &mut tokio_tungstenite::WebSocketStream<S>,
+    message: Message,
+) -> Result<(), tokio_tungstenite::tungstenite::Error>
+where
+    S: tokio::io::AsyncRead + tokio::io::AsyncWrite + Unpin,
+{
+    tokio::time::timeout(Duration::from_secs(10), socket.send(message))
+        .await
+        .map_err(|_| {
+            tokio_tungstenite::tungstenite::Error::Io(std::io::Error::from(
+                std::io::ErrorKind::TimedOut,
+            ))
+        })?
 }
 
 fn parse_trade(event: &Value, received_at_ms: i64) -> Result<Price, Failure> {
@@ -360,6 +444,120 @@ fn parse_trade(event: &Value, received_at_ms: i64) -> Result<Price, Failure> {
 mod tests {
     use super::*;
     use tokio::net::TcpListener;
+
+    #[test]
+    fn configuration_and_error_classification_are_explicit() {
+        for (symbols, feed, key) in [
+            ("", "iex", "key"),
+            ("*", "iex", "key"),
+            ("../AAPL", "iex", "key"),
+            ("AAPL", "unknown", "key"),
+            ("AAPL", "test", "key"),
+            ("AAPL", "iex", ""),
+        ] {
+            assert!(
+                Config::parse(symbols.into(), feed.into(), key.into(), "secret".into()).is_err()
+            );
+        }
+        let cfg = Config::parse(
+            "aapl,MSFT,AAPL".into(),
+            "iex".into(),
+            "key".into(),
+            "secret".into(),
+        )
+        .unwrap();
+        assert_eq!(cfg.symbols, ["AAPL", "MSFT"]);
+        assert_eq!(cfg.endpoint, "wss://stream.data.alpaca.markets/v2/iex");
+        let response = tokio_tungstenite::tungstenite::http::Response::builder()
+            .status(401)
+            .body(Some(b"secret".to_vec()))
+            .unwrap();
+        let Failure::Fatal(message) = classify_socket_error(
+            tokio_tungstenite::tungstenite::Error::Http(Box::new(response)),
+        ) else {
+            panic!("HTTP auth error must stop")
+        };
+        assert!(!message.contains("secret"));
+        assert!(matches!(
+            classify_socket_error(tokio_tungstenite::tungstenite::Error::ConnectionClosed),
+            Failure::Retry
+        ));
+    }
+
+    #[tokio::test]
+    async fn reconnect_resubscribes_and_shutdown_seals_the_capture() {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let endpoint = format!("ws://{}", listener.local_addr().unwrap());
+        let server = tokio::spawn(async move {
+            for index in 0..2 {
+                let (stream, _) = listener.accept().await.unwrap();
+                let mut socket = tokio_tungstenite::accept_async(stream).await.unwrap();
+                let auth: Value =
+                    serde_json::from_str(socket.next().await.unwrap().unwrap().to_text().unwrap())
+                        .unwrap();
+                assert_eq!(auth["action"], "auth");
+                socket
+                    .send(Message::Text(
+                        json!([{"T":"success","msg":"authenticated"}])
+                            .to_string()
+                            .into(),
+                    ))
+                    .await
+                    .unwrap();
+                let sub: Value =
+                    serde_json::from_str(socket.next().await.unwrap().unwrap().to_text().unwrap())
+                        .unwrap();
+                assert_eq!(sub["trades"], json!(["AAPL"]));
+                socket.send(Message::Text(json!([{"T":"subscription","trades":["AAPL"],"quotes":["AAPL"],"bars":["AAPL"],"updatedBars":["AAPL"]},
+                    {"T":"t","S":"AAPL","p":100+index,"s":1,"t":Utc::now().to_rfc3339()}]).to_string().into())).await.unwrap();
+                if index == 0 {
+                    socket.close(None).await.unwrap();
+                } else {
+                    while let Some(Ok(_)) = socket.next().await {}
+                }
+            }
+        });
+        let temp = tempfile::tempdir().unwrap();
+        let journal = Journal::create(temp.path(), "iex", &["AAPL".into()])
+            .await
+            .unwrap();
+        let path = temp.path().join(&journal.relative);
+        let state = disabled();
+        let (stop, receive) = watch::channel(false);
+        let task = tokio::spawn(run(
+            Config {
+                endpoint,
+                feed: "iex".into(),
+                symbols: vec!["AAPL".into()],
+                key: "key".into(),
+                secret: "secret".into(),
+            },
+            state.clone(),
+            journal,
+            receive,
+        ));
+        tokio::time::timeout(Duration::from_secs(8), async {
+            while state.read().await.received_events < 2 {
+                tokio::time::sleep(Duration::from_millis(10)).await;
+            }
+        })
+        .await
+        .unwrap();
+        stop.send(true).unwrap();
+        tokio::time::timeout(Duration::from_secs(5), task)
+            .await
+            .unwrap()
+            .unwrap();
+        server.await.unwrap();
+        let audit = quant_data::capture::verify(&path).unwrap();
+        assert!(audit.clean_shutdown);
+        assert_eq!(audit.gaps, 1);
+        let state = state.read().await;
+        assert_eq!(state.status, "stopped");
+        assert_eq!(state.connection_attempts, 2);
+        assert_eq!(state.durable_seq, audit.records);
+        assert_eq!(state.prices["AAPL"].price, 101.0);
+    }
 
     #[test]
     fn rejects_invalid_trades() {
@@ -411,11 +609,10 @@ mod tests {
             let _ = ws.close(None).await;
         });
         let temp = tempfile::tempdir().unwrap();
-        let path = temp.path().join("events.ndjson");
-        let mut journal = Journal {
-            file: tokio::fs::File::create(&path).await.unwrap(),
-            bytes: 0,
-        };
+        let mut journal = Journal::create(temp.path(), "iex", &["AAPL".into()])
+            .await
+            .unwrap();
+        let path = temp.path().join(&journal.relative);
         let live = disabled();
         let config = Config {
             endpoint,
@@ -424,16 +621,24 @@ mod tests {
             key: "test-key".into(),
             secret: "test-secret".into(),
         };
+        let (_sender, mut stop) = watch::channel(false);
         let failure = tokio::time::timeout(
             Duration::from_secs(5),
-            session(&config, &live, &mut journal),
+            session(&config, &live, &mut journal, &mut stop),
         )
         .await
         .unwrap()
         .unwrap_err();
-        journal.file.flush().await.unwrap();
+        journal.sync().await.unwrap();
         server.await.unwrap();
-        let record = tokio::fs::read_to_string(path).await.unwrap();
+        let contents = tokio::fs::read_to_string(path.join("000001.ndjson"))
+            .await
+            .unwrap();
+        let record = contents
+            .lines()
+            .filter(|line| serde_json::from_str::<Value>(line).unwrap()["type"] == "market")
+            .collect::<Vec<_>>()
+            .join("\n");
         assert!(!record.contains("test-secret"));
         (live, record, failure)
     }
@@ -441,13 +646,13 @@ mod tests {
     #[tokio::test]
     async fn websocket_authenticates_subscribes_persists_and_preserves_event_order() {
         let (live, records, failure) = exchange(vec![
-            json!([{"T":"subscription","trades":["AAPL"]}]),
+            json!([{"T":"subscription","trades":["AAPL"],"quotes":["AAPL"],"bars":["AAPL"],"updatedBars":["AAPL"]}]),
             json!([
                 {"T":"t","S":"AAPL","p":102,"s":2,"t":"2026-09-28T14:00:02Z"},
                 {"T":"t","S":"AAPL","p":101,"s":1,"t":"2026-09-28T14:00:01Z"},
-                {"T":"q","S":"AAPL","bp":101,"ap":103,"t":"2026-09-28T14:00:02Z"},
-                {"T":"u","S":"AAPL","c":102,"t":"2026-09-28T14:00:00Z"},
-                {"T":"c","S":"AAPL","cp":101,"t":"2026-09-28T14:00:03Z"},
+                {"T":"q","S":"AAPL","bp":101,"ap":103,"bs":1,"as":1,"t":"2026-09-28T14:00:02Z"},
+                {"T":"u","S":"AAPL","o":102,"h":102,"l":102,"c":102,"v":2,"t":"2026-09-28T14:00:00Z"},
+                {"T":"c","S":"AAPL","op":102,"cp":101,"os":1,"cs":1,"t":"2026-09-28T14:00:03Z"},
                 {"T":"t","S":"MSFT","p":999,"s":1,"t":"2026-09-28T14:00:03Z"}
             ]),
         ])
@@ -488,26 +693,11 @@ mod tests {
     #[tokio::test]
     async fn invalid_trade_is_not_recorded_or_displayed() {
         let (state, records, failure) =
-            exchange(vec![json!([{"T":"subscription","trades":["AAPL"]},
+            exchange(vec![json!([{"T":"subscription","trades":["AAPL"],"quotes":["AAPL"],"bars":["AAPL"],"updatedBars":["AAPL"]},
             {"T":"t","S":"AAPL","p":-1,"s":2,"t":"2026-09-28T14:00:00Z"}])])
             .await;
         assert!(matches!(failure, Failure::Fatal(_)));
         assert!(records.is_empty());
         assert!(state.read().await.prices.is_empty());
-    }
-
-    #[tokio::test]
-    async fn journal_limit_stops_ingestion() {
-        let temp = tempfile::tempdir().unwrap();
-        let mut journal = Journal {
-            file: tokio::fs::File::create(temp.path().join("events"))
-                .await
-                .unwrap(),
-            bytes: 256 * 1024 * 1024,
-        };
-        assert!(matches!(
-            journal.append(&json!({"event":1})).await,
-            Err(Failure::Fatal(_))
-        ));
     }
 }

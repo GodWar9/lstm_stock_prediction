@@ -2,6 +2,7 @@
 
 pub mod adapters;
 pub mod adjust;
+pub mod capture;
 pub mod provider;
 pub mod storage;
 pub mod types;

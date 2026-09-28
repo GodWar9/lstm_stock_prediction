@@ -8,7 +8,7 @@ use quant_features::{
 };
 use std::path::Path;
 
-pub fn graph() -> FeatureGraph {
+pub fn graph(periods_per_year: f64) -> FeatureGraph {
     // Keep the established schema: the former duplicate SMA key retained SMA(20).
     FeatureGraph::new(vec![
         Box::new(Sma::new(20)),
@@ -17,16 +17,27 @@ pub fn graph() -> FeatureGraph {
         Box::new(Macd::standard()),
         Box::new(BollingerBands::standard()),
         Box::new(Atr::new(14)),
-        Box::new(RollingVolatility::daily(20)),
+        Box::new(RollingVolatility::new(20, periods_per_year.sqrt())),
         Box::new(LogReturn::new(1)),
     ])
 }
 
 pub fn bars(config: &Path, symbol: &str) -> Result<Vec<Bar>> {
     let cfg = load_config(config)?;
+    let manifest = quant_data::read_manifest("datasets/market", &cfg.data.dataset_version, symbol)?;
+    if manifest.bar_interval != cfg.data.bar_interval {
+        bail!("Configured bar interval differs from the dataset");
+    }
     let bars = read_dataset("datasets/market", &cfg.data.dataset_version, symbol)
         .context("Ingest the configured dataset with quantctl data ingest first")?;
     validate_bars_monotonic_and_sound(&bars)?;
+    if bars.iter().any(|b| b.availability_timestamp < b.timestamp)
+        || bars
+            .windows(2)
+            .any(|b| b[1].availability_timestamp <= b[0].availability_timestamp)
+    {
+        bail!("Bar availability must follow market time and be strictly increasing");
+    }
     if bars.is_empty() {
         bail!("Market dataset is empty");
     }
@@ -42,4 +53,13 @@ pub fn ordered(rows: &[FeatureRow], schema: &[String]) -> Result<Vec<(i64, Vec<f
         }).collect::<Result<Vec<_>>>()?;
         Ok((row.timestamp.as_nanos(), values))
     }).collect()
+}
+
+pub fn check_model_interval(artifact: &Path, cfg: &quant_config::AppConfig) -> Result<()> {
+    let meta: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(artifact.join("metadata.json"))?)?;
+    if meta["bar_interval"].as_str().unwrap_or("1d") != cfg.data.bar_interval {
+        bail!("Model bar interval differs from the dataset; train an interval-matched model");
+    }
+    Ok(())
 }

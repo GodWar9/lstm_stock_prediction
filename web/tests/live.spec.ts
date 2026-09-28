@@ -34,7 +34,7 @@ async function emit(page: Page, overrides: Record<string, unknown> = {}) {
     window.dispatchEvent(new CustomEvent('test-feed', { detail: {
       status: 'connected', message: 'Subscribed', feed: 'iex', symbols: ['AAPL'],
       prices: { AAPL: { symbol: 'AAPL', price: 123.45, size: 10, exchange_timestamp: new Date(now).toISOString(), received_at_ms: now } },
-      received_events: 1, reconnects: 0, journal: 'datasets/live/test.ndjson', server_time_ms: now,
+      received_events: 1, reconnects: 0, connection_attempts: 1, journal_bytes: 100, durable_seq: 2, last_message_at_ms: now, journal: 'datasets/live/test.ndjson', server_time_ms: now,
       ...overrides,
     } }));
   }, overrides);

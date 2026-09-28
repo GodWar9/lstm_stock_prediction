@@ -3,6 +3,121 @@
 use std::process::Command;
 
 #[test]
+fn captured_minutes_train_fresh_model_backtest_and_simulation() {
+    use chrono::{Duration, TimeZone, Utc};
+    use serde_json::json;
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .canonicalize()
+        .unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    let capture = temp.path().join("capture");
+    std::fs::create_dir(&capture).unwrap();
+    let start = Utc.with_ymd_and_hms(2024, 1, 2, 14, 30, 0).unwrap();
+    let mut records = vec![
+        json!({"type":"session","feed":"iex","symbols":["AAPL"],"synthetic":true,"received_at_ms":start.timestamp_millis()}),
+    ];
+    // Three full regular sessions, explicitly marked synthetic protocol data.
+    let mut close: f64 = 100.0;
+    for day in 0..3 {
+        for minute in 0..390 {
+            let t = start + Duration::days(day) + Duration::minutes(minute);
+            let open = close;
+            close *= 1.0 + if minute % 3 == 0 { 0.0003 } else { -0.0001 };
+            records.push(json!({"type":"market","feed":"iex","received_at_ms":(t+Duration::minutes(1)).timestamp_millis()+500,
+                "event":{"T":"b","S":"AAPL","t":t.to_rfc3339(),"o":open,"h":open.max(close)+0.02,"l":open.min(close)-0.02,"c":close,"v":50000}}));
+        }
+    }
+    let last = records.last().unwrap()["received_at_ms"].as_i64().unwrap();
+    records.push(json!({"type":"stop","reason":"shutdown","received_at_ms":last+1}));
+    let mut chain = String::new();
+    let mut journal = String::new();
+    for (i, mut record) in records.into_iter().enumerate() {
+        record["schema_version"] = json!(1);
+        record["seq"] = json!(i + 1);
+        record["session_id"] = json!("synthetic_protocol_fixture");
+        record["previous_checksum"] = json!(chain);
+        chain = quant_data::capture::checksum(&record);
+        record["checksum"] = json!(chain);
+        journal.push_str(&record.to_string());
+        journal.push('\n');
+    }
+    std::fs::write(capture.join("000001.ndjson"), journal).unwrap();
+    // Scale the shipped intraday config down to this three-session fixture. The
+    // production lookback and embargo need roughly a month of minute history; the
+    // first walk-forward fold would otherwise leave a validation split below
+    // lookback + 1 rows. Cadence, provenance and mismatched-bar-interval checks
+    // are unaffected.
+    let cfg = std::fs::read_to_string(root.join("configs/intraday.yaml"))
+        .unwrap()
+        .replace("2026-09-01", "2024-01-01")
+        .replace("2026-10-01", "2024-01-05")
+        .replace("epochs: 10", "epochs: 1")
+        .replace("hidden_size: 32", "hidden_size: 8")
+        .replace("lookback: 30", "lookback: 5")
+        .replace("embargo_gap: 30", "embargo_gap: 3");
+    let config = temp.path().join("config.yaml");
+    std::fs::write(&config, cfg).unwrap();
+    let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .current_dir(&root)
+        .arg("--config")
+        .arg(&config)
+        .args(["research", "--journal"])
+        .arg(&capture)
+        .args(["--paths", "20"])
+        .output()
+        .unwrap();
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(
+        output.status.success(),
+        "{}\n{}",
+        stdout,
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let result = stdout
+        .lines()
+        .find_map(|line| line.strip_prefix("Research complete: "))
+        .unwrap();
+    let result: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join(result)).unwrap()).unwrap();
+    let id = result["id"].as_str().unwrap();
+    assert_eq!(result["status"], "complete");
+    assert_eq!(result["capture"]["synthetic"], true);
+    let model = root.join("models").join(id);
+    let metadata: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(model.join("metadata.json")).unwrap()).unwrap();
+    assert_eq!(metadata["bar_interval"], "1m");
+    assert_eq!(metadata["periods_per_year"], 98280);
+    let validation: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(model.join("validation.json")).unwrap()).unwrap();
+    assert_eq!(validation["folds"].as_array().unwrap().len(), 3);
+    for run in result["runs"].as_array().unwrap() {
+        assert_eq!(run["metrics"]["periods_per_year"], 98280.0);
+        assert!(run["provenance"]["source"]
+            .as_str()
+            .unwrap()
+            .starts_with("synthetic_capture:"));
+        assert_eq!(run["provenance"]["data_version"], id);
+    }
+    // A daily configuration cannot silently run this minute-trained model.
+    let mismatch = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .current_dir(&root)
+        .args([
+            "--config",
+            "configs/demo.yaml",
+            "predict",
+            "--model",
+            id,
+            "--symbol",
+            "AAPL",
+        ])
+        .output()
+        .unwrap();
+    assert!(!mismatch.status.success());
+    assert!(String::from_utf8_lossy(&mismatch.stderr).contains("bar interval differs"));
+}
+
+#[test]
 fn test_cli_help() {
     let output = Command::new(env!("CARGO_BIN_EXE_quantctl"))
         .arg("--help")
@@ -233,7 +348,9 @@ fn full_pipeline(local_csv: bool) {
             let value: serde_json::Value =
                 serde_json::from_slice(&std::fs::read(entry.path().join("manifest.json")).ok()?)
                     .ok()?;
-            (value["provenance"]["model_artifact_id"] == unique).then_some(value)
+            // The simulation inherits this provenance, so select the backtest run.
+            (value["kind"] == "backtest" && value["provenance"]["model_artifact_id"] == unique)
+                .then_some(value)
         })
         .expect("published run manifest");
     assert_eq!(manifest["split"], "test");
