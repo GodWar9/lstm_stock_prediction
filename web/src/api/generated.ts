@@ -15,6 +15,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/live": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["live_snapshot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/live/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["live_events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/models": {
         parameters: {
             query?: never;
@@ -114,6 +146,16 @@ export interface components {
             training_log?: unknown;
             validation?: unknown;
         };
+        Price: {
+            exchange_timestamp: string;
+            /** Format: double */
+            price: number;
+            /** Format: int64 */
+            received_at_ms: number;
+            /** Format: double */
+            size: number;
+            symbol: string;
+        };
         Provenance: {
             config_hash: string;
             data_version: string;
@@ -141,6 +183,22 @@ export interface components {
             split: string;
             warnings: string[];
         };
+        Snapshot: {
+            feed: string;
+            journal?: string | null;
+            message: string;
+            prices: {
+                [key: string]: components["schemas"]["Price"];
+            };
+            /** Format: int64 */
+            received_events: number;
+            /** Format: int64 */
+            reconnects: number;
+            /** Format: int64 */
+            server_time_ms: number;
+            status: string;
+            symbols: string[];
+        };
         SourceSnapshot: {
             content_sha256: string;
             file_count: number;
@@ -166,6 +224,43 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description SSE completed artifact snapshots; no job launcher */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    live_snapshot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Snapshot"];
+                };
+            };
+        };
+    };
+    live_events: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description SSE live snapshots, at most once per second; not a tick replay stream */
             200: {
                 headers: {
                     [name: string]: unknown;

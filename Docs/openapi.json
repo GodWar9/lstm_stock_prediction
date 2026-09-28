@@ -20,6 +20,35 @@
         }
       }
     },
+    "/api/live": {
+      "get": {
+        "tags": [],
+        "operationId": "live_snapshot",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Snapshot"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/live/events": {
+      "get": {
+        "tags": [],
+        "operationId": "live_events",
+        "responses": {
+          "200": {
+            "description": "SSE live snapshots, at most once per second; not a tick replay stream"
+          }
+        }
+      }
+    },
     "/api/models": {
       "get": {
         "tags": [],
@@ -293,6 +322,36 @@
           "validation": {}
         }
       },
+      "Price": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "price",
+          "size",
+          "exchange_timestamp",
+          "received_at_ms"
+        ],
+        "properties": {
+          "exchange_timestamp": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "format": "double"
+          },
+          "received_at_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "size": {
+            "type": "number",
+            "format": "double"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        }
+      },
       "Provenance": {
         "type": "object",
         "required": [
@@ -399,6 +458,65 @@
             "description": "test, validation, train, or unverified. A label alone is not proof of OOS."
           },
           "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Snapshot": {
+        "type": "object",
+        "required": [
+          "status",
+          "message",
+          "feed",
+          "symbols",
+          "prices",
+          "received_events",
+          "reconnects",
+          "server_time_ms"
+        ],
+        "properties": {
+          "feed": {
+            "type": "string"
+          },
+          "journal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "prices": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Price"
+            },
+            "propertyNames": {
+              "type": "string"
+            }
+          },
+          "received_events": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "reconnects": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          },
+          "server_time_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string"
+          },
+          "symbols": {
             "type": "array",
             "items": {
               "type": "string"

@@ -31,7 +31,7 @@ pub enum Commands {
         #[arg(long)]
         artifact_dir: PathBuf,
     },
-    /// Serve the local read-only research inspector
+    /// Serve the research inspector and optional Alpaca live ingestion
     Serve {
         #[arg(long, default_value_t = 8787)]
         port: u16,

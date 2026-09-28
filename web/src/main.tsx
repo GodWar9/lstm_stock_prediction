@@ -1,16 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createRootRoute, createRoute, createRouter, RouterProvider, Link, Outlet, useNavigate } from '@tanstack/react-router';
+import { createRootRoute, createRoute, createRouter, RouterProvider, Link, Outlet, useNavigate, useRouterState } from '@tanstack/react-router';
 import { json, object, numbers, type Run, type Model } from './api/client';
 import { loadSeries, loadPage } from './arrow/decode';
 import { Chart, DataTable } from './components/Chart';
 import { number, percent } from './lib/format';
 import './style.css';
+import { Live } from './components/Live';
 
 const client = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: Infinity } } });
 const RunContext = createContext<Run | undefined>(undefined);
-const pages = [['/', 'Overview'], ['/backtest', 'Backtest'], ['/validation', 'Data and validation'], ['/models', 'Models'], ['/signals', 'Signals'], ['/risk', 'Risk and simulation'], ['/jobs', 'Run activity']] as const;
+const pages = [['/live', 'Live market data'], ['/', 'Overview'], ['/backtest', 'Backtest'], ['/validation', 'Data and validation'], ['/models', 'Models'], ['/signals', 'Signals'], ['/risk', 'Risk and simulation'], ['/jobs', 'Run activity']] as const;
 function Notice({ title, children, error = false }: { title: string; children?: React.ReactNode; error?: boolean }) {
   return <section className={`notice ${error ? 'error' : ''}`} role={error ? 'alert' : 'status'}><h2>{title}</h2>{children && <div>{children}</div>}</section>;
 }
@@ -21,11 +22,12 @@ function Provenance({ run }: { run?: Run }) {
 }
 function Shell() {
   const search = rootRoute.useSearch();
+  const livePage = useRouterState({ select: state => state.location.pathname === '/live' });
   const navigate = useNavigate({ from: '/' });
   const queryClient = useQueryClient();
-  const runs = useQuery({ queryKey: ['runs'], queryFn: () => json<Run[]>('/api/runs'), staleTime: 0 });
+  const runs = useQuery({ queryKey: ['runs'], queryFn: () => json<Run[]>('/api/runs'), staleTime: 0, enabled: !livePage });
   const visible = runs.data?.filter(r => search.inSample || r.split === 'test') ?? [];
-  const selected = visible.find(r => r.run_id === search.run) ?? visible[0];
+  const selected = livePage ? undefined : visible.find(r => r.run_id === search.run) ?? visible[0];
   useEffect(() => {
     const events = new EventSource('/api/events');
     let previous = '';
@@ -35,12 +37,12 @@ function Shell() {
     });
     return () => events.close();
   }, [queryClient]);
-  return <div className="app"><aside><Link className="brand" to="/" search={search}><span className="brand-mark">q</span><span>Quant<br /><small>Research inspector</small></span></Link><nav aria-label="Main navigation">{pages.map(([to, label]) => <Link key={to} to={to} search={search} activeProps={{ className: 'active' }} activeOptions={{ exact: true }}>{label}</Link>)}</nav><p className="sidebar-note">Local research workspace<br />Read-only artifact inspection</p></aside>
-    <div className="workspace"><header><div><span className="muted">Inspect the evidence</span><h1>Research workspace</h1></div><div className="run-controls"><label htmlFor="run">Active run</label><select id="run" value={selected?.run_id ?? ''} onChange={e => void navigate({ search: { ...search, run: e.target.value } })}>{!visible.length && <option value="">No eligible runs</option>}{visible.map(r => <option key={r.run_id} value={r.run_id}>{r.kind} · {r.instruments.map(i => i.id).join(', ')} · {r.created_at.slice(0, 16)} · {r.run_id.slice(0, 8)}</option>)}</select><label className="checkbox"><input type="checkbox" checked={search.inSample} onChange={e => void navigate({ search: { run: undefined, inSample: e.target.checked } })} />Include in-sample and unverified runs</label></div></header>
+  return <div className="app"><aside><Link className="brand" to="/" search={search}><span className="brand-mark">q</span><span>Quant<br /><small>Research inspector</small></span></Link><nav aria-label="Main navigation">{pages.map(([to, label]) => <Link key={to} to={to} search={search} activeProps={{ className: 'active' }} activeOptions={{ exact: true }}>{label}</Link>)}</nav><p className="sidebar-note">Local research workspace<br />Live feed and recorded research</p></aside>
+    <div className="workspace"><header><div><span className="muted">Inspect the evidence</span><h1>Research workspace</h1></div>{!livePage && <div className="run-controls"><label htmlFor="run">Active run</label><select id="run" value={selected?.run_id ?? ''} onChange={e => void navigate({ search: { ...search, run: e.target.value } })}>{!visible.length && <option value="">No eligible runs</option>}{visible.map(r => <option key={r.run_id} value={r.run_id}>{r.kind} · {r.instruments.map(i => i.id).join(', ')} · {r.created_at.slice(0, 16)} · {r.run_id.slice(0, 8)}</option>)}</select><label className="checkbox"><input type="checkbox" checked={search.inSample} onChange={e => void navigate({ search: { run: undefined, inSample: e.target.checked } })} />Include in-sample and unverified runs</label></div>}</header>
       <main id="main"><RunContext.Provider value={selected}>
-        {search.inSample && <div className="warning">In-sample and unverified results can overstate performance. Check the split and source before comparing runs.</div>}
+        {!livePage && search.inSample && <div className="warning">In-sample and unverified results can overstate performance. Check the split and source before comparing runs.</div>}
         {selected && <div className="run-strip"><span className="badge">{selected.split === 'test' ? 'Held-out test' : selected.split}</span><strong>{selected.instruments.map(i => i.id).join(', ')}</strong><span>{selected.kind}</span><span>Source: {selected.provenance.source}</span><span>Model: {selected.provenance.model_artifact_id}</span></div>}
-        {runs.isPending ? <Notice title="Reading local research artifacts">Loading manifests and provenance from the Rust API.</Notice> : runs.error ? <Notice title="Cannot load runs" error>{runs.error.message}<p>Start <code>quantctl serve --root .</code> from the project root, then retry.</p><button onClick={() => void runs.refetch()}>Retry</button></Notice> : <><Outlet />{selected?.warnings.map(w => <p className="method-note" key={w}>{w}</p>)}</>}
+        {livePage ? <Outlet /> : runs.isPending ? <Notice title="Reading local research artifacts">Loading manifests and provenance from the Rust API.</Notice> : runs.error ? <Notice title="Cannot load runs" error>{runs.error.message}<p>Start <code>quantctl serve --root .</code> from the project root, then retry.</p><button onClick={() => void runs.refetch()}>Retry</button></Notice> : <><Outlet />{selected?.warnings.map(w => <p className="method-note" key={w}>{w}</p>)}</>}
       </RunContext.Provider></main><Provenance run={selected} />
     </div></div>;
 }
@@ -256,6 +258,7 @@ function Jobs() {
 }
 const rootRoute = createRootRoute({ component: Shell, validateSearch: (search: Record<string, unknown>) => ({ run: typeof search.run === 'string' ? search.run : undefined, inSample: search.inSample === true || search.inSample === 'true' }) });
 const routeTree = rootRoute.addChildren([
+  createRoute({ getParentRoute: () => rootRoute, path: '/live', component: Live }),
   createRoute({ getParentRoute: () => rootRoute, path: '/', component: Overview }),
   createRoute({ getParentRoute: () => rootRoute, path: '/backtest', component: Backtest }),
   createRoute({ getParentRoute: () => rootRoute, path: '/validation', component: Validation }),

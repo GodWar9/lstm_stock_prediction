@@ -30,6 +30,7 @@ use utoipa::OpenApi;
 pub struct AppState {
     root: PathBuf,
     workers: Arc<tokio::sync::Semaphore>,
+    live: crate::live::Live,
 }
 
 const MAX_ARTIFACT_BYTES: u64 = 64 * 1024 * 1024;
@@ -590,16 +591,52 @@ async fn spa(uri: Uri) -> Response {
     }
 }
 
+#[utoipa::path(get, path = "/api/live", responses((status = 200, body = crate::live::Snapshot)))]
+async fn live_snapshot(State(s): State<AppState>) -> Json<crate::live::Snapshot> {
+    let mut snapshot = s.live.read().await.clone();
+    snapshot.server_time_ms = chrono::Utc::now().timestamp_millis();
+    Json(snapshot)
+}
+
+#[utoipa::path(get, path = "/api/live/events", responses((status = 200, description = "SSE live snapshots, at most once per second; not a tick replay stream")))]
+async fn live_events(
+    State(s): State<AppState>,
+) -> Sse<impl tokio_stream::Stream<Item = Result<Event, Infallible>>> {
+    let stream =
+        tokio_stream::wrappers::IntervalStream::new(tokio::time::interval(Duration::from_secs(1)))
+            .then(move |_| {
+                let state = s.clone();
+                async move {
+                    let snapshot = live_snapshot(State(state)).await.0;
+                    Ok(Event::default()
+                        .event("live")
+                        .data(serde_json::to_string(&snapshot).expect("live snapshot")))
+                }
+            });
+    Sse::new(stream).keep_alive(KeepAlive::default())
+}
+
 #[derive(OpenApi)]
 #[openapi(
-    paths(runs, manifest, artifact, models, model, events),
+    paths(
+        runs,
+        manifest,
+        artifact,
+        models,
+        model,
+        events,
+        live_snapshot,
+        live_events
+    ),
     components(schemas(
         RunManifest,
         Provenance,
         SourceSnapshot,
         Instrument,
         ApiError,
-        ModelArtifact
+        ModelArtifact,
+        crate::live::Snapshot,
+        crate::live::Price
     ))
 )]
 struct ApiDoc;
@@ -610,7 +647,12 @@ pub fn openapi() -> String {
 }
 
 pub fn router(root: PathBuf) -> Router {
+    router_with_live(root, crate::live::disabled())
+}
+fn router_with_live(root: PathBuf, live: crate::live::Live) -> Router {
     Router::new()
+        .route("/api/live", get(live_snapshot))
+        .route("/api/live/events", get(live_events))
         .route("/api/runs", get(runs))
         .route("/api/runs/{run_id}/manifest", get(manifest))
         .route("/api/runs/{run_id}/{*artifact}", get(artifact))
@@ -625,6 +667,7 @@ pub fn router(root: PathBuf) -> Router {
         .layer(axum::middleware::from_fn(local_only))
         .with_state(AppState {
             root,
+            live,
             workers: Arc::new(tokio::sync::Semaphore::new(4)),
         })
 }
@@ -654,12 +697,17 @@ async fn local_only(request: axum::extract::Request, next: axum::middleware::Nex
 }
 pub async fn serve(root: PathBuf, port: u16) -> anyhow::Result<()> {
     let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, port)).await?;
+    let (live, task) = crate::live::start(&root).await;
     println!("Research inspector: http://{}", listener.local_addr()?);
-    axum::serve(listener, router(root))
+    let result = axum::serve(listener, router_with_live(root, live))
         .with_graceful_shutdown(async {
             let _ = tokio::signal::ctrl_c().await;
         })
-        .await?;
+        .await;
+    if let Some(task) = task {
+        task.abort();
+    }
+    result?;
     Ok(())
 }
 
@@ -724,6 +772,7 @@ mod tests {
         let temp = tempfile::tempdir().unwrap();
         let state = AppState {
             root: temp.path().into(),
+            live: crate::live::disabled(),
             workers: Arc::new(tokio::sync::Semaphore::new(1)),
         };
         let (started, ready) = tokio::sync::oneshot::channel();
