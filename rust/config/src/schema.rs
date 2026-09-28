@@ -30,10 +30,17 @@ pub struct DataConfig {
     pub exchange: String,
     #[serde(default = "default_dataset_version")]
     pub dataset_version: String,
+    /// Directory containing one <symbol>.csv file per instrument, relative to the project root.
+    #[serde(default = "default_input_dir")]
+    pub input_dir: String,
 }
 
 fn default_provider() -> String {
-    "yfinance".to_string()
+    "csv".to_string()
+}
+
+fn default_input_dir() -> String {
+    "datasets/import".to_string()
 }
 
 fn default_exchange() -> String {
@@ -80,6 +87,10 @@ fn default_target_transformation() -> String {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TrainingConfig {
+    #[serde(default)]
+    pub walk_forward: bool,
+    #[serde(default = "default_folds")]
+    pub n_folds: usize,
     #[serde(default = "default_model_id")]
     pub model_id: String,
     #[serde(default = "default_hidden_size")]
@@ -102,6 +113,10 @@ pub struct TrainingConfig {
     pub purge_gap: usize,
     #[serde(default = "default_embargo_gap")]
     pub embargo_gap: usize,
+}
+
+fn default_folds() -> usize {
+    5
 }
 
 fn default_model_id() -> String {

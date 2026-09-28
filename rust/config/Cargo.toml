@@ -8,3 +8,4 @@ serde.workspace = true
 serde_yaml.workspace = true
 thiserror.workspace = true
 anyhow.workspace = true
+chrono.workspace = true

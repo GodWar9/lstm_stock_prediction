@@ -10,6 +10,7 @@ use std::path::{Path, PathBuf};
 use tracing::info;
 
 fn resolve_model_path(model_id: &str) -> Result<PathBuf> {
+    quant_data::validate_storage_id(model_id)?;
     let candidates = [
         PathBuf::from(format!("models/{}", model_id)),
         PathBuf::from(format!("../models/{}", model_id)),

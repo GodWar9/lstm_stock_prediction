@@ -5,7 +5,9 @@ data:
     - AAPL
   start_date: "2015-01-01"
   end_date: "2024-01-01"
-  provider: yfinance
+  # Offline by default. Supply datasets/import/AAPL.csv before ingesting.
+  provider: csv
+  input_dir: datasets/import
   exchange: NYSE
   dataset_version: ds_2024_v1
 

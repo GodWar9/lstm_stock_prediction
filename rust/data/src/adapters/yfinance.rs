@@ -34,14 +34,30 @@ impl YfinanceAdapter {
 
     /// Automatically discovers the default python executable and helper script path relative to workspace.
     pub fn default_paths() -> Self {
-        let python = std::env::var("PYTHON_BIN").unwrap_or_else(|_| "python".to_string());
-        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../");
+        let root = Path::new(".");
+        let local = if cfg!(windows) {
+            "python/.venv/Scripts/python.exe"
+        } else {
+            "python/.venv/bin/python"
+        };
+        let python = std::env::var("QUANTCTL_PYTHON")
+            .or_else(|_| std::env::var("PYTHON_BIN"))
+            .unwrap_or_else(|_| {
+                if Path::new(local).is_file() {
+                    local.into()
+                } else {
+                    "python".into()
+                }
+            });
         let script = root.join("python/ml/data_fetch_helper.py");
         let cache = root.join("datasets/cache/yfinance");
         Self::new(python, script, cache)
     }
 
     fn run_helper(&self, args: &[&str]) -> Result<String, DataError> {
+        if std::env::var("QUANTCTL_ALLOW_NETWORK").as_deref() != Ok("1") {
+            return Err(DataError::FetchError("Network acquisition is disabled. Use provider: csv for offline data, or explicitly set QUANTCTL_ALLOW_NETWORK=1 on a connected acquisition machine".into()));
+        }
         let output = Command::new(&self.python_bin)
             .arg(&self.helper_script)
             .args(args)
@@ -67,6 +83,7 @@ impl MarketDataProvider for YfinanceAdapter {
         start: NaiveDate,
         end: NaiveDate,
     ) -> Result<Vec<Bar>, DataError> {
+        crate::validate_storage_id(symbol)?;
         let output_file = self
             .cache_dir
             .join(format!("{}_{}_{}.csv", symbol, start, end));
@@ -94,8 +111,11 @@ impl MarketDataProvider for YfinanceAdapter {
             }
 
             let parts: Vec<&str> = line.split(',').map(|s| s.trim()).collect();
-            if parts.len() < 6 {
-                continue;
+            if parts.len() != 6 {
+                return Err(DataError::ParseError(format!(
+                    "Malformed OHLCV row {}",
+                    line_idx + 1
+                )));
             }
 
             let dt_str = parts[0];
@@ -122,7 +142,9 @@ impl MarketDataProvider for YfinanceAdapter {
             let close: f64 = parts[4]
                 .parse()
                 .map_err(|_| DataError::ParseError("Invalid close".into()))?;
-            let volume: u64 = parts[5].parse().unwrap_or(0);
+            let volume: u64 = parts[5]
+                .parse()
+                .map_err(|_| DataError::ParseError("Invalid volume".into()))?;
 
             let ts = Timestamp::from_datetime(dt);
             bars.push(Bar::same_bar(ts, open, high, low, close, volume));
@@ -141,6 +163,7 @@ impl MarketDataProvider for YfinanceAdapter {
         start: NaiveDate,
         end: NaiveDate,
     ) -> Result<Vec<CorporateAction>, DataError> {
+        crate::validate_storage_id(symbol)?;
         let output_file = self
             .cache_dir
             .join(format!("{}_actions_{}_{}.csv", symbol, start, end));

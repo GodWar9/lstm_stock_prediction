@@ -1672,6 +1672,7 @@ name = "quant_config"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "serde",
  "serde_yaml",
  "thiserror 1.0.69",
@@ -1685,6 +1686,7 @@ dependencies = [
  "chrono",
  "proptest",
  "quant_calendar",
+ "quant_config",
  "quant_instruments",
  "serde",
  "serde_json",

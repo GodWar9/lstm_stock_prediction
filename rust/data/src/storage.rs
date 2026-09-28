@@ -5,6 +5,7 @@ use crate::types::Bar;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::fs;
+use std::io::Write;
 use std::path::{Path, PathBuf};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -17,6 +18,15 @@ pub struct DatasetManifest {
     pub source: String,
     #[serde(default)]
     pub content_sha256: String,
+}
+
+pub fn validate_storage_id(id: &str) -> Result<(), DataError> {
+    if !quant_config::valid_storage_id(id) {
+        return Err(DataError::ValidationError(format!(
+            "Invalid storage identifier: {id}"
+        )));
+    }
+    Ok(())
 }
 
 pub fn dataset_path(root: impl AsRef<Path>, dataset_version: &str, symbol: &str) -> PathBuf {
@@ -36,6 +46,8 @@ pub fn write_dataset(
     manifest: &DatasetManifest,
     bars: &[Bar],
 ) -> Result<PathBuf, DataError> {
+    validate_storage_id(&manifest.dataset_version)?;
+    validate_storage_id(&manifest.symbol)?;
     if bars.is_empty() {
         return Err(DataError::ValidationError(format!(
             "Cannot persist empty dataset for '{}'",
@@ -64,15 +76,30 @@ pub fn write_dataset(
         .map_err(|e| DataError::FetchError(format!("Failed to serialize bars: {}", e)))?;
     let mut sealed = manifest.clone();
     sealed.content_sha256 = format!("{:x}", Sha256::digest(&data));
-    fs::write(&data_path, data)
-        .map_err(|e| DataError::FetchError(format!("Failed to write dataset: {}", e)))?;
-
     let metadata = serde_json::to_vec_pretty(&sealed)
         .map_err(|e| DataError::FetchError(format!("Failed to serialize manifest: {}", e)))?;
-    fs::write(&metadata_path, metadata)
-        .map_err(|e| DataError::FetchError(format!("Failed to write manifest: {}", e)))?;
+    // Never rewrite a version used by an existing model. The manifest is published last;
+    // readers fail closed while an incomplete write has no valid manifest.
+    write_new(&data_path, &data)?;
+    if let Err(error) = write_new(&metadata_path, &metadata) {
+        let _ = fs::remove_file(&data_path);
+        return Err(error);
+    }
 
     Ok(data_path)
+}
+
+fn write_new(path: &Path, bytes: &[u8]) -> Result<(), DataError> {
+    let mut file = fs::OpenOptions::new().write(true).create_new(true).open(path)
+        .map_err(|e| DataError::FetchError(format!("Cannot create {}: {e}. Use a new dataset_version; existing data is never overwritten", path.display())))?;
+    if let Err(error) = file.write_all(bytes).and_then(|_| file.sync_all()) {
+        drop(file);
+        let _ = fs::remove_file(path);
+        return Err(DataError::FetchError(format!(
+            "Failed to persist dataset: {error}"
+        )));
+    }
+    Ok(())
 }
 
 pub fn read_dataset(
@@ -80,6 +107,8 @@ pub fn read_dataset(
     dataset_version: &str,
     symbol: &str,
 ) -> Result<Vec<Bar>, DataError> {
+    validate_storage_id(dataset_version)?;
+    validate_storage_id(symbol)?;
     let path = dataset_path(&root, dataset_version, symbol);
     let content = fs::read(&path).map_err(|e| {
         DataError::FetchError(format!("Failed to read dataset {}: {}", path.display(), e))
@@ -109,6 +138,8 @@ pub fn read_manifest(
     dataset_version: &str,
     symbol: &str,
 ) -> Result<DatasetManifest, DataError> {
+    validate_storage_id(dataset_version)?;
+    validate_storage_id(symbol)?;
     let path = manifest_path(root, dataset_version, symbol);
     let content = fs::read(&path).map_err(|e| {
         DataError::FetchError(format!("Failed to read manifest {}: {}", path.display(), e))
@@ -147,5 +178,18 @@ mod tests {
             read_manifest(dir.path(), "ds_test", "TEST").unwrap(),
             manifest
         );
+        assert!(write_dataset(dir.path(), &manifest, &bars).is_err());
+        assert_eq!(read_dataset(dir.path(), "ds_test", "TEST").unwrap(), bars);
+        fs::write(dataset_path(dir.path(), "ds_test", "TEST"), b"[]").unwrap();
+        assert!(read_dataset(dir.path(), "ds_test", "TEST").is_err());
+    }
+
+    #[test]
+    fn storage_rejects_paths_before_file_access() {
+        let dir = tempdir().unwrap();
+        for id in ["../outside", "/tmp/escape", "a\\b", "CON", "A:stream", ""] {
+            assert!(read_dataset(dir.path(), id, "AAPL").is_err());
+            assert!(read_manifest(dir.path(), "valid", id).is_err());
+        }
     }
 }

@@ -20,6 +20,12 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
 
             let app_config =
                 load_config(config_path).context("Failed to load application configuration")?;
+            if feature_set != "baseline_v1"
+                || app_config.features.feature_set != "baseline_v1"
+                || app_config.features.target_transformation != "log_return"
+            {
+                anyhow::bail!("Only baseline_v1 features and log_return targets are implemented by this pipeline");
+            }
 
             let symbols = &app_config.data.symbols;
 
@@ -29,8 +35,7 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
                 info!(symbol = %symbol, "Processing symbol for features");
                 let bars = super::pipeline::bars(config_path, symbol)?;
                 if bars.is_empty() {
-                    info!(symbol = %symbol, "No bars returned, skipping");
-                    continue;
+                    anyhow::bail!("No bars available for {symbol}");
                 }
 
                 // Build standard feature suite
@@ -38,6 +43,9 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
 
                 let rows = graph.compute_batch(&bars);
                 let row_count = rows.len();
+                if rows.is_empty() {
+                    anyhow::bail!("Insufficient bars for {symbol}: {} supplied, need more than {} for feature warmup", bars.len(), graph.max_lookback());
+                }
                 info!(
                     symbol = %symbol,
                     bars_ingested = bars.len(),

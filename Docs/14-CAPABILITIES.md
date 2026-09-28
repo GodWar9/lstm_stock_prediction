@@ -4,6 +4,10 @@ This guide describes the implemented research platform, not a promise of
 profitable trading or an exchange-connected execution system. Read
 `15-IMPROVEMENTS.md` for the remaining research and engineering work.
 
+The latest offline setup, audit findings and required user inputs are in
+[the system audit](../SYSTEM_AUDIT_AND_OFFLINE_GUIDE.md). Local CSV ingestion is
+now the default; network acquisition requires explicit permission.
+
 ## End-to-end workflow
 
 ```text
@@ -29,7 +33,8 @@ lookback and target horizon, model architecture and optimizer settings,
 inference settings, exposure limits, transaction costs and initial capital.
 Configuration is validated before operational commands. Supported environment
 overrides are defined in `rust/config/src/loader.rs`; they are not a general
-override for every field. Python reads the YAML training configuration directly.
+override for every field. The Rust CLI passes its resolved and validated YAML to
+Python training so supported environment overrides reach both languages.
 
 | Command | Capability / output |
 |---|---|
@@ -56,7 +61,7 @@ workspaces or manual deletion of the ledger.
 
 ## Market data and point-in-time validation
 
-- Yahoo acquisition adapter and deterministic synthetic provider. Unknown
+- Strict local CSV provider, permission-gated Yahoo acquisition adapter and deterministic synthetic provider. Unknown
   providers fail; no implicit synthetic replacement is permitted.
 - OHLC values must be finite and positive, candles must be internally
   consistent, and timestamps must be strictly increasing.
@@ -68,6 +73,10 @@ workspaces or manual deletion of the ledger.
   promise a complete survivorship-free institutional dataset.
 - Data artifacts are local version-named files with content hashes. Reload and
   replay checks reject changed market/training content.
+- Ingestion cannot overwrite an existing market dataset version. CSV timestamps
+  require an explicit timezone; filtering uses UTC dates with an exclusive end.
+- Training and backtest require one configured symbol and reject multi-symbol
+  configurations instead of silently selecting the first.
 
 ## Features and datasets
 

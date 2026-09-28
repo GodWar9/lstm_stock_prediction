@@ -6,6 +6,7 @@ Rust owns features, CPU inference through **tract-onnx**, portfolio accounting, 
 
 ## Documentation
 
+- [System audit, offline setup, required inputs and remaining work](SYSTEM_AUDIT_AND_OFFLINE_GUIDE.md)
 - [Complete capability breakdown](Docs/14-CAPABILITIES.md)
 - [Software-only and hardware-aware improvement roadmap](Docs/15-IMPROVEMENTS.md)
 - [Verification results](Docs/16-VERIFICATION.md)
@@ -58,7 +59,9 @@ Training reserves the model ID and exports under `models/.staging`. Only a compl
 
 ## Market data and models
 
-Edit a copy of `configs/default.yaml` with distinct dataset/model versions and the desired date range. Ingest before building features. Yahoo acquisition requires network access and the Python acquisition helper's dependencies. Failures never fall back to synthetic data. Feature building processes configured symbols; the current training/backtest CLI uses the first symbol.
+Edit a copy of `configs/default.yaml` with distinct dataset/model versions and the desired date range. The default `csv` provider reads `datasets/import/<symbol>.csv` (or `data.input_dir`). Use the exact header `timestamp,open,high,low,close,volume`, RFC3339 timestamps with timezones, strictly increasing bars, valid OHLC prices and integer volume. Dates select UTC `[start_date, end_date)`. Ingest before building features; an existing market dataset version cannot be overwritten. Feature building processes configured symbols; training/backtest require exactly one symbol per run.
+
+Operation is offline after the one-time dependency setup. Yahoo acquisition is disabled unless `QUANTCTL_ALLOW_NETWORK=1` is explicitly set on a connected acquisition machine; it additionally requires the optional Python `yfinance` dependency. Failures never fall back to synthetic data. The [offline guide](SYSTEM_AUDIT_AND_OFFLINE_GUIDE.md) covers preparation, CSV inputs, checks and the distinction between application policy and machine-level isolation.
 
 Legacy `lstm_v1` metadata references synthetic feature names. Retrain on the Rust Arrow dataset; unavailable model features are rejected, never replaced with fabricated values.
 
@@ -85,7 +88,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-`scripts/verify.ps1` runs the main checks on Windows. CLI integration tests perform real small-model training and create uniquely versioned, git-ignored artifacts. They require the Python environment but no live market downloads.
+`scripts/verify.ps1` runs the main checks on Windows using installed dependencies and offline Cargo resolution. `-Benchmarks` also runs benchmark smoke checks. Dependency installation is opt-in via `-InstallDependencies`; install Python and Playwright Chromium during connected setup. `python/.venv/Scripts/python.exe scripts/offline_doctor.py` checks local readiness. CLI integration tests perform real small-model training and create uniquely versioned, git-ignored artifacts. They require the Python environment but no live market downloads.
 
 For frontend development, serve Rust on port 8787 and run `npm run dev` in `web`. Vite proxies `/api`. After API edits run `npm run contract` and commit generated TypeScript and `Docs/openapi.json`.
 

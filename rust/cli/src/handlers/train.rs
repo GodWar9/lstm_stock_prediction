@@ -8,6 +8,10 @@ use tracing::{error, info};
 
 pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
     let config_file = args.train_config.as_deref().unwrap_or(global_config_path);
+    let resolved = quant_config::load_config(config_file)?;
+    if resolved.data.symbols.len() != 1 {
+        anyhow::bail!("Training currently supports one symbol per model; configure exactly one data.symbols entry");
+    }
 
     // Resolve script path relative to current execution context
     let candidates = [
@@ -73,17 +77,22 @@ pub fn handle_train(args: &TrainArgs, global_config_path: &Path) -> Result<()> {
         "Launching PyTorch training orchestrator subprocess"
     );
 
-    let abs_config =
-        std::fs::canonicalize(config_file).unwrap_or_else(|_| config_file.to_path_buf());
+    // Pass precisely the validated configuration (including QUANTCTL_* overrides)
+    // to Python instead of letting the two languages train with different settings.
+    let resolved_dir = tempfile::tempdir()?;
+    let abs_config = resolved_dir.path().join("resolved-config.yaml");
+    std::fs::write(&abs_config, serde_yaml::to_string(&resolved)?)?;
 
     let mut cmd = Command::new(&python_bin);
     cmd.env("QUANTCTL_EXECUTABLE", std::env::current_exe()?);
     cmd.arg(&script_path).arg("--config").arg(&abs_config);
     if let Some(dataset) = &args.dataset {
-        cmd.arg("--dataset").arg(dataset);
+        cmd.arg("--dataset")
+            .arg(std::fs::canonicalize(dataset).context("Training dataset does not exist")?);
     }
     if let Some(manifest) = &args.manifest {
-        cmd.arg("--manifest").arg(manifest);
+        cmd.arg("--manifest")
+            .arg(std::fs::canonicalize(manifest).context("Training manifest does not exist")?);
     }
     if args.synthetic {
         cmd.arg("--synthetic");

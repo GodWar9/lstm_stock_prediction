@@ -6,10 +6,12 @@
 
 - [x] Publish trained models atomically after complete export and finite parity validation; reject duplicate writers and clean up failed attempts.
 - [x] Hash all model-package files and verify their exact bytes before loading the Rust prediction provider.
-- [ ] Hash market/training datasets and bind those hashes to model provenance before replay.
-- [ ] Gate every model package on PyTorch/ONNX Runtime/tract parity.
-- [ ] Orchestrate rolling walk-forward training with independently recorded folds.
-- [ ] Persist benchmark, positions, realized targets and risk evidence for the inspector.
+- [x] Hash market/training datasets and bind those hashes to model provenance before replay.
+- [x] Gate newly published model packages on PyTorch/ONNX Runtime/tract parity.
+- [x] Orchestrate rolling walk-forward training with independently recorded folds.
+- [x] Persist benchmark, positions, realized targets and risk evidence for the inspector.
+- [x] Support validated local CSV ingestion and offline operation after connected setup.
+- [ ] Complete the remaining operational/statistical work listed in [the system audit](SYSTEM_AUDIT_AND_OFFLINE_GUIDE.md).
 
 The historical optimization checklist below describes library components; see
 the capability guide for which components are used by the default pipeline.

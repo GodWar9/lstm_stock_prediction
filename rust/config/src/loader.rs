@@ -213,4 +213,27 @@ backtest:
         assert_eq!(cfg.data.symbols, vec!["AAPL"]);
         assert_eq!(cfg.features.lookback, 60);
     }
+
+    #[test]
+    fn rejects_invalid_numbers_dates_and_paths() {
+        let _guard = TEST_MUTEX.lock().unwrap();
+        for (from, to) in [
+            ("learning_rate: 0.001", "learning_rate: .nan"),
+            ("dropout: 0.2", "dropout: .nan"),
+            ("max_gross_exposure: 1.0", "max_gross_exposure: .inf"),
+            ("initial_cash: 500000.0", "initial_cash: 0"),
+            ("risk_free_rate: 0.045", "risk_free_rate: .nan"),
+            ("slippage_factor: 0.05", "slippage_factor: -1"),
+            ("hidden_size: 64", "hidden_size: 0"),
+            ("2020-01-01", "2020-02-31"),
+            ("ds_test_v1", "../escape"),
+            ("[\"AAPL\", \"MSFT\"]", "[\"AAPL\", \"AAPL\"]"),
+            ("[\"AAPL\", \"MSFT\"]", "[\"../escape\"]"),
+        ] {
+            assert!(
+                load_config_from_str(&VALID_YAML.replace(from, to)).is_err(),
+                "{to}"
+            );
+        }
+    }
 }

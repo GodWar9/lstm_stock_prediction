@@ -5,6 +5,26 @@ const pages = [
   ['/validation', 'Data and validation'], ['/models', 'Model artifacts'],
   ['/signals', 'Signal inspection'], ['/risk', 'Risk and simulation'], ['/jobs', 'Run activity'],
 ];
+test('all inspector routes work with external requests blocked', async ({ page, context }) => {
+  const external: string[] = [];
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await context.route('**/*', route => {
+    if (new URL(route.request().url()).origin !== 'http://127.0.0.1:8788') {
+      external.push(route.request().url());
+      return route.abort('internetdisconnected');
+    }
+    return route.continue();
+  });
+  for (const [path, title] of pages) {
+    const response = await page.goto(path);
+    expect(response?.headers()['content-security-policy']).toContain("connect-src 'self'");
+    await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
+    await expect(page.getByRole('alert')).toHaveCount(0);
+  }
+  expect(external).toEqual([]);
+  expect(errors).toEqual([]);
+});
 for (const [path, title] of pages) {
   test(`${title} renders against Rust artifacts`, async ({ page }) => {
     const errors: string[] = [];

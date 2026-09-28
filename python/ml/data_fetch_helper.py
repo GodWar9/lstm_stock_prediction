@@ -6,12 +6,14 @@ Does NOT perform any modeling, feature calculation, or backtesting.
 """
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
 
 def fetch_ohlcv(symbol: str, start: str, end: str, output_path: str):
     try:
+        require_network_permission()
         import yfinance as yf
         ticker = yf.Ticker(symbol)
         df = ticker.history(start=start, end=end, auto_adjust=False)
@@ -37,6 +39,7 @@ def fetch_ohlcv(symbol: str, start: str, end: str, output_path: str):
 
 def fetch_actions(symbol: str, start: str, end: str, output_path: str):
     try:
+        require_network_permission()
         import yfinance as yf
         ticker = yf.Ticker(symbol)
         actions = ticker.actions
@@ -59,6 +62,11 @@ def fetch_actions(symbol: str, start: str, end: str, output_path: str):
     except Exception as e:
         sys.stderr.write(f"Error fetching actions for {symbol}: {e}\n")
         sys.exit(1)
+
+
+def require_network_permission():
+    if os.environ.get("QUANTCTL_ALLOW_NETWORK") != "1":
+        raise RuntimeError("Network acquisition is disabled; use local CSV data. Explicit online acquisition requires QUANTCTL_ALLOW_NETWORK=1.")
 
 
 def main():

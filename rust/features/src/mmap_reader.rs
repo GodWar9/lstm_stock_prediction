@@ -10,7 +10,7 @@
 //!
 //! let reader = MmapArrowReader::open("datasets/training/v1/AAPL.arrow").unwrap();
 //! println!("Schema: {:?}", reader.schema());
-//! for batch in reader.chunks() {
+//! for batch in reader.chunks().unwrap() {
 //!     println!("Batch with {} rows", batch.len());
 //! }
 //! ```

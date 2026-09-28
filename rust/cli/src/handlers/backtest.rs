@@ -24,6 +24,10 @@ pub fn handle_backtest(command: &BacktestSubcommands, config_path: &Path) -> Res
         bail!("split must be test, validation, or train");
     }
     let cfg = quant_config::load_config(config_path)?;
+    if cfg.data.symbols.len() != 1 {
+        bail!("Backtesting currently supports one symbol per model; configure exactly one data.symbols entry");
+    }
+    quant_data::validate_storage_id(model)?;
     let symbol = &cfg.data.symbols[0];
     let artifact_dir = Path::new("models").join(model);
     let provider = OnnxLstmProvider::load(&artifact_dir)?;

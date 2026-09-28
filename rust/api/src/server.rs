@@ -622,10 +622,35 @@ pub fn router(root: PathBuf) -> Router {
             get(|| async { ([(header::CONTENT_TYPE, "application/json")], openapi()) }),
         )
         .fallback(spa)
+        .layer(axum::middleware::from_fn(local_only))
         .with_state(AppState {
             root,
             workers: Arc::new(tokio::sync::Semaphore::new(4)),
         })
+}
+
+async fn local_only(request: axum::extract::Request, next: axum::middleware::Next) -> Response {
+    // Loopback binding alone does not protect against a hostile DNS name resolving to it.
+    if let Some(host) = request.headers().get(header::HOST) {
+        let valid = host
+            .to_str()
+            .ok()
+            .and_then(|s| s.parse::<axum::http::uri::Authority>().ok())
+            .is_some_and(|a| matches!(a.host(), "127.0.0.1" | "localhost"));
+        if !valid {
+            return StatusCode::FORBIDDEN.into_response();
+        }
+    }
+    let mut response = next.run(request).await;
+    response.headers_mut().insert(header::CONTENT_SECURITY_POLICY,
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; worker-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'".parse().unwrap());
+    response
+        .headers_mut()
+        .insert(header::X_CONTENT_TYPE_OPTIONS, "nosniff".parse().unwrap());
+    response
+        .headers_mut()
+        .insert(header::REFERRER_POLICY, "no-referrer".parse().unwrap());
+    response
 }
 pub async fn serve(root: PathBuf, port: u16) -> anyhow::Result<()> {
     let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, port)).await?;
@@ -642,6 +667,34 @@ pub async fn serve(root: PathBuf, port: u16) -> anyhow::Result<()> {
 mod tests {
     use super::*;
     use tower::ServiceExt;
+    #[tokio::test]
+    async fn rejects_remote_hosts_and_restricts_browser_connections() {
+        let tmp = tempfile::tempdir().unwrap();
+        for (host, expected) in [
+            ("127.0.0.1:8787", 200),
+            ("localhost:8787", 200),
+            ("evil.example", 403),
+            ("127.0.0.1.evil.example", 403),
+        ] {
+            let response = router(tmp.path().into())
+                .oneshot(
+                    axum::http::Request::builder()
+                        .uri("/api/runs")
+                        .header(header::HOST, host)
+                        .body(axum::body::Body::empty())
+                        .unwrap(),
+                )
+                .await
+                .unwrap();
+            assert_eq!(response.status().as_u16(), expected);
+            if expected == 200 {
+                assert!(response.headers()[header::CONTENT_SECURITY_POLICY]
+                    .to_str()
+                    .unwrap()
+                    .contains("connect-src 'self'"));
+            }
+        }
+    }
     #[tokio::test]
     async fn empty_list_missing_run_and_read_only() {
         let tmp = tempfile::tempdir().unwrap();

@@ -5,7 +5,7 @@ use chrono::NaiveDate;
 use quant_config::load_config;
 use quant_data::{
     check_duplicate_timestamps, read_dataset, validate_bars_monotonic_and_sound, write_dataset,
-    DatasetManifest, MarketDataProvider, SyntheticDataProvider, YfinanceAdapter,
+    DatasetManifest, LocalCsvProvider, MarketDataProvider, SyntheticDataProvider, YfinanceAdapter,
 };
 use std::path::Path;
 use tracing::info;
@@ -34,7 +34,9 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
 
             // Synthetic data is opt-in for development and tests; production ingestion must fail
             // instead of silently replacing missing market data.
-            let provider: Box<dyn MarketDataProvider> = if cfg.data.provider == "yfinance" {
+            let provider: Box<dyn MarketDataProvider> = if cfg.data.provider == "csv" {
+                Box::new(LocalCsvProvider::new(&cfg.data.input_dir))
+            } else if cfg.data.provider == "yfinance" {
                 Box::new(YfinanceAdapter::default_paths())
             } else if cfg.data.provider == "synthetic" {
                 Box::new(SyntheticDataProvider::default())
@@ -43,6 +45,7 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
             };
 
             for sym in &target_symbols {
+                quant_data::validate_storage_id(sym)?;
                 println!(
                     "Ingesting historical bars for '{}' [{} -> {}]...",
                     sym, start, end

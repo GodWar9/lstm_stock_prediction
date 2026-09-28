@@ -16,6 +16,7 @@ if hasattr(sys.stdout, "reconfigure"):
 import numpy as np
 import onnx
 import onnxruntime as ort
+ort.disable_telemetry_events()
 import torch
 import torch.nn as nn
 from python.ml.models.lstm import LSTMForecaster

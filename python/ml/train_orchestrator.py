@@ -63,7 +63,7 @@ def load_config(path: str) -> dict:
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             return yaml.safe_load(f)
-    return {}
+    raise FileNotFoundError(f"Training configuration not found: {path}")
 
 
 def load_training_arrays(args, cfg, lookback):
@@ -143,6 +143,7 @@ def train_and_export(args, cfg, model_id, stage):
     num_layers = train_cfg.get("num_layers", 2)
     dropout = train_cfg.get("dropout", 0.2)
     lr = train_cfg.get("learning_rate", 0.001)
+    weight_decay = train_cfg.get("weight_decay", 1e-4)
     batch_size = train_cfg.get("batch_size", 32)
     epochs = train_cfg.get("epochs", 5)  # Fast default for orchestrator run
     seed = train_cfg.get("random_seed", 42)
@@ -248,14 +249,15 @@ def train_and_export(args, cfg, model_id, stage):
 
     # Model & Trainer
     model = LSTMForecaster(input_dim=n_features, hidden_dim=hidden_dim, num_layers=num_layers, dropout=dropout)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     criterion = DirectionalAsymmetricLoss(alpha=2.0)
 
     trainer = ModelTrainer(model, optimizer, criterion)
     history = trainer.fit(train_loader, val_loader, epochs=epochs, patience=5)
 
     # Out of sample evaluation
-    model.eval()
+    # Training may select CUDA; evaluation/export inputs below are CPU tensors.
+    model.cpu().eval()
     with torch.no_grad():
         x_te_tensor = torch.from_numpy(x_te.astype(np.float32))
         preds = model(x_te_tensor).numpy() if len(x_te) > 0 else np.zeros((1, 1))
@@ -273,7 +275,7 @@ def train_and_export(args, cfg, model_id, stage):
         model_version=1,
         lookback=lookback,
         architecture={"hidden_size": hidden_dim, "num_layers": num_layers, "dropout": dropout},
-        hyperparameters={"lr": lr, "batch_size": batch_size, "weight_decay": 1e-4},
+        hyperparameters={"lr": lr, "batch_size": batch_size, "weight_decay": weight_decay},
         evaluation_metrics=metrics,
         training_log=history,
         random_seed=seed,
@@ -292,6 +294,7 @@ def train_and_export(args, cfg, model_id, stage):
     )
     # Persist exact split windows, units, and an artifact-specific numerical parity check.
     import onnxruntime as ort
+    ort.disable_telemetry_events()
     import subprocess
     with torch.no_grad():
         reference = model(torch.from_numpy(x_te[:1].astype(np.float32))).numpy()
