@@ -8,10 +8,11 @@ import { Chart, DataTable } from './components/Chart';
 import { number, percent } from './lib/format';
 import './style.css';
 import { Live } from './components/Live';
+import { Forecast } from './components/Forecast';
 
 const client = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: Infinity } } });
 const RunContext = createContext<Run | undefined>(undefined);
-const pages = [['/live', 'Live market data'], ['/', 'Overview'], ['/backtest', 'Backtest'], ['/validation', 'Data and validation'], ['/models', 'Models'], ['/signals', 'Signals'], ['/risk', 'Risk and simulation'], ['/jobs', 'Run activity']] as const;
+const pages = [['/forecast', 'Make a forecast'], ['/live', 'Live market data'], ['/', 'Overview'], ['/backtest', 'Backtest'], ['/validation', 'Data and validation'], ['/models', 'Models'], ['/signals', 'Signals'], ['/risk', 'Risk and simulation'], ['/jobs', 'Run activity']] as const;
 function Notice({ title, children, error = false }: { title: string; children?: React.ReactNode; error?: boolean }) {
   return <section className={`notice ${error ? 'error' : ''}`} role={error ? 'alert' : 'status'}><h2>{title}</h2>{children && <div>{children}</div>}</section>;
 }
@@ -22,7 +23,7 @@ function Provenance({ run }: { run?: Run }) {
 }
 function Shell() {
   const search = rootRoute.useSearch();
-  const livePage = useRouterState({ select: state => state.location.pathname === '/live' });
+  const livePage = useRouterState({ select: state => ['/live', '/forecast'].includes(state.location.pathname) });
   const navigate = useNavigate({ from: '/' });
   const queryClient = useQueryClient();
   const runs = useQuery({ queryKey: ['runs'], queryFn: () => json<Run[]>('/api/runs'), staleTime: 0, enabled: !livePage });
@@ -258,6 +259,7 @@ function Jobs() {
 }
 const rootRoute = createRootRoute({ component: Shell, validateSearch: (search: Record<string, unknown>) => ({ run: typeof search.run === 'string' ? search.run : undefined, inSample: search.inSample === true || search.inSample === 'true' }) });
 const routeTree = rootRoute.addChildren([
+  createRoute({ getParentRoute: () => rootRoute, path: '/forecast', component: Forecast }),
   createRoute({ getParentRoute: () => rootRoute, path: '/live', component: Live }),
   createRoute({ getParentRoute: () => rootRoute, path: '/', component: Overview }),
   createRoute({ getParentRoute: () => rootRoute, path: '/backtest', component: Backtest }),

@@ -1651,6 +1651,8 @@ dependencies = [
  "mime_guess",
  "quant_backtest",
  "quant_data",
+ "quant_features",
+ "quant_inference",
  "quant_simulation",
  "rust-embed",
  "serde",

@@ -2,24 +2,11 @@
 use anyhow::{bail, Context, Result};
 use quant_config::load_config;
 use quant_data::{read_dataset, validate_bars_monotonic_and_sound, Bar};
-use quant_features::{
-    Atr, BollingerBands, Ema, FeatureGraph, FeatureRow, LogReturn, Macd, RollingVolatility, Rsi,
-    Sma,
-};
+use quant_features::{FeatureGraph, FeatureRow};
 use std::path::Path;
 
 pub fn graph(periods_per_year: f64) -> FeatureGraph {
-    // Keep the established schema: the former duplicate SMA key retained SMA(20).
-    FeatureGraph::new(vec![
-        Box::new(Sma::new(20)),
-        Box::new(Ema::new(12)),
-        Box::new(Rsi::new(14)),
-        Box::new(Macd::standard()),
-        Box::new(BollingerBands::standard()),
-        Box::new(Atr::new(14)),
-        Box::new(RollingVolatility::new(20, periods_per_year.sqrt())),
-        Box::new(LogReturn::new(1)),
-    ])
+    quant_features::standard_graph(periods_per_year)
 }
 
 pub fn bars(config: &Path, symbol: &str) -> Result<Vec<Bar>> {

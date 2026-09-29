@@ -7,3 +7,6 @@
 .pagination { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
 button:disabled { opacity: .5; cursor: not-allowed; }
 .panel pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.forecast-inputs { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin: 1rem 0; }
+.forecast-inputs label { display: grid; gap: .5rem; min-width: 0; }
+.forecast-inputs select { width: 100%; min-width: 0; }

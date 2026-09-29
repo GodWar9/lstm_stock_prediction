@@ -33,3 +33,17 @@ pub use targets::*;
 pub use traits::*;
 pub use volatility::*;
 pub use window::*;
+
+/// Version-one training/inference graph. Keep every consumer on the same schema.
+pub fn standard_graph(periods_per_year: f64) -> FeatureGraph {
+    FeatureGraph::new(vec![
+        Box::new(Sma::new(20)),
+        Box::new(Ema::new(12)),
+        Box::new(Rsi::new(14)),
+        Box::new(Macd::standard()),
+        Box::new(BollingerBands::standard()),
+        Box::new(Atr::new(14)),
+        Box::new(RollingVolatility::new(20, periods_per_year.sqrt())),
+        Box::new(LogReturn::new(1)),
+    ])
+}

@@ -487,6 +487,31 @@ fn read_model(s: &AppState, id: &str) -> ApiResult<ModelArtifact> {
 async fn models(State(s): State<AppState>) -> ApiResult<Json<Vec<ModelArtifact>>> {
     blocking(s, models_sync).await
 }
+
+#[utoipa::path(get, path = "/api/datasets", responses((status = 200, body = [crate::forecast::DatasetChoice]), (status = 422, body = ApiError)))]
+async fn datasets(
+    State(s): State<AppState>,
+) -> ApiResult<Json<Vec<crate::forecast::DatasetChoice>>> {
+    blocking(s, |s| {
+        crate::forecast::datasets(&s.root)
+            .map(Json)
+            .map_err(|e| error(StatusCode::UNPROCESSABLE_ENTITY, "dataset_unavailable", e))
+    })
+    .await
+}
+
+#[utoipa::path(get, path = "/api/forecast", params(crate::forecast::ForecastQuery), responses((status = 200, body = crate::forecast::Forecast), (status = 422, body = ApiError), (status = 503, body = ApiError)))]
+async fn forecast(
+    State(s): State<AppState>,
+    Query(q): Query<crate::forecast::ForecastQuery>,
+) -> ApiResult<Json<crate::forecast::Forecast>> {
+    blocking(s, move |s| {
+        crate::forecast::run(&s.root, &q)
+            .map(Json)
+            .map_err(|e| error(StatusCode::UNPROCESSABLE_ENTITY, "forecast_unavailable", e))
+    })
+    .await
+}
 fn models_sync(s: AppState) -> ApiResult<Json<Vec<ModelArtifact>>> {
     let mut result = Vec::new();
     let mut bytes = 0u64;
@@ -684,6 +709,8 @@ async fn live_events(
         manifest,
         artifact,
         models,
+        datasets,
+        forecast,
         model,
         events,
         live_snapshot,
@@ -698,6 +725,8 @@ async fn live_events(
         Instrument,
         ApiError,
         ModelArtifact,
+        crate::forecast::DatasetChoice,
+        crate::forecast::Forecast,
         crate::live::Snapshot,
         crate::live::Price,
         LiveHealth
@@ -730,6 +759,8 @@ fn router_with_shutdown(
         .route("/api/runs/{run_id}/manifest", get(manifest))
         .route("/api/runs/{run_id}/{*artifact}", get(artifact))
         .route("/api/models", get(models))
+        .route("/api/datasets", get(datasets))
+        .route("/api/forecast", get(forecast))
         .route("/api/models/{artifact_id}", get(model))
         .route("/api/events", get(events))
         .route(

@@ -1,4 +1,20 @@
 export interface paths {
+    "/api/datasets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["datasets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/events": {
         parameters: {
             query?: never;
@@ -7,6 +23,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["events"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["forecast"];
         put?: never;
         post?: never;
         delete?: never;
@@ -167,6 +199,38 @@ export interface components {
             code: string;
             message: string;
         };
+        DatasetChoice: {
+            bars: number;
+            dataset: string;
+            interval: string;
+            source: string;
+            symbol: string;
+        };
+        Forecast: {
+            /** Format: int64 */
+            as_of_ms: number;
+            /** Format: int64 */
+            available_at_ms: number;
+            dataset: string;
+            dataset_sha256: string;
+            /** Format: int64 */
+            generated_at_ms: number;
+            horizon_bars: number;
+            /** Format: double */
+            implied_close: number;
+            interval: string;
+            /** Format: double */
+            last_close: number;
+            model: string;
+            model_package_sha256: string;
+            /** Format: double */
+            predicted_log_return: number;
+            /** Format: double */
+            predicted_return: number;
+            source: string;
+            symbol: string;
+            warnings: string[];
+        };
         Instrument: {
             id: string;
             kind: string;
@@ -262,6 +326,33 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    datasets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DatasetChoice"][];
+                };
+            };
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+        };
+    };
     events: {
         parameters: {
             query?: never;
@@ -277,6 +368,45 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    forecast: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                model: string;
+                dataset: string;
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Forecast"];
+                };
+            };
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
+            };
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiError"];
+                };
             };
         };
     };

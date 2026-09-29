@@ -6,6 +6,9 @@ Rust owns features, CPU inference through **tract-onnx**, portfolio accounting, 
 
 ## Documentation
 
+- [Live capture, fresh research and forecast runbook](Docs/19-LIVE-INGESTION.md)
+- [Production checklist and release gates](Docs/20-PRODUCTION-CHECKLIST.md)
+- [Forecast website and public deployment scope](Docs/21-WEB-FORECAST-DEPLOYMENT.md)
 - [System audit, offline setup, required inputs and remaining work](SYSTEM_AUDIT_AND_OFFLINE_GUIDE.md)
 - [Complete capability breakdown](Docs/14-CAPABILITIES.md)
 - [Software-only and hardware-aware improvement roadmap](Docs/15-IMPROVEMENTS.md)
@@ -29,6 +32,12 @@ cargo build --manifest-path rust/Cargo.toml --bin quantctl --release
 ```
 
 Build web assets **before** compiling Rust. A backend-only build serves a setup page and the API. Rebuild Rust after changing the SPA. The compiled application requires no Node process.
+
+Open `/forecast` on the running inspector to generate an ONNX forecast from a
+selected model and recorded dataset. The result includes the actual data timestamp,
+horizon and provenance; historical and synthetic inputs are explicit. The live
+price stream is not yet connected to the forecast feature window. Public hosting
+and authenticated access remain deployment gates; the default server is local.
 
 ## Reproducible demo
 

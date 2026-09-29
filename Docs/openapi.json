@@ -9,6 +9,37 @@
     "version": "0.1.0"
   },
   "paths": {
+    "/api/datasets": {
+      "get": {
+        "tags": [],
+        "operationId": "datasets",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatasetChoice"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/events": {
       "get": {
         "tags": [],
@@ -16,6 +47,70 @@
         "responses": {
           "200": {
             "description": "SSE completed artifact snapshots; no job launcher"
+          }
+        }
+      }
+    },
+    "/api/forecast": {
+      "get": {
+        "tags": [],
+        "operationId": "forecast",
+        "parameters": [
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forecast"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
           }
         }
       }
@@ -324,6 +419,116 @@
           },
           "message": {
             "type": "string"
+          }
+        }
+      },
+      "DatasetChoice": {
+        "type": "object",
+        "required": [
+          "dataset",
+          "symbol",
+          "interval",
+          "source",
+          "bars"
+        ],
+        "properties": {
+          "bars": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "dataset": {
+            "type": "string"
+          },
+          "interval": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          }
+        }
+      },
+      "Forecast": {
+        "type": "object",
+        "required": [
+          "model",
+          "dataset",
+          "symbol",
+          "interval",
+          "source",
+          "as_of_ms",
+          "available_at_ms",
+          "generated_at_ms",
+          "horizon_bars",
+          "last_close",
+          "predicted_log_return",
+          "predicted_return",
+          "implied_close",
+          "dataset_sha256",
+          "model_package_sha256",
+          "warnings"
+        ],
+        "properties": {
+          "as_of_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "available_at_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dataset": {
+            "type": "string"
+          },
+          "dataset_sha256": {
+            "type": "string"
+          },
+          "generated_at_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "horizon_bars": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "implied_close": {
+            "type": "number",
+            "format": "double"
+          },
+          "interval": {
+            "type": "string"
+          },
+          "last_close": {
+            "type": "number",
+            "format": "double"
+          },
+          "model": {
+            "type": "string"
+          },
+          "model_package_sha256": {
+            "type": "string"
+          },
+          "predicted_log_return": {
+            "type": "number",
+            "format": "double"
+          },
+          "predicted_return": {
+            "type": "number",
+            "format": "double"
+          },
+          "source": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

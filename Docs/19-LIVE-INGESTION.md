@@ -3,7 +3,7 @@
 The `/live` page receives continuously updated trade snapshots from a single
 server-owned Alpaca stock WebSocket. It works without any saved backtest or model.
 Rust authenticates, subscribes to trades, quotes, minute bars and updated bars,
-and writes provider events to `datasets/live/<session UUID>.ndjson` under the
+and writes provider events to `datasets/live/<session UUID>/000001.ndjson` under the
 `quantctl serve --root` directory. API keys never enter the browser.
 
 ## Run locally
@@ -58,15 +58,63 @@ and [authentication protocol](https://docs.alpaca.markets/us/docs/streaming-mark
 - A trade becomes stale after 30 seconds based on exchange time or receipt time.
   An interrupted upstream or browser connection also makes retained prices stale.
   Closed markets and illiquid stocks can be stale while the connection is healthy.
-- Maximum 30 configured symbols, 1 MiB upstream frame/batch, and 256 MiB per session
-  journal. Disk errors or a full journal stop ingestion visibly. Journals accumulate
-  across restarts and need archival. Records are written through the OS; there is
-  no per-event fsync guarantee against sudden power loss.
-- Journals are a separate raw intraday data source. Existing backtests and Monte
-  Carlo reports remain historical research artifacts. Converting these records
-  into model inputs requires interval-specific bar construction, corrections,
-  gap policy, point-in-time validation, and models trained on that same interval.
-  No live orders are submitted and no existing daily model is fed raw ticks.
+- Maximum 30 configured symbols and 1 MiB upstream frame/batch. Journals rotate
+  at 16 MiB; the live directory has a 2 GiB total limit across sessions. A workspace
+  lock prevents competing capture writers. Disk or capacity errors stop ingestion
+  visibly. There is no automatic deletion: archive closed sessions deliberately.
+- Schema-one records carry a session ID, sequence, receipt time and SHA-256 chain.
+  One-second checkpoints call `sync_all`; `durable_seq` reports the checkpointed
+  prefix. A hard crash can lose the uncheckpointed tail. Graceful shutdown appends
+  and syncs a stop record. Do not repair an incomplete capture by inventing a stop.
+- Closed captures can now produce new datasets, models, backtests and simulations
+  through `quantctl research`. Import takes the first original regular-session
+  minute bar, uses its close time as market time and receipt time as availability,
+  and rejects gaps, duplicates, late arrivals and unclean sessions. Updated bars
+  remain in the raw journal but cannot revise already available model inputs.
+  Research accepts IEX/SIP captures only; test/delayed feeds are not admitted.
+
+## From capture to research and forecasts
+
+Stop capture gracefully with Ctrl+C, then use the session directory shown on the
+Live page. Set the dates and single symbol in `configs/intraday.yaml` to the actual
+capture coverage. Collect sufficient history for every walk-forward fold; a few
+minutes cannot train a meaningful model or even satisfy validation warmup.
+
+```powershell
+.\rust\target\debug\quantctl.exe data verify-capture --journal datasets/live/SESSION_ID
+.\rust\target\debug\quantctl.exe --config configs/intraday.yaml research --journal datasets/live/SESSION_ID --paths 100
+.\rust\target\debug\quantctl.exe serve --root . --port 8787
+```
+
+The research command writes a unique dataset/model version and records status,
+resolved configuration and logs under `reports/research/research_ID`. A failed
+stage retains its evidence; it does not publish a successful result or overwrite
+an existing version. Minute metrics use 98,280 periods/year, not 252 daily periods.
+
+Open `/forecast`, select the resulting model and matching dataset, and generate
+a prediction. Rust verifies hashes and interval compatibility, reconstructs the
+training feature graph, applies the fitted scaler, and runs ONNX inference. The
+response includes data availability time, horizon, source and package hashes.
+The implied close is `last_close * exp(predicted_log_return)`; it is not a
+confidence bound. This is a recorded-dataset forecast, not automatic inference
+from the currently open capture. Historical and synthetic inputs are labeled.
+
+## Operations
+
+`/api/health` reports process liveness. `/api/live/ready` returns 503 unless the
+capture is connected, has a recent provider message and has checkpointed data;
+its separate fresh/stale symbol lists describe market freshness. Neither endpoint
+certifies a model or a trading signal. Diagnostics appear on `/live`.
+
+To rotate keys or symbols, stop gracefully, update the service environment and
+restart; credentials are read only at startup. On disk-full errors, stop, verify
+and archive closed sessions to separate storage, confirm the archive checksums,
+then free space under the host's retention policy and restart. Preserve failed
+captures for diagnosis; the research importer deliberately refuses them. Restore
+archives into an isolated workspace and verify before import. Roll back the
+binary and matching embedded UI together; never rewrite sealed model/dataset
+versions. Host-specific supervision, alerting and backup restore drills remain
+release gates in the production checklist.
 
 ## Verification
 

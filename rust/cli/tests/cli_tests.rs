@@ -48,6 +48,13 @@ fn captured_minutes_train_fresh_model_backtest_and_simulation() {
     // first walk-forward fold would otherwise leave a validation split below
     // lookback + 1 rows. Cadence, provenance and mismatched-bar-interval checks
     // are unaffected.
+    // A repeated test must train a distinct package: production intentionally
+    // prevents evaluating the exact same ONNX bytes on a test split twice.
+    let seed = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_nanos()
+        % u32::MAX as u128;
     let cfg = std::fs::read_to_string(root.join("configs/intraday.yaml"))
         .unwrap()
         .replace("2026-09-01", "2024-01-01")
@@ -55,6 +62,7 @@ fn captured_minutes_train_fresh_model_backtest_and_simulation() {
         .replace("epochs: 10", "epochs: 1")
         .replace("hidden_size: 32", "hidden_size: 8")
         .replace("lookback: 30", "lookback: 5")
+        .replace("random_seed: 42", &format!("random_seed: {seed}"))
         .replace("embargo_gap: 30", "embargo_gap: 3");
     let config = temp.path().join("config.yaml");
     std::fs::write(&config, cfg).unwrap();
@@ -88,6 +96,39 @@ fn captured_minutes_train_fresh_model_backtest_and_simulation() {
         serde_json::from_slice(&std::fs::read(model.join("metadata.json")).unwrap()).unwrap();
     assert_eq!(metadata["bar_interval"], "1m");
     assert_eq!(metadata["periods_per_year"], 98280);
+    // Exercise the same inference service used by the browser with a genuinely
+    // trained and sealed ONNX package, not a mocked prediction response.
+    let query = quant_api::forecast::ForecastQuery {
+        model: id.into(),
+        dataset: id.into(),
+        symbol: "AAPL".into(),
+    };
+    let forecast = quant_api::forecast::run(&root, &query).unwrap();
+    assert_eq!(forecast.interval, "1m");
+    assert_eq!(forecast.horizon_bars, 1);
+    assert_eq!(forecast.as_of_ms, (last - 500));
+    assert_eq!(forecast.available_at_ms, last);
+    assert!(forecast.implied_close.is_finite() && forecast.implied_close > 0.0);
+    assert!(
+        (forecast.implied_close / forecast.last_close - 1.0 - forecast.predicted_return).abs()
+            < 1e-12
+    );
+    assert_eq!(forecast.dataset_sha256.len(), 64);
+    assert!(forecast.warnings.iter().any(|w| w.contains("Synthetic")));
+    assert!(forecast.warnings.iter().any(|w| w.contains("Historical")));
+    let dataset_manifest = root
+        .join("datasets/market")
+        .join(id)
+        .join("AAPL.manifest.json");
+    let original = std::fs::read(&dataset_manifest).unwrap();
+    let mut mismatched: serde_json::Value = serde_json::from_slice(&original).unwrap();
+    mismatched["bar_interval"] = json!("1d");
+    std::fs::write(&dataset_manifest, serde_json::to_vec(&mismatched).unwrap()).unwrap();
+    assert!(quant_api::forecast::run(&root, &query)
+        .unwrap_err()
+        .to_string()
+        .contains("intervals differ"));
+    std::fs::write(&dataset_manifest, &original).unwrap();
     let validation: serde_json::Value =
         serde_json::from_slice(&std::fs::read(model.join("validation.json")).unwrap()).unwrap();
     assert_eq!(validation["folds"].as_array().unwrap().len(), 3);

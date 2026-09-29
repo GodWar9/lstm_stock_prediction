@@ -21,6 +21,8 @@ arrow2.workspace = true
 quant_backtest.workspace = true
 quant_simulation.workspace = true
 quant_data.workspace = true
+quant_features.workspace = true
+quant_inference.workspace = true
 sha2 = "0.10"
 
 [dev-dependencies]

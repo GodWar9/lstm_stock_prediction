@@ -1,7 +1,8 @@
 # Production readiness checklist
 
-Baseline: `4c004f0`. Started 2026-09-28. Scope: local Alpaca market-data ingestion
-and research UI, with downstream research/trading gates tracked separately.
+Baseline: `4c004f0`. Started 2026-09-28; scope clarified 2026-09-29:
+end-to-end intraday research and backtesting, with public website access and
+forecast generation. Automated order execution is outside this release.
 **Release decision: NOT READY** until the applicable unchecked gates below pass.
 An implemented feature is not evidence of an authenticated production deployment.
 
@@ -18,36 +19,36 @@ beside it. `[ ]` means incomplete or unverified, including external dependencies
 
 ## B. Protocol and service lifecycle
 
-- [ ] Validate configuration with pure tests: feeds, symbols, credentials and bounds.
-- [ ] Confirm every requested channel, after authentication; reject incomplete/out-of-order control messages.
-- [ ] Separate terminal HTTP/auth/protocol failures from retryable network/provider failures; redact provider error text.
-- [ ] Bound connect, authenticate, subscribe, send, heartbeat and disk waits.
-- [ ] Test actual disconnect → reauthenticate → resubscribe → new data; record the gap.
-- [ ] Graceful Ctrl+C/SIGTERM drains the journal and stops SSE clients; no indefinite shutdown.
+- [x] Validate configuration with pure tests: `configuration_and_error_classification_are_explicit`.
+- [x] Confirm every requested channel after authentication: `incomplete_subscription_fails_instead_of_claiming_live` and WebSocket protocol test.
+- [x] Classify terminal/retryable errors and redact upstream text: configuration/classification and provider rejection tests.
+- [x] Bound network/disk waits: `live::session`, `send`, `Journal::write`; protocol timeout paths and capacity tests.
+- [x] Reconnect → authenticate → resubscribe → new data and gap record: `reconnect_resubscribes_and_shutdown_seals_the_capture`.
+- [ ] Verify OS Ctrl+C/SIGTERM on deployment host. Controller shutdown and SSE termination pass deterministic Rust tests; process supervision acceptance remains open.
 
 ## C. Data integrity and storage
 
-- [ ] Validate subscribed trade/quote/bar/correction/cancel payloads before recording; reject impossible timestamps and malformed prices.
-- [ ] Version journals and sequence records; include session/feed/symbol metadata and explicit gap/stop records.
-- [ ] Rotate journal segments without silently losing data; bound storage across sessions and fail visibly on exhaustion.
-- [ ] Define and test durability checkpoints and clean shutdown; expose the durable sequence.
-- [ ] Read-only journal verifier detects malformed/truncated records, sequence discontinuities and unclean sessions.
+- [x] Validate market events and timestamps: `quant_data::capture` and invalid-trade API tests.
+- [x] Version/sequence/hash-chain journals with session, gap and stop records: capture verification tests.
+- [x] Rotate segments, bound total storage and fail visibly: `rotation_chain_durability_lock_and_clean_shutdown`, `capacity_and_backward_clock_fail_closed`.
+- [x] Checkpoint durability and expose sequence: journal tests and `/api/live` diagnostics.
+- [x] Detect truncation, corruption, sequence gaps and unclean sessions: `quant_data::capture` tests; `data verify-capture`.
 
 ## D. Operations and browser reliability
 
-- [ ] Liveness/readiness API distinguishes process availability, provider connectivity, market freshness and persistence failure.
-- [ ] Diagnostics expose connection attempts, last message time, journal usage and durable progress without secrets.
-- [ ] Browser validates snapshot payloads; stale/error states survive malformed messages and future timestamps.
+- [x] Separate liveness/capture readiness and symbol freshness: `readiness_and_sse_clients_follow_state_and_shutdown`.
+- [x] Expose attempts, message time, storage and durable progress: API snapshot and Live diagnostics.
+- [x] Validate browser snapshots and future/stale timestamps: frontend `live.test.ts` (13 total frontend unit tests including format tests).
 - [ ] Test navigation cleanup, reconnect, multiple clients and shutdown using actual SSE transport.
-- [ ] Document launch, restart, key rotation, disk-full recovery, journal verification and rollback.
+- [x] Document operations and capture-to-research workflow: `Docs/19-LIVE-INGESTION.md` (host drills remain in F).
 - [ ] Add a repeatable local acceptance command and CI gates for the new checks.
 
 ## E. Release verification
 
-- [ ] Rust formatting, Clippy and full workspace suite pass on final changes.
-- [ ] Python contract/leakage/parity suite passes on final changes.
-- [ ] Frontend unit tests, production build, OpenAPI drift check and desktop/mobile Playwright pass.
-- [ ] Review final diff for credentials, accidental fixtures and misleading readiness claims.
+- [x] Rust formatting, Clippy and full workspace suite: 180 reported passes including 2 doctests, 2026-09-29. Two legacy provider tests return early without a sealed `lstm_v1`; the capture integration independently runs real ONNX inference.
+- [x] Python contract/leakage/parity suite: 49 passed, 2026-09-29.
+- [x] Frontend: 13 unit tests, production build, OpenAPI drift check and 46 desktop/mobile Playwright cases pass, 2026-09-29.
+- [x] Final diff reviewed: no credentials or generated model/data fixtures tracked; historical/synthetic forecast labels and open deployment gates retained.
 
 ## F. Deployment acceptance (requires configured account/host)
 
@@ -57,19 +58,39 @@ beside it. `[ ]` means incomplete or unverified, including external dependencies
 - [ ] Configure OS service supervision, restricted credential storage, disk/connection alerts and retention/backup ownership on the actual host.
 - [ ] Exercise restart, interrupted journal recovery and backup restore on the deployment filesystem.
 
-## G. Gates before intraday model research or trading
+## G. Intraday research gates
 
-These remain separate from a market-data capture release; do not label this system
-a production trading engine while they are open.
+These are part of the requested research release. Production trading is outside
+scope; synthetic protocol acceptance does not establish market performance.
 
-- [ ] Define bar interval, session calendar, trade-condition filters, deduplication, corrections and gap/backfill policy.
-- [ ] Convert captured events to versioned PIT datasets with receipt-time availability and replay tests.
-- [ ] Train/evaluate interval-matched models using purged walk-forward validation and Python/Rust parity.
-- [ ] Wire fresh intraday datasets through backtesting/simulation with matching annualization, fees and slippage; demonstrate new results derived from captured data.
-- [ ] If execution is requested: paper broker adapter, idempotent orders, reconciliation, exposure limits, kill switch and recovery drills.
+- [x] Define first-publication provider minute bars, regular sessions, duplicate rejection, correction and gap policy. Provider bar construction is trusted; this does not reconstruct trade-condition-filtered bars from raw trades.
+- [x] Import versioned PIT datasets with receipt-time availability: `capture` replay/integrity tests.
+- [x] Train interval-matched purged walk-forward models and ONNX parity: captured-minute integration plus Python suite.
+- [x] Run fresh captured-data backtest/simulation with minute annualization and configured costs: `captured_minutes_train_fresh_model_backtest_and_simulation` (synthetic protocol fixture, real training/inference).
+- [ ] Validate slippage assumptions and out-of-sample behavior on actual captured market data, beyond synthetic acceptance.
+
+## H. Public forecast website
+
+- [x] Browser forecast selection, missing-data errors, interval mismatches, historical labels and input-change reset: eight desktop/mobile forecast cases, 2026-09-29.
+- [x] Real ONNX forecast from a freshly trained minute model, timestamp/return/provenance assertions and incompatible interval rejection: CLI capture integration, 2026-09-29.
+- [ ] Wire open live capture into cadence-matched model features with warmup, gap and freshness gates. Current forecasts consume recorded datasets.
+- [ ] Add authenticated hosted research job execution/status; current research launch is CLI-only.
+- [ ] Select hosting/domain/storage; configure authenticated HTTPS access and service supervision. **Owner: hosting details to follow.**
+- [ ] Deploy and test the public URL, access controls, SSE, restart and restore on the target host.
+
+See `Docs/21-WEB-FORECAST-DEPLOYMENT.md` for the exact current forecast scope.
 
 ## Evidence log
 
 - Baseline `4c004f0`: 169 Rust reported passes (including doctests), 38 Playwright,
   4 frontend unit tests; Clippy and API contract check passed. These are baseline
   results, not completion evidence for changes made after this checklist began.
+- 2026-09-29 after GitHub sync at `5a0b039`: 180 Rust reported passes (178
+  unit/integration plus 2 doctests), 49 Python, 13 frontend unit and 46 Playwright.
+  Clippy, formatting, production build and contract drift check passed. Logs are
+  local ignored `audit-forecast-*.log` files. The repeated-capture acceptance test
+  now varies its training seed so retained test-evaluation guards do not collide;
+  production reuse protection remains enabled.
+- Local HTTP acceptance on port 8787 returned an integrity-checked minute forecast
+  for the fresh `research_9758fa4a95bf401190844360f0f3a404` synthetic capture model.
+  This proves inference execution, not predictive quality or live market access.
