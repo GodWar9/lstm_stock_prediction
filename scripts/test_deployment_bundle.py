@@ -1,3 +1,4 @@
+import gzip
 import hashlib
 import importlib.util
 import io
@@ -21,13 +22,17 @@ class BundleTests(unittest.TestCase):
         self.archive.write_bytes(SOURCE.read_bytes())
         self.archive.with_suffix(".json").write_bytes(SOURCE.with_suffix(".json").read_bytes())
 
-    def test_valid_bundle_extracts_and_repacking_is_identical(self):
+    def test_valid_bundle_extracts_and_repacking_preserves_bytes_and_metadata(self):
         output = self.root / "workspace"
         bundle.extract(self.archive, output)
         info = json.loads((output / "bundle.json").read_text())
         repacked = self.root / "repacked.tar.gz"
         bundle.pack(output, info["model"], info["dataset"], info["symbol"], repacked)
-        self.assertEqual(repacked.read_bytes(), self.archive.read_bytes())
+        # Compare the entire tar stream across Python/zlib versions, not compressor output.
+        self.assertEqual(gzip.decompress(repacked.read_bytes()), gzip.decompress(self.archive.read_bytes()))
+        repeated = self.root / "repeated.tar.gz"
+        bundle.pack(output, info["model"], info["dataset"], info["symbol"], repeated)
+        self.assertEqual(repacked.read_bytes(), repeated.read_bytes())
 
     def test_modified_archive_is_rejected(self):
         self.archive.write_bytes(self.archive.read_bytes() + b"tampered")

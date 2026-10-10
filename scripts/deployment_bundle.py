@@ -78,8 +78,9 @@ def pack(root, model, dataset, symbol, output):
             "files": {name: {"sha256": digest(data), "size_bytes": len(data)} for name, data in sorted(files.items())}}
     files["bundle.json"] = (json.dumps(info, indent=2) + "\n").encode()
     output.parent.mkdir(parents=True, exist_ok=True)
-    # Stable gzip/tar metadata makes repacking identical inputs reproducible.
-    with output.open("wb") as raw, gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as zipped:
+    # Stable tar metadata preserves identical artifact bytes across platforms.
+    # Pin compression level; zlib versions may still produce different gzip bytes.
+    with output.open("wb") as raw, gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0, compresslevel=9) as zipped:
         with tarfile.open(fileobj=zipped, mode="w") as archive:
             for name, data in sorted(files.items()):
                 entry = tarfile.TarInfo(name)
