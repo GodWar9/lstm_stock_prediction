@@ -106,7 +106,10 @@ try {
 } finally {
   await browser?.close();
   if (server) { server.closeAllConnections(); server.close(); }
-  const stopped = once(child, 'exit');
-  child.kill('SIGTERM');
-  await stopped;
+  if (child.pid && child.exitCode === null && child.signalCode === null) {
+    const stopped = once(child, 'exit');
+    child.kill('SIGTERM');
+    const forceStop = setTimeout(() => child.kill('SIGKILL'), 5000);
+    try { await stopped; } finally { clearTimeout(forceStop); }
+  }
 }

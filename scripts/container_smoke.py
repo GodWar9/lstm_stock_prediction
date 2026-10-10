@@ -20,6 +20,10 @@ def request(base, path, authenticated=True):
     except urllib.error.HTTPError as error:
         return error.code, error.read(), error.headers
 
+def container_url():
+    port = subprocess.check_output(["docker", "port", container, "10000/tcp"], text=True).strip().split(":")[-1]
+    return "http://127.0.0.1:" + port
+
 def ready(base):
     for _ in range(60):
         try:
@@ -33,8 +37,7 @@ def ready(base):
 try:
     container = subprocess.check_output(["docker", "run", "-d", "--memory=512m", "--cpus=0.5",
         "-p", "127.0.0.1::10000", "-e", "QUANTCTL_BACKEND_TOKEN=" + token, "lstm-backend:ci"], text=True).strip()
-    port = subprocess.check_output(["docker", "port", container, "10000/tcp"], text=True).strip().split(":")[-1]
-    base = "http://127.0.0.1:" + port
+    base = container_url()
     ready(base)
     assert request(base, "/api/models", False)[0] == 401
     status, data, _ = request(base, "/api/models")
@@ -51,6 +54,8 @@ try:
     assert status == 200 and data.startswith(b"ARROW1")
     assert headers["Content-Type"] == "application/vnd.apache.arrow.file"
     subprocess.run(["docker", "restart", container], check=True, stdout=subprocess.DEVNULL)
+    # Docker may allocate a different ephemeral host port on restart.
+    base = container_url()
     ready(base)
     status, data, _ = request(base, "/api/forecast?" + query)
     assert status == 200 and json.loads(data)["implied_close"] == prediction["implied_close"]
