@@ -178,6 +178,7 @@ jobs:
         working-directory: web
         run: |
           npm test
+          npm run test:bridge
           npm run build
       - name: Build embedded application
         run: cargo build --manifest-path rust/Cargo.toml --bin quantctl --locked
@@ -187,16 +188,38 @@ jobs:
       - name: Desktop and mobile browser tests
         working-directory: web
         run: npm run test:e2e
+      - name: Verify public artifact bundle
+        run: python scripts/test_deployment_bundle.py
+      - name: Real inference through deployment bridge and browser
+        working-directory: web
+        run: npm run test:deployment
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: browser-test-results
           path: web/test-results
 
+  container-test:
+    name: Backend Container
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: lstm-backend:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Exercise the image, auth, inference, and restart
+        run: python scripts/container_smoke.py
+
   all-checks:
     name: All Checks Passed
     runs-on: ubuntu-latest
-    needs: [rust-check, rust-test, python-test, bench-gate, web-test]
+    needs: [rust-check, rust-test, python-test, bench-gate, web-test, container-test]
     if: always()
     steps:
       - name: Verify all jobs succeeded
@@ -205,7 +228,8 @@ jobs:
              [[ "${{ needs.rust-test.result }}" != "success" ]] || \
              [[ "${{ needs.python-test.result }}" != "success" ]] || \
              [[ "${{ needs.bench-gate.result }}" != "success" ]] || \
-             [[ "${{ needs.web-test.result }}" != "success" ]]; then
+             [[ "${{ needs.web-test.result }}" != "success" ]] || \
+             [[ "${{ needs.container-test.result }}" != "success" ]]; then
             echo "One or more CI jobs failed"
             exit 1
           fi

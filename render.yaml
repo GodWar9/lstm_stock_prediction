@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: lstm-research-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: QUANTCTL_BACKEND_TOKEN
+        generateValue: true

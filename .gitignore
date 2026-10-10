@@ -53,3 +53,10 @@ models/inspector_demo/
 !rust/Cargo.lock
 
 /models/research_*/
+
+/models/deploy_*/
+.env
+.env.*
+!.env.example
+.vercel/
+deploy/workspace*/

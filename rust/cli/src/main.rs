@@ -24,7 +24,21 @@ async fn main() -> anyhow::Result<()> {
             "{}",
             quant_inference::parity::verify_runtime_parity(artifact_dir)?
         ),
-        Commands::Serve { port, root } => quant_api::serve(root.clone(), *port).await?,
+        Commands::Serve {
+            port,
+            root,
+            remote,
+            workers,
+        } => {
+            let options = if *remote {
+                let token = std::env::var("QUANTCTL_BACKEND_TOKEN")
+                    .map_err(|_| anyhow::anyhow!("Remote mode requires QUANTCTL_BACKEND_TOKEN"))?;
+                quant_api::ServerOptions::remote(&token, *workers)?
+            } else {
+                quant_api::ServerOptions::default()
+            };
+            quant_api::serve_with_options(root.clone(), *port, options).await?;
+        }
         Commands::Openapi => println!("{}", quant_api::openapi()),
         Commands::Config(args) => {
             handlers::config::handle_config(&args.command, &cli.config)?;

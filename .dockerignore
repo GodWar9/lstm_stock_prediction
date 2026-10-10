@@ -1,0 +1,16 @@
+**
+!Dockerfile
+!rust/
+!rust/**
+rust/target/
+**/target/
+**/datasets/
+**/reports/
+**/models/
+**/*.log
+**/.env*
+!scripts/
+!scripts/deployment_bundle.py
+!deploy/
+!deploy/artifacts.tar.gz
+!deploy/artifacts.tar.json

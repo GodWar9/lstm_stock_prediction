@@ -33,10 +33,16 @@ pub enum Commands {
     },
     /// Serve the research inspector and optional Alpaca live ingestion
     Serve {
-        #[arg(long, default_value_t = 8787)]
+        #[arg(long, env = "PORT", default_value_t = 8787)]
         port: u16,
         #[arg(long, default_value = ".")]
         root: PathBuf,
+        /// Bind all interfaces; requires QUANTCTL_BACKEND_TOKEN in the environment
+        #[arg(long)]
+        remote: bool,
+        /// Maximum concurrent artifact/inference workers in remote mode
+        #[arg(long, default_value_t = 1)]
+        workers: usize,
     },
     /// Print the generated OpenAPI contract
     Openapi,

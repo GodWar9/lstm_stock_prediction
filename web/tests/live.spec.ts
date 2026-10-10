@@ -76,7 +76,7 @@ test('upstream reconnect and local disconnect never display fresh prices', async
   await expect(page.getByRole('cell', { name: 'Stale', exact: true })).toBeVisible();
   await emit(page);
   await page.evaluate(() => window.dispatchEvent(new Event('test-feed-error')));
-  await expect(page.getByRole('status')).toContainText('Local connection lost');
+  await expect(page.getByRole('status')).toContainText('Backend connection lost');
   await expect(page.getByRole('cell', { name: 'Stale', exact: true })).toBeVisible();
   await emit(page);
   await expect(page.getByRole('cell', { name: 'Fresh', exact: true })).toBeVisible();
@@ -88,7 +88,7 @@ test('stalled browser stream expires freshness even without an error event', asy
   await emit(page);
   await expect(page.getByRole('cell', { name: 'Fresh', exact: true })).toBeVisible();
   await page.clock.fastForward(6000);
-  await expect(page.getByRole('status')).toContainText('Local feed is stale');
+  await expect(page.getByRole('status')).toContainText('Market feed is stale');
   await expect(page.getByRole('cell', { name: 'Stale', exact: true })).toBeVisible();
 });
 

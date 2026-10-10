@@ -4,7 +4,7 @@ import { number } from '../lib/format';
 
 export function Live() {
   const [snapshot, setSnapshot] = useState<LiveSnapshot>();
-  const [transport, setTransport] = useState('Connecting to local feed');
+  const [transport, setTransport] = useState('Connecting to market feed');
   const [lastMessage, setLastMessage] = useState(0);
   const [now, setNow] = useState(performance.now());
   useEffect(() => {
@@ -12,20 +12,20 @@ export function Live() {
     events.addEventListener('live', event => {
       try {
         const data = parseLiveSnapshot(JSON.parse(event.data));
-        setSnapshot(data); setLastMessage(performance.now()); setTransport('Connected to local feed');
+        setSnapshot(data); setLastMessage(performance.now()); setTransport('Connected to market feed');
       } catch { setTransport('Invalid feed response'); }
     });
-    events.onerror = () => setTransport('Local connection lost; reconnecting');
+    events.onerror = () => setTransport('Backend connection lost; reconnecting');
     const timer = setInterval(() => setNow(performance.now()), 1000);
     return () => { events.close(); clearInterval(timer); };
   }, []);
-  const disconnected = transport !== 'Connected to local feed' || now - lastMessage > 5000;
+  const disconnected = transport !== 'Connected to market feed' || now - lastMessage > 5000;
   const serverNow = (snapshot?.server_time_ms ?? now) + Math.max(0, now - lastMessage);
   return <>
     <div className="page-title"><h2>Live market data</h2><p>Continuous Alpaca stock WebSocket ingestion, recorded by Rust. Browser prices update once per second.</p></div>
     <section className="panel">
       <h2>Feed connection</h2>
-      <p role="status">{disconnected ? (transport === 'Connected to local feed' ? 'Local feed is stale; waiting for updates' : transport) : `${snapshot?.status}: ${snapshot?.message}`}</p>
+      <p role="status">{disconnected ? (transport === 'Connected to market feed' ? 'Market feed is stale; waiting for updates' : transport) : `${snapshot?.status}: ${snapshot?.message}`}</p>
       {snapshot && <>
         <p>Provider: Alpaca · Feed: <strong>{snapshot.feed}</strong> · Recorded events: {snapshot.received_events} · Reconnects: {snapshot.reconnects}</p>
         {snapshot.feed === 'iex' && <p>IEX covers one exchange, not the consolidated US market.</p>}

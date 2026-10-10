@@ -1,22 +1,31 @@
 # Deployment build plan
 
-Updated 2026-10-09. Free-tier hosting only; the target is a real application.
+Updated 2026-10-10. LSTM is the active release priority. Free-tier services only.
+The owner will create the hosted deployments later; this delivery prepares code,
+artifacts, repeatable checks and exact deployment instructions.
 
-Verified locally in the initial audit: Rust workspace checks, 49 Python tests,
-13 frontend tests, 46 browser checks, production frontend build and API contract.
-The existing server is deliberately local-only; passing these checks does not
-make it a publicly deployable application.
+Implemented:
+1. Opt-in remote Rust serving with a required backend bearer token, bounded
+   inference concurrency, and unchanged default loopback/Host protection.
+2. Vercel server-only API bridge, restricted GET routes, binary/pagination
+   preservation, bounded SSE with reconnect, timeout/disconnect handling and SPA routing.
+3. Multi-stage non-root backend Docker image and Render Free blueprint.
+4. A sealed, reproducibly packed model/data/backtest/simulation archive that
+   survives restarts by being included in the image.
+5. Real desktop/mobile browser-to-bridge-to-Rust inference smoke, plus unit,
+   transport, artifact-integrity and container restart gates.
+6. [Deployment, updates, rollback and interview walkthrough](22-DEPLOYMENT.md).
 
-1. Add explicit remote mode with a required backend token; retain loopback and
-   Host validation for the default local mode. Test both policies.
-2. Add a Vercel server-side API bridge with server-only credentials, binary and
-   SSE forwarding, timeout/disconnect handling, path restrictions and SPA routing.
-3. Build a reproducible backend container and verify its health/startup behavior.
-4. Provision a free backend account and persistent model/data artifacts; verify
-   cold-start limits and storage before choosing the service.
-5. Deploy the frontend to Vercel and run real browser workflows against the hosted
-   backend, including forecasting, artifact retrieval and live stream reconnects.
-6. Document data provenance, model limitations, rollback and a recruiter demo.
+Release scope: recorded-data forecasting and research inspection. The included
+small LSTM uses explicitly synthetic historical data; inference is real, predictive
+usefulness is not established. Replace the bundle with licensed real data and a
+validated model for market research. Live prices do not feed the forecast window.
+Hosted training/jobs and private user accounts are outside this deployment.
 
-No backend hosting account is confirmed. No paid resources are authorized.
-Zex is the current first release priority because it needs no hosted backend.
+Owner steps:
+- Deploy Render Free from the tested commit.
+- Import web/ into Vercel Hobby; configure the server-only backend URL/token.
+- Complete the hosted acceptance checklist in Docs/22-DEPLOYMENT.md before sharing.
+
+No hosted deployment is claimed from local tests. Docker is unavailable on the
+local Windows machine; Linux container validation runs in GitHub Actions.

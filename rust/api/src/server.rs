@@ -750,6 +750,46 @@ fn router_with_shutdown(
     live: crate::live::Live,
     shutdown: Arc<AtomicBool>,
 ) -> Router {
+    configured_router(root, live, shutdown, ServerOptions::default())
+}
+
+/// Remote mode is opt-in and requires a server-to-server credential.
+#[derive(Clone)]
+pub struct ServerOptions {
+    token_hash: Option<[u8; 32]>,
+    workers: usize,
+}
+impl Default for ServerOptions {
+    fn default() -> Self {
+        Self {
+            token_hash: None,
+            workers: 4,
+        }
+    }
+}
+impl ServerOptions {
+    pub fn remote(token: &str, workers: usize) -> anyhow::Result<Self> {
+        use sha2::{Digest, Sha256};
+        anyhow::ensure!(
+            (32..=256).contains(&token.len()) && token.bytes().all(|b| b.is_ascii_graphic()),
+            "QUANTCTL_BACKEND_TOKEN must be 32..256 printable ASCII characters without spaces"
+        );
+        anyhow::ensure!(
+            (1..=4).contains(&workers),
+            "Workers must be between 1 and 4"
+        );
+        Ok(Self {
+            token_hash: Some(Sha256::digest(token.as_bytes()).into()),
+            workers,
+        })
+    }
+}
+fn configured_router(
+    root: PathBuf,
+    live: crate::live::Live,
+    shutdown: Arc<AtomicBool>,
+    options: ServerOptions,
+) -> Router {
     Router::new()
         .route("/api/health", get(health))
         .route("/api/live/ready", get(live_ready))
@@ -768,18 +808,51 @@ fn router_with_shutdown(
             get(|| async { ([(header::CONTENT_TYPE, "application/json")], openapi()) }),
         )
         .fallback(spa)
-        .layer(axum::middleware::from_fn(local_only))
+        .layer(axum::middleware::from_fn_with_state(
+            options.clone(),
+            access_policy,
+        ))
         .with_state(AppState {
             root,
             live,
             shutdown,
-            workers: Arc::new(tokio::sync::Semaphore::new(4)),
+            workers: Arc::new(tokio::sync::Semaphore::new(options.workers)),
         })
 }
 
-async fn local_only(request: axum::extract::Request, next: axum::middleware::Next) -> Response {
+async fn access_policy(
+    State(options): State<ServerOptions>,
+    request: axum::extract::Request,
+    next: axum::middleware::Next,
+) -> Response {
+    if let Some(expected) = options.token_hash {
+        use sha2::{Digest, Sha256};
+        // The host health probe discloses process liveness only, never artifacts.
+        let probe =
+            request.method() == axum::http::Method::GET && request.uri().path() == "/api/health";
+        let authorized = request
+            .headers()
+            .get(header::AUTHORIZATION)
+            .and_then(|v| v.to_str().ok())
+            .and_then(|v| v.strip_prefix("Bearer "))
+            .filter(|v| v.len() <= 256)
+            .is_some_and(|v| <[u8; 32]>::from(Sha256::digest(v.as_bytes())) == expected);
+        if !probe && !authorized {
+            return (
+                StatusCode::UNAUTHORIZED,
+                [
+                    (header::CACHE_CONTROL, "no-store"),
+                    (header::WWW_AUTHENTICATE, "Bearer"),
+                ],
+                Json(ApiError {
+                    code: "unauthorized".into(),
+                    message: "Backend authentication required".into(),
+                }),
+            )
+                .into_response();
+        }
     // Loopback binding alone does not protect against a hostile DNS name resolving to it.
-    if let Some(host) = request.headers().get(header::HOST) {
+    } else if let Some(host) = request.headers().get(header::HOST) {
         let valid = host
             .to_str()
             .ok()
@@ -790,6 +863,11 @@ async fn local_only(request: axum::extract::Request, next: axum::middleware::Nex
         }
     }
     let mut response = next.run(request).await;
+    if options.token_hash.is_some() {
+        response
+            .headers_mut()
+            .insert(header::CACHE_CONTROL, "private, no-store".parse().unwrap());
+    }
     response.headers_mut().insert(header::CONTENT_SECURITY_POLICY,
         "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; worker-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'".parse().unwrap());
     response
@@ -805,19 +883,35 @@ async fn local_only(request: axum::extract::Request, next: axum::middleware::Nex
     response
 }
 pub async fn serve(root: PathBuf, port: u16) -> anyhow::Result<()> {
-    let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, port)).await?;
+    serve_with_options(root, port, ServerOptions::default()).await
+}
+pub async fn serve_with_options(
+    root: PathBuf,
+    port: u16,
+    options: ServerOptions,
+) -> anyhow::Result<()> {
+    anyhow::ensure!(root.is_dir(), "Artifact root must be an existing directory");
+    let bind = if options.token_hash.is_some() {
+        std::net::Ipv4Addr::UNSPECIFIED
+    } else {
+        std::net::Ipv4Addr::LOCALHOST
+    };
+    let listener = tokio::net::TcpListener::bind((bind, port)).await?;
     let (live, task) = crate::live::start(&root).await;
     println!("Research inspector: http://{}", listener.local_addr()?);
     let shutdown = Arc::new(AtomicBool::new(false));
-    let result = axum::serve(listener, router_with_shutdown(root, live, shutdown.clone()))
-        .with_graceful_shutdown(async move {
-            shutdown_signal().await;
-            shutdown.store(true, Ordering::Relaxed);
-            if let Some(task) = task {
-                task.shutdown().await;
-            }
-        })
-        .await;
+    let result = axum::serve(
+        listener,
+        configured_router(root, live, shutdown.clone(), options),
+    )
+    .with_graceful_shutdown(async move {
+        shutdown_signal().await;
+        shutdown.store(true, Ordering::Relaxed);
+        if let Some(task) = task {
+            task.shutdown().await;
+        }
+    })
+    .await;
     result?;
     Ok(())
 }
@@ -840,6 +934,73 @@ mod tests {
     use super::*;
     use http_body_util::BodyExt;
     use tower::ServiceExt;
+
+    #[test]
+    fn remote_configuration_requires_strong_token_and_bounded_workers() {
+        for token in ["", "short", &"x".repeat(257), &" ".repeat(32)] {
+            assert!(ServerOptions::remote(token, 1).is_err());
+        }
+        assert!(ServerOptions::remote(&"x".repeat(32), 0).is_err());
+        assert!(ServerOptions::remote(&"x".repeat(32), 5).is_err());
+        assert!(ServerOptions::remote(&"x".repeat(32), 1).is_ok());
+    }
+    #[tokio::test]
+    async fn remote_auth_covers_artifacts_streams_and_spa_but_allows_liveness() {
+        let temp = tempfile::tempdir().unwrap();
+        let token = "a".repeat(32);
+        let app = configured_router(
+            temp.path().into(),
+            crate::live::disabled(),
+            Arc::new(AtomicBool::new(false)),
+            ServerOptions::remote(&token, 1).unwrap(),
+        );
+        for path in [
+            "/api/runs",
+            "/api/models",
+            "/api/datasets",
+            "/api/forecast",
+            "/api/events",
+            "/api/live/events",
+            "/api/live",
+            "/api/openapi.json",
+            "/forecast",
+        ] {
+            for auth in ["", "Bearer wrong", &token] {
+                let res = app
+                    .clone()
+                    .oneshot(
+                        axum::http::Request::builder()
+                            .uri(path)
+                            .header(header::HOST, "backend.onrender.com")
+                            .header(header::AUTHORIZATION, auth)
+                            .body(axum::body::Body::empty())
+                            .unwrap(),
+                    )
+                    .await
+                    .unwrap();
+                assert_eq!(res.status(), StatusCode::UNAUTHORIZED, "{path}");
+            }
+        }
+        for (path, auth) in [
+            ("/api/health", ""),
+            ("/api/runs", &format!("Bearer {token}")),
+        ] {
+            let res = app
+                .clone()
+                .oneshot(
+                    axum::http::Request::builder()
+                        .uri(path)
+                        .header(header::HOST, "backend.onrender.com")
+                        .header(header::AUTHORIZATION, auth)
+                        .body(axum::body::Body::empty())
+                        .unwrap(),
+                )
+                .await
+                .unwrap();
+            assert_eq!(res.status(), StatusCode::OK);
+            assert_eq!(res.headers()[header::CACHE_CONTROL], "private, no-store");
+        }
+    }
 
     #[tokio::test]
     async fn readiness_and_sse_clients_follow_state_and_shutdown() {

@@ -1,6 +1,6 @@
 # Forecast website release scope
 
-Updated 2026-09-29 after syncing GitHub main at `5a0b039`.
+Historical scope note (2026-09-29), originally based on `5a0b039`.
 
 The requested target is end-to-end intraday research and backtesting, with a
 public website that can generate forecasts. Automated broker order execution is
@@ -27,7 +27,15 @@ out-of-sample status are not certified by this endpoint. A fresh request does no
 make an old dataset current. Neither a probability nor an uncertainty interval is
 invented from an LSTM point estimate.
 
-## Gates still open
+## Deployment update (2026-10-10)
+
+Authenticated remote mode, a Vercel API bridge, a Render Free container, a sealed
+artifact bundle and deployment tests are now implemented. The owner will deploy
+later. Follow [the current deployment runbook](22-DEPLOYMENT.md) for setup and
+hosted acceptance. The historical gates below describe the earlier baseline;
+live forecasting and hosted research execution remain future work.
+
+## Original gates
 
 - Public hosting: choose host, domain and persistent storage. The application
   intentionally still binds loopback and rejects remote Host headers.

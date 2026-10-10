@@ -23,7 +23,7 @@ export function Forecast() {
     <div className="page-title"><h2>Make a forecast</h2><p>Run the Rust ONNX model on the latest complete feature window in a recorded dataset.</p></div>
     <div className="warning">Recorded-data research. Live prices on the market page are not model inputs here. Check the data timestamp and source before interpreting a forecast.</div>
     <section className="panel"><h3>Forecast inputs</h3>
-      {(models.isPending || datasets.isPending) && <p role="status">Loading models and datasets…</p>}
+      {(models.isPending || datasets.isPending) && <p role="status">The backend may take a minute to wake up. Loading models and datasets…</p>}
       {(models.error || datasets.error) && <div role="alert">{models.error?.message ?? datasets.error?.message}<button onClick={() => { void models.refetch(); void datasets.refetch(); }}>Reload inputs</button></div>}
       {models.data?.length === 0 && <p>No trained models are available. Train a model with <code>quantctl train</code> before forecasting.</p>}
       {datasets.data?.length === 0 && <p>No recorded datasets are available. Ingest market data with <code>quantctl data ingest</code> or import a completed Alpaca capture with <code>quantctl research --journal …</code>.</p>}

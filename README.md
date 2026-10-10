@@ -1,11 +1,12 @@
 # Quant research inspector
 
-A local Rust/PyTorch quantitative research platform with an embedded React inspector. Build validated datasets, train versioned models, replay held-out predictions with simulated execution costs, and inspect the resulting evidence.
+A Rust/PyTorch quantitative research platform with a React inspector, real ONNX forecasts and a free-tier deployment configuration. Build validated datasets, train versioned models, replay held-out predictions with simulated execution costs, and inspect the resulting evidence.
 
-Rust owns features, CPU inference through **tract-onnx**, portfolio accounting, backtesting, bootstrap simulation and the localhost API. Python owns training and export. Node is a build dependency only. This is a research simulator; it does not place live orders. Synthetic demo results are labelled.
+Rust owns features, CPU inference through **tract-onnx**, portfolio accounting, backtesting, bootstrap simulation and the API. Python owns training and export. Local serving needs no Node process; the Vercel deployment uses a Node API bridge. This is a research simulator; it does not place live orders. Synthetic demo results are labelled.
 
 ## Documentation
 
+- [Deploy on Vercel and Render Free](Docs/22-DEPLOYMENT.md)
 - [Live capture, fresh research and forecast runbook](Docs/19-LIVE-INGESTION.md)
 - [Production checklist and release gates](Docs/20-PRODUCTION-CHECKLIST.md)
 - [Forecast website and public deployment scope](Docs/21-WEB-FORECAST-DEPLOYMENT.md)
@@ -36,8 +37,8 @@ Build web assets **before** compiling Rust. A backend-only build serves a setup 
 Open `/forecast` on the running inspector to generate an ONNX forecast from a
 selected model and recorded dataset. The result includes the actual data timestamp,
 horizon and provenance; historical and synthetic inputs are explicit. The live
-price stream is not yet connected to the forecast feature window. Public hosting
-and authenticated access remain deployment gates; the default server is local.
+price stream is not yet connected to the forecast feature window. An authenticated remote backend and Vercel bridge are available; follow the
+[deployment guide](Docs/22-DEPLOYMENT.md). The default CLI server remains local.
 
 ## Reproducible demo
 
@@ -80,7 +81,7 @@ New training runs publish `integrity.json` with SHA-256 hashes for every model-p
 
 Overview, Backtest, Data and validation, Models, Signals, Risk and simulation, and Run activity share a run selector and copyable provenance footer. Rust supplies metrics, Arrow series and split records. The browser formats and plots them without recomputing financial metrics. Unsupported capabilities have explicit empty states. Desktop/mobile layouts, keyboard focus, accessible tables and browser tests are included.
 
-The server binds only to `127.0.0.1`. It has no account system, remote deployment or job-launching API. Published run files are immutable resources.
+By default, the server binds to `127.0.0.1`. Remote mode requires a backend token. There is no visitor account system or job-launching API. Published run files are immutable resources.
 
 ## Verification and development
 

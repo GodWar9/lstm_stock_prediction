@@ -9,7 +9,9 @@
     "test": "vitest run src",
     "test:e2e": "playwright test",
     "contract": "node scripts/contract.mjs",
-    "contract:check": "node scripts/contract.mjs --check"
+    "contract:check": "node scripts/contract.mjs --check",
+    "test:bridge": "node --test scripts/bridge.test.mjs",
+    "test:deployment": "node scripts/deployment-smoke.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.0",
