@@ -63,10 +63,10 @@ impl AppConfig {
         }
         if !matches!(
             self.data.provider.as_str(),
-            "csv" | "synthetic" | "yfinance" | "alpaca_journal"
+            "csv" | "synthetic" | "yfinance" | "alpaca_journal" | "twelve_data"
         ) {
             return Err(ConfigValidationError::Data(
-                "provider must be csv, synthetic, yfinance or alpaca_journal".into(),
+                "provider must be csv, synthetic, yfinance, alpaca_journal or twelve_data".into(),
             ));
         }
         if self
@@ -91,10 +91,28 @@ impl AppConfig {
         }
 
         if !matches!(self.data.bar_interval.as_str(), "1d" | "1m")
-            || (self.data.bar_interval == "1m") != (self.data.provider == "alpaca_journal")
+            || (self.data.provider != "twelve_data"
+                && (self.data.bar_interval == "1m") != (self.data.provider == "alpaca_journal"))
         {
             return Err(ConfigValidationError::Data(
                 "One-minute research requires alpaca_journal; other providers require 1d".into(),
+            ));
+        }
+
+        if self.data.provider == "twelve_data" {
+            let market = self.data.market.as_ref().ok_or_else(|| {
+                ConfigValidationError::Data("twelve_data requires data.market".into())
+            })?;
+            market.validate().map_err(ConfigValidationError::Data)?;
+            if self.data.symbols.len() != 1 || self.data.exchange != market.exchange {
+                return Err(ConfigValidationError::Data(
+                    "Use one storage symbol per global market config and matching data.exchange"
+                        .into(),
+                ));
+            }
+        } else if self.data.market.is_some() {
+            return Err(ConfigValidationError::Data(
+                "data.market requires provider: twelve_data".into(),
             ));
         }
 

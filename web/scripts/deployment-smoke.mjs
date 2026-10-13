@@ -23,6 +23,7 @@ const env = { ...process.env, QUANTCTL_BACKEND_TOKEN: token };
 delete env.QUANTCTL_LIVE_SYMBOLS;
 delete env.APCA_API_KEY_ID;
 delete env.APCA_API_SECRET_KEY;
+delete env.TWELVE_DATA_API_KEY;
 const child = spawn(binary, ['serve', '--remote', '--workers', '1', '--port', '0', '--root', workspace], { env, stdio: ['ignore', 'pipe', 'pipe'] });
 let server, browser;
 const failures = [];

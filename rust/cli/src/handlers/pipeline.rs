@@ -12,6 +12,9 @@ pub fn graph(periods_per_year: f64) -> FeatureGraph {
 pub fn bars(config: &Path, symbol: &str) -> Result<Vec<Bar>> {
     let cfg = load_config(config)?;
     let manifest = quant_data::read_manifest("datasets/market", &cfg.data.dataset_version, symbol)?;
+    if manifest.market != cfg.data.market {
+        bail!("Configured market identity differs from the dataset");
+    }
     if manifest.bar_interval != cfg.data.bar_interval {
         bail!("Configured bar interval differs from the dataset");
     }
@@ -47,6 +50,11 @@ pub fn check_model_interval(artifact: &Path, cfg: &quant_config::AppConfig) -> R
         serde_json::from_slice(&std::fs::read(artifact.join("metadata.json"))?)?;
     if meta["bar_interval"].as_str().unwrap_or("1d") != cfg.data.bar_interval {
         bail!("Model bar interval differs from the dataset; train an interval-matched model");
+    }
+    if let Some(market) = &cfg.data.market {
+        if meta["market"] != serde_json::to_value(market)? {
+            bail!("Model market identity differs from the dataset; retrain a matching model");
+        }
     }
     Ok(())
 }

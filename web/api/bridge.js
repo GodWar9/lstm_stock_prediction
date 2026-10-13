@@ -3,7 +3,7 @@ import { pipeline } from 'node:stream/promises';
 
 // Only this server module reads credentials. Never prefix these settings with VITE_.
 const ID = '[A-Za-z0-9_-]{1,128}';
-const allowed = new RegExp('^/api/(?:health|runs|models|datasets|forecast|events|live(?:/events|/ready)?|openapi\\.json|models/' + ID + '|runs/' + ID + '/(?:manifest|equity\\.arrow|trades\\.arrow|signals\\.arrow|simulation/bands\\.arrow|validation|simulation\\.json|report\\.json|benchmark\\.arrow|positions\\.arrow|signal_outcomes\\.arrow|risk\\.json))$');
+const allowed = new RegExp('^/api/(?:health|runs|models|datasets|forecast|market/status|events|live(?:/events|/ready)?|openapi\\.json|models/' + ID + '|runs/' + ID + '/(?:manifest|equity\\.arrow|trades\\.arrow|signals\\.arrow|simulation/bands\\.arrow|validation|simulation\\.json|report\\.json|benchmark\\.arrow|positions\\.arrow|signal_outcomes\\.arrow|risk\\.json))$');
 const forwardedHeaders = ['content-type', 'x-total-count', 'x-returned-count', 'x-offset', 'x-sampled'];
 const maxResponseBytes = 4 * 1024 * 1024;
 

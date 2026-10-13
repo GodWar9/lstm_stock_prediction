@@ -34,6 +34,7 @@ pub struct AppState {
     root: PathBuf,
     workers: Arc<tokio::sync::Semaphore>,
     live: crate::live::Live,
+    market: Arc<crate::market::MarketService>,
     shutdown: Arc<AtomicBool>,
 }
 
@@ -500,13 +501,29 @@ async fn datasets(
     .await
 }
 
+#[derive(serde::Serialize, utoipa::ToSchema)]
+struct MarketStatus {
+    provider: String,
+    configured: bool,
+    message: String,
+}
+#[utoipa::path(get, path = "/api/market/status", responses((status = 200, body = MarketStatus)))]
+async fn market_status() -> Json<MarketStatus> {
+    let configured = quant_data::global::key_configured();
+    Json(MarketStatus {
+        provider: "Twelve Data".into(), configured,
+        message: if configured { "Credential configured; exchange access and live connectivity have not been verified." }
+            else { "Fresh market data is not configured. Set TWELVE_DATA_API_KEY on the backend and train a matching market model." }.into(),
+    })
+}
+
 #[utoipa::path(get, path = "/api/forecast", params(crate::forecast::ForecastQuery), responses((status = 200, body = crate::forecast::Forecast), (status = 422, body = ApiError), (status = 503, body = ApiError)))]
 async fn forecast(
     State(s): State<AppState>,
     Query(q): Query<crate::forecast::ForecastQuery>,
 ) -> ApiResult<Json<crate::forecast::Forecast>> {
     blocking(s, move |s| {
-        crate::forecast::run(&s.root, &q)
+        crate::forecast::run_with_market(&s.root, &q, &s.market)
             .map(Json)
             .map_err(|e| error(StatusCode::UNPROCESSABLE_ENTITY, "forecast_unavailable", e))
     })
@@ -711,6 +728,7 @@ async fn live_events(
         models,
         datasets,
         forecast,
+        market_status,
         model,
         events,
         live_snapshot,
@@ -725,6 +743,7 @@ async fn live_events(
         Instrument,
         ApiError,
         ModelArtifact,
+        MarketStatus,
         crate::forecast::DatasetChoice,
         crate::forecast::Forecast,
         crate::live::Snapshot,
@@ -801,6 +820,7 @@ fn configured_router(
         .route("/api/models", get(models))
         .route("/api/datasets", get(datasets))
         .route("/api/forecast", get(forecast))
+        .route("/api/market/status", get(market_status))
         .route("/api/models/{artifact_id}", get(model))
         .route("/api/events", get(events))
         .route(
@@ -817,6 +837,7 @@ fn configured_router(
             live,
             shutdown,
             workers: Arc::new(tokio::sync::Semaphore::new(options.workers)),
+            market: Arc::new(crate::market::MarketService::default()),
         })
 }
 
@@ -959,6 +980,7 @@ mod tests {
             "/api/models",
             "/api/datasets",
             "/api/forecast",
+            "/api/market/status",
             "/api/events",
             "/api/live/events",
             "/api/live",
@@ -1143,6 +1165,7 @@ mod tests {
     async fn cancelled_requests_keep_worker_permits_until_work_finishes() {
         let temp = tempfile::tempdir().unwrap();
         let state = AppState {
+            market: Arc::new(crate::market::MarketService::default()),
             root: temp.path().into(),
             live: crate::live::disabled(),
             shutdown: Arc::new(AtomicBool::new(false)),

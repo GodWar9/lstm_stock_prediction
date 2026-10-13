@@ -40,6 +40,10 @@ pub struct FeatureDatasetManifest {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct TrainingDatasetManifest {
+    #[serde(default)]
+    pub market: Option<quant_data::MarketIdentity>,
+    #[serde(default)]
+    pub source: String,
     #[serde(default = "default_interval")]
     pub bar_interval: String,
     pub dataset_version: String,
@@ -369,6 +373,8 @@ mod tests {
             direction: crate::targets::DirectionLabel::Up,
         }];
         let manifest = TrainingDatasetManifest {
+            market: None,
+            source: "fixture".into(),
             bar_interval: "1d".into(),
             dataset_version: "ds_test".to_string(),
             feature_set: "baseline".to_string(),

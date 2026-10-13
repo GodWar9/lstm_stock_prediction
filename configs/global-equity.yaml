@@ -1,0 +1,62 @@
+# Global equities example. Access depends on your Twelve Data exchange entitlement.
+env: development
+
+data:
+  bar_interval: 1d
+  market:
+    provider_symbol: AAPL
+    exchange: NASDAQ
+    currency: USD
+    timezone: America/New_York
+    instrument_type: Common Stock
+    periods_per_year: 252
+  symbols:
+    - AAPL_NASDAQ
+  start_date: "2024-01-01"
+  end_date: "2026-10-01"
+  provider: twelve_data
+  exchange: NASDAQ
+  dataset_version: aapl_nasdaq_daily_v1
+
+features:
+  feature_set: baseline_v1
+  feature_set_version: 1
+  lookback: 12
+  target_horizon: 1
+  target_transformation: log_return
+
+training:
+  model_id: aapl_nasdaq_daily_v1
+  hidden_size: 32
+  num_layers: 1
+  dropout: 0.3
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  batch_size: 64
+  epochs: 30
+  random_seed: 42
+  purge_gap: 5
+  embargo_gap: 12
+
+inference:
+  model_version: aapl_nasdaq_daily_v1
+  intra_op_threads: 2
+  inter_op_threads: 1
+  batch_size: 64
+
+portfolio:
+  max_gross_exposure: 1.0
+  max_net_exposure: 0.5
+  max_position_pct: 0.2
+  volatility_target: 0.15
+  long_short_mode: LongOnly
+
+execution:
+  fixed_commission: 0.001
+  half_spread_bps: 2.0
+  slippage_factor: 0.1
+  participation_cap: 0.05
+
+backtest:
+  initial_cash: 100000.0
+  risk_free_rate: 0.04

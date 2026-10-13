@@ -80,6 +80,18 @@ pub fn handle_features(cmd: &FeaturesSubcommands, config_path: &Path) -> Result<
                     let training_path = FeatureArrowExporter::write_training_ipc(
                         Path::new("datasets/training"),
                         &TrainingDatasetManifest {
+                            market: quant_data::read_manifest(
+                                "datasets/market",
+                                &app_config.data.dataset_version,
+                                symbol,
+                            )?
+                            .market,
+                            source: quant_data::read_manifest(
+                                "datasets/market",
+                                &app_config.data.dataset_version,
+                                symbol,
+                            )?
+                            .source,
                             bar_interval: app_config.data.bar_interval.clone(),
                             dataset_version: app_config.data.dataset_version.clone(),
                             feature_set: feature_set.clone(),

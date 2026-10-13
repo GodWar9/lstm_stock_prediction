@@ -57,8 +57,16 @@
         "operationId": "forecast",
         "parameters": [
           {
+            "name": "fresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "model",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "string"
@@ -66,7 +74,7 @@
           },
           {
             "name": "dataset",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "string"
@@ -74,7 +82,7 @@
           },
           {
             "name": "symbol",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "string"
@@ -176,6 +184,24 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LiveHealth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/market/status": {
+      "get": {
+        "tags": [],
+        "operationId": "market_status",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketStatus"
                 }
               }
             }
@@ -442,6 +468,7 @@
           "interval": {
             "type": "string"
           },
+          "market": {},
           "source": {
             "type": "string"
           },
@@ -453,6 +480,9 @@
       "Forecast": {
         "type": "object",
         "required": [
+          "input_mode",
+          "data_age_ms",
+          "feed_latency",
           "model",
           "dataset",
           "symbol",
@@ -479,11 +509,25 @@
             "type": "integer",
             "format": "int64"
           },
+          "data_age_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
           "dataset": {
             "type": "string"
           },
           "dataset_sha256": {
             "type": "string"
+          },
+          "feed_latency": {
+            "type": "string"
+          },
+          "fetched_at_ms": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
           },
           "generated_at_ms": {
             "type": "integer",
@@ -497,6 +541,9 @@
             "type": "number",
             "format": "double"
           },
+          "input_mode": {
+            "type": "string"
+          },
           "interval": {
             "type": "string"
           },
@@ -504,6 +551,7 @@
             "type": "number",
             "format": "double"
           },
+          "market": {},
           "model": {
             "type": "string"
           },
@@ -578,6 +626,25 @@
             }
           },
           "status": {
+            "type": "string"
+          }
+        }
+      },
+      "MarketStatus": {
+        "type": "object",
+        "required": [
+          "provider",
+          "configured",
+          "message"
+        ],
+        "properties": {
+          "configured": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "provider": {
             "type": "string"
           }
         }

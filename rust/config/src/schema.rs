@@ -21,6 +21,9 @@ fn default_env() -> String {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DataConfig {
+    /// Exact global market identity; required by the Twelve Data adapter.
+    #[serde(default)]
+    pub market: Option<MarketIdentity>,
     /// Supported research cadence: daily bars or regular-session one-minute bars.
     #[serde(default = "default_bar_interval")]
     pub bar_interval: String,
@@ -264,10 +267,51 @@ pub fn default_bar_interval() -> String {
 }
 impl DataConfig {
     pub fn periods_per_year(&self) -> f64 {
+        if let Some(market) = &self.market {
+            return market.periods_per_year;
+        }
         if self.bar_interval == "1m" {
             252.0 * 390.0
         } else {
             252.0
         }
+    }
+}
+
+/// Identity and feature annualization travel with data and sealed model artifacts.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct MarketIdentity {
+    pub provider_symbol: String,
+    pub exchange: String,
+    pub currency: String,
+    pub timezone: String,
+    pub instrument_type: String,
+    pub periods_per_year: f64,
+}
+impl MarketIdentity {
+    pub fn validate(&self) -> Result<(), String> {
+        for value in [
+            &self.provider_symbol,
+            &self.exchange,
+            &self.currency,
+            &self.timezone,
+        ] {
+            if value.is_empty() || value.len() > 128 || value.chars().any(char::is_control) {
+                return Err(
+                    "Market identity fields must be nonempty, bounded and printable".into(),
+                );
+            }
+        }
+        if !matches!(self.instrument_type.as_str(), "Common Stock" | "ETF") {
+            return Err(
+                "Global forecasting currently supports Common Stock and ETF OHLCV data".into(),
+            );
+        }
+        if !self.periods_per_year.is_finite() || !(1.0..=600_000.0).contains(&self.periods_per_year)
+        {
+            return Err("Invalid market periods_per_year".into());
+        }
+        Ok(())
     }
 }

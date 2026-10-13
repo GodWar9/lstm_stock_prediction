@@ -118,3 +118,7 @@ License: MIT OR Apache-2.0.
 ## Rolling evaluation
 
 Use `quantctl --config configs/demo.yaml train --walk-forward --folds 3` with a new model ID and enough rows for every train/validation/test window. Each fold has an exported model and Rust parity evidence. The root model is the last fold; `backtest run` replays that fold, while pooled prediction metrics are recorded separately in `validation.json`. New backtests also supply benchmark, positions, realized signal outcomes and terminal risk evidence to the inspector.
+
+### Fresh global market forecasts
+
+[Global market setup and API keys](Docs/23-GLOBAL-MARKET-FORECASTS.md) covers Twelve Data stock/ETF ingestion, market-matched training, fresh forecast controls and optional hosting configuration. Recorded demo forecasts remain available without any API key.

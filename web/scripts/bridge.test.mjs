@@ -73,3 +73,12 @@ test('times out a stalled backend and limits oversized responses', async t => {
   const large = await server(t, { env, fetchImpl: async () => new Response(new Uint8Array(4 * 1024 * 1024 + 1)) });
   assert.equal((await fetch(large + '/api/runs')).status, 502);
 });
+
+test('global market status and fresh forecast queries pass through the server bridge', async t => {
+  const seen=[];
+  const url=await server(t,{env,fetchImpl:async url=>{seen.push(url.toString());return new Response('{}',{headers:{'content-type':'application/json'}});}});
+  assert.equal((await fetch(url+'/api/bridge?__path=market/status')).status,200);
+  assert.equal((await fetch(url+'/api/bridge?__path=forecast&model=m&dataset=d&symbol=INFY_NSE&fresh=true')).status,200);
+  assert.equal(seen[0],'https://backend.example/api/market/status');
+  assert.match(seen[1],/fresh=true/);
+});

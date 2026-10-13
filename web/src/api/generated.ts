@@ -111,6 +111,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/market/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["market_status"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/models": {
         parameters: {
             query?: never;
@@ -203,6 +219,7 @@ export interface components {
             bars: number;
             dataset: string;
             interval: string;
+            market?: unknown;
             source: string;
             symbol: string;
         };
@@ -211,16 +228,23 @@ export interface components {
             as_of_ms: number;
             /** Format: int64 */
             available_at_ms: number;
+            /** Format: int64 */
+            data_age_ms: number;
             dataset: string;
             dataset_sha256: string;
+            feed_latency: string;
+            /** Format: int64 */
+            fetched_at_ms?: number | null;
             /** Format: int64 */
             generated_at_ms: number;
             horizon_bars: number;
             /** Format: double */
             implied_close: number;
+            input_mode: string;
             interval: string;
             /** Format: double */
             last_close: number;
+            market?: unknown;
             model: string;
             model_package_sha256: string;
             /** Format: double */
@@ -242,6 +266,11 @@ export interface components {
             fresh_symbols: string[];
             stale_or_waiting_symbols: string[];
             status: string;
+        };
+        MarketStatus: {
+            configured: boolean;
+            message: string;
+            provider: string;
         };
         ModelArtifact: {
             artifact_id: string;
@@ -373,13 +402,14 @@ export interface operations {
     };
     forecast: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
+            query: {
+                fresh?: boolean;
                 model: string;
                 dataset: string;
                 symbol: string;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -488,6 +518,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LiveHealth"];
+                };
+            };
+        };
+    };
+    market_status: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketStatus"];
                 };
             };
         };

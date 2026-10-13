@@ -84,6 +84,8 @@ def load_training_arrays(args, cfg, lookback):
         )
         if dataset.integrity.get("bar_interval", "1d") != data_cfg.get("bar_interval", "1d"):
             raise ValueError("Training config and Arrow dataset bar intervals differ")
+        if dataset.integrity.get("market") != data_cfg.get("market"):
+            raise ValueError("Training config and Arrow market identity differ")
         if dataset.features.shape[0] < lookback:
             raise ValueError(
                 f"Training dataset has {dataset.features.shape[0]} rows, "
@@ -170,7 +172,7 @@ def train_and_export(args, cfg, model_id, stage):
         data_integrity,
     ) = load_training_arrays(args, cfg, lookback)
     bar_interval = cfg.get("data", {}).get("bar_interval", "1d")
-    periods_per_year = 252 * 390 if bar_interval == "1m" else 252
+    periods_per_year = (data_integrity.get("market") or {}).get("periods_per_year", 252 * 390 if bar_interval == "1m" else 252)
     n_samples, n_features = raw_features.shape
 
     purge_gap = max(target_horizon, train_cfg.get("purge_gap", 5))
@@ -337,7 +339,7 @@ def train_and_export(args, cfg, model_id, stage):
     meta_path = os.path.join(onnx_out_dir, "metadata.json")
     with open(meta_path) as source:
         metadata = json.load(source)
-    metadata.update(bar_interval=bar_interval, periods_per_year=periods_per_year, training_dataset_version=validation["data_version"], feature_set_version=feature_set_version,
+    metadata.update(market=data_integrity.get("market"), source=data_integrity.get("source", "unknown"), training_symbol=data_integrity.get("symbol"), bar_interval=bar_interval, periods_per_year=periods_per_year, training_dataset_version=validation["data_version"], feature_set_version=feature_set_version,
                     target_definition={"horizon": target_horizon, "transformation": "log_return"})
     executable = os.environ.get("QUANTCTL_EXECUTABLE")
     if not executable:

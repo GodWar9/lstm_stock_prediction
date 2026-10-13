@@ -40,6 +40,7 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
                     let (audit, bars) =
                         quant_data::capture::import_minutes(journal, sym, start, end)?;
                     let manifest = DatasetManifest {
+                        market: None,
                         bar_interval: "1m".into(),
                         capture_sha256: Some(audit.content_sha256),
                         dataset_version: cfg.data.dataset_version.clone(),
@@ -71,6 +72,36 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
                 anyhow::bail!("--journal requires provider: alpaca_journal");
             }
 
+            if cfg.data.provider == "twelve_data" {
+                anyhow::ensure!(
+                    target_symbols == cfg.data.symbols,
+                    "Global ingest must use the configured storage symbol"
+                );
+                let market = cfg.data.market.clone().expect("validated market config");
+                let interval = cfg.data.bar_interval.clone();
+                // reqwest's blocking runtime must be created outside the CLI Tokio runtime.
+                let snapshot = std::thread::spawn(move || {
+                    quant_data::global::fetch(&market, &interval, Some((start, end)), 5000)
+                })
+                .join()
+                .map_err(|_| anyhow::anyhow!("Market data worker failed"))??;
+                let manifest = DatasetManifest {
+                    market: cfg.data.market.clone(),
+                    bar_interval: cfg.data.bar_interval.clone(),
+                    capture_sha256: None,
+                    dataset_version: cfg.data.dataset_version.clone(),
+                    symbol: target_symbols[0].clone(),
+                    start_date: start.to_string(),
+                    end_date: end.to_string(),
+                    bar_count: snapshot.bars.len(),
+                    source: "twelve_data:unadjusted:rest_snapshot".into(),
+                    content_sha256: String::new(),
+                };
+                let path = write_dataset("datasets/market", &manifest, &snapshot.bars)?;
+                println!("Imported {} global market bars to {}. Historical availability is estimated; revised REST data is not a first-publication capture.", snapshot.bars.len(), path.display());
+                return Ok(());
+            }
+
             // Synthetic data is opt-in for development and tests; production ingestion must fail
             // instead of silently replacing missing market data.
             let provider: Box<dyn MarketDataProvider> = if cfg.data.provider == "csv" {
@@ -93,6 +124,7 @@ pub fn handle_data(command: &DataSubcommands, config_path: &Path) -> anyhow::Res
                 validate_bars_monotonic_and_sound(&bars)?;
                 check_duplicate_timestamps(&bars)?;
                 let manifest = DatasetManifest {
+                    market: None,
                     bar_interval: "1d".into(),
                     capture_sha256: None,
                     dataset_version: cfg.data.dataset_version.clone(),

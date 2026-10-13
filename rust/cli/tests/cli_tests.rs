@@ -98,7 +98,8 @@ fn captured_minutes_train_fresh_model_backtest_and_simulation() {
     assert_eq!(metadata["periods_per_year"], 98280);
     // Exercise the same inference service used by the browser with a genuinely
     // trained and sealed ONNX package, not a mocked prediction response.
-    let query = quant_api::forecast::ForecastQuery {
+    let mut query = quant_api::forecast::ForecastQuery {
+        fresh: false,
         model: id.into(),
         dataset: id.into(),
         symbol: "AAPL".into(),
@@ -116,6 +117,12 @@ fn captured_minutes_train_fresh_model_backtest_and_simulation() {
     assert_eq!(forecast.dataset_sha256.len(), 64);
     assert!(forecast.warnings.iter().any(|w| w.contains("Synthetic")));
     assert!(forecast.warnings.iter().any(|w| w.contains("Historical")));
+    query.fresh = true;
+    assert!(quant_api::forecast::run(&root, &query)
+        .unwrap_err()
+        .to_string()
+        .contains("matching Twelve Data history"));
+    query.fresh = false;
     let dataset_manifest = root
         .join("datasets/market")
         .join(id)
@@ -128,6 +135,14 @@ fn captured_minutes_train_fresh_model_backtest_and_simulation() {
         .unwrap_err()
         .to_string()
         .contains("intervals differ"));
+    std::fs::write(&dataset_manifest, &original).unwrap();
+    mismatched = serde_json::from_slice(&original).unwrap();
+    mismatched["market"] = json!({"provider_symbol":"AAPL","exchange":"NASDAQ","currency":"USD","timezone":"America/New_York","instrument_type":"Common Stock","periods_per_year":98280.0});
+    std::fs::write(&dataset_manifest, serde_json::to_vec(&mismatched).unwrap()).unwrap();
+    assert!(quant_api::forecast::run(&root, &query)
+        .unwrap_err()
+        .to_string()
+        .contains("market identities differ"));
     std::fs::write(&dataset_manifest, &original).unwrap();
     let validation: serde_json::Value =
         serde_json::from_slice(&std::fs::read(model.join("validation.json")).unwrap()).unwrap();
@@ -502,4 +517,33 @@ fn offline_csv_ingest_and_network_denial() {
     ])
     .status
     .success());
+}
+
+#[test]
+fn global_config_validates_without_key_and_missing_key_fails_before_import() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../..")
+        .canonicalize()
+        .unwrap();
+    let config = root.join("configs/global-equity.yaml");
+    let cfg = quant_config::load_config(&config).unwrap();
+    assert_eq!(cfg.data.periods_per_year(), 252.0);
+    let mut wrong = cfg.clone();
+    wrong.data.market.as_mut().unwrap().exchange = "NSE".into();
+    assert!(wrong.validate().is_err());
+    let mut missing = cfg.clone();
+    missing.data.market = None;
+    assert!(missing.validate().is_err());
+    let temp = tempfile::tempdir().unwrap();
+    let result = Command::new(env!("CARGO_BIN_EXE_quantctl"))
+        .current_dir(temp.path())
+        .env_remove("TWELVE_DATA_API_KEY")
+        .arg("--config")
+        .arg(config)
+        .args(["data", "ingest"])
+        .output()
+        .unwrap();
+    assert!(!result.status.success());
+    assert!(String::from_utf8_lossy(&result.stderr).contains("TWELVE_DATA_API_KEY"));
+    assert!(!temp.path().join("datasets").exists());
 }

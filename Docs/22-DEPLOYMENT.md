@@ -7,7 +7,9 @@ evidence and request actual ONNX forecasts from recorded datasets.
 The included package is a real, small, trained LSTM using **synthetic historical
 data**. It proves the software workflow, not useful market forecasts. The UI
 displays its source, timestamps and warnings. No live market feed or paid service
-is required. Live prices do not feed the forecasting window.
+is required. Optional fresh global forecasts now use a separately trained matching
+model and a backend market-data key; see [global setup](23-GLOBAL-MARKET-FORECASTS.md).
+The bundled synthetic model stays in recorded mode.
 
 ## 1. Deploy the backend
 
@@ -147,6 +149,6 @@ services to the last known-good commit if acceptance fails.
 3. Inspect held-out backtest equity, execution costs and the saved validation
    split. Explain why held-out synthetic results cannot prove trading returns.
 4. Show the deployment bridge, API authentication tests and container restart test.
-5. State the remaining product scope: fresh market inputs, live forecasting,
-   durable hosted training jobs and private multi-user workspaces are separate
-   capabilities, not claims of this release.
+5. Show the fresh global data mode and explain its key, trained-model and exchange
+   requirements. Account-specific live connectivity, durable hosted training jobs
+   and private multi-user workspaces remain outside the verified deployment.

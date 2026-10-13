@@ -13,7 +13,11 @@ use utoipa::{IntoParams, ToSchema};
 
 #[derive(Debug, Deserialize, IntoParams)]
 #[serde(deny_unknown_fields)]
+#[into_params(parameter_in = Query)]
 pub struct ForecastQuery {
+    #[serde(default)]
+    #[param(required = false)]
+    pub fresh: bool,
     pub model: String,
     pub dataset: String,
     pub symbol: String,
@@ -21,6 +25,7 @@ pub struct ForecastQuery {
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct DatasetChoice {
+    pub market: Option<serde_json::Value>,
     pub dataset: String,
     pub symbol: String,
     pub interval: String,
@@ -30,6 +35,11 @@ pub struct DatasetChoice {
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct Forecast {
+    pub market: Option<serde_json::Value>,
+    pub input_mode: String,
+    pub fetched_at_ms: Option<i64>,
+    pub data_age_ms: i64,
+    pub feed_latency: String,
     pub model: String,
     pub dataset: String,
     pub symbol: String,
@@ -113,6 +123,11 @@ pub fn datasets(root: &Path) -> Result<Vec<DatasetChoice>> {
                 "Dataset manifest identity mismatch"
             );
             choices.push(DatasetChoice {
+                market: manifest
+                    .market
+                    .as_ref()
+                    .map(serde_json::to_value)
+                    .transpose()?,
                 dataset: id.clone(),
                 symbol: manifest.symbol,
                 interval: manifest.bar_interval,
@@ -126,6 +141,14 @@ pub fn datasets(root: &Path) -> Result<Vec<DatasetChoice>> {
 }
 
 pub fn run(root: &Path, q: &ForecastQuery) -> Result<Forecast> {
+    run_with_market(root, q, &crate::market::MarketService::default())
+}
+
+pub(crate) fn run_with_market(
+    root: &Path,
+    q: &ForecastQuery,
+    market_service: &crate::market::MarketService,
+) -> Result<Forecast> {
     quant_data::validate_storage_id(&q.symbol)?;
     let model = directory(&root.join("models"), &q.model)?;
     let dataset = directory(&root.join("datasets/market"), &q.dataset)?;
@@ -148,7 +171,7 @@ pub fn run(root: &Path, q: &ForecastQuery) -> Result<Forecast> {
     }
     let meta: serde_json::Value =
         serde_json::from_slice(&read(&model.join("metadata.json"), 8 * 1024 * 1024)?)?;
-    let manifest: DatasetManifest = serde_json::from_slice(&read(
+    let mut manifest: DatasetManifest = serde_json::from_slice(&read(
         &dataset.join(format!("{}.manifest.json", q.symbol)),
         65536,
     )?)?;
@@ -161,7 +184,7 @@ pub fn run(root: &Path, q: &ForecastQuery) -> Result<Forecast> {
         interval == manifest.bar_interval,
         "Model and dataset bar intervals differ; train an interval-matched model"
     );
-    let periods = match interval {
+    let mut periods = match interval {
         "1d" => 252.0,
         "1m" => 252.0 * 390.0,
         _ => bail!("Unsupported bar interval"),
@@ -174,7 +197,7 @@ pub fn run(root: &Path, q: &ForecastQuery) -> Result<Forecast> {
         format!("{:x}", Sha256::digest(&bytes)) == manifest.content_sha256,
         "Market dataset integrity mismatch"
     );
-    let bars: Vec<Bar> = serde_json::from_slice(&bytes)?;
+    let mut bars: Vec<Bar> = serde_json::from_slice(&bytes)?;
     ensure!(
         !bars.is_empty() && bars.len() == manifest.bar_count && bars.len() <= 100_000,
         "Dataset row count is unsupported"
@@ -202,6 +225,44 @@ pub fn run(root: &Path, q: &ForecastQuery) -> Result<Forecast> {
             && metadata.target_definition.horizon > 0,
         "Unsupported forecast target"
     );
+    let mut fetched_at_ms = None;
+    let identity = manifest
+        .market
+        .as_ref()
+        .map(serde_json::to_value)
+        .transpose()?;
+    if identity.is_some() || !meta["market"].is_null() {
+        ensure!(
+            identity.as_ref() == Some(&meta["market"]),
+            "Model and dataset market identities differ; train a matching model"
+        );
+        let market = manifest
+            .market
+            .as_ref()
+            .context("Dataset market identity missing")?;
+        market.validate().map_err(anyhow::Error::msg)?;
+        periods = market.periods_per_year;
+        ensure!(
+            meta["periods_per_year"].as_f64() == Some(periods),
+            "Model feature annualization differs from the market"
+        );
+    }
+    if q.fresh {
+        ensure!(meta["source"].as_str() == Some("twelve_data:unadjusted:rest_snapshot")
+            && manifest.source == "twelve_data:unadjusted:rest_snapshot"
+            && meta["training_symbol"].as_str() == Some(q.symbol.as_str()),
+            "Fresh forecasts require a model trained on matching Twelve Data history; demo and legacy models cannot use fresh inputs");
+        let market = manifest
+            .market
+            .as_ref()
+            .context("Train a global market model before requesting fresh data")?;
+        let snapshot = market_service.snapshot(market, interval)?;
+        crate::market::require_recent(&snapshot, interval, chrono::Utc::now().timestamp_millis())?;
+        fetched_at_ms = Some(snapshot.fetched_at_ms);
+        bars = snapshot.bars;
+        manifest.content_sha256 =
+            format!("{:x}", Sha256::digest(serde_json::to_vec_pretty(&bars)?));
+    }
     let rows = quant_features::standard_graph(periods).compute_batch(&bars);
     ensure!(
         rows.len() >= provider.lookback(),
@@ -234,24 +295,39 @@ pub fn run(root: &Path, q: &ForecastQuery) -> Result<Forecast> {
         "Invalid model output"
     );
     let mut warnings = vec![
-        "Recorded dataset forecast; this request does not consume the live price stream.".into(),
+        if q.fresh {
+            "Fresh REST snapshot forecast; feed delay and exchange entitlement are not independently verified.".into()
+        } else {
+            "Recorded dataset forecast; this request does not consume the live price stream.".into()
+        },
         "Implied close is a model estimate, not a calibrated price interval or probability.".into(),
     ];
     if manifest.source.contains("synthetic") || manifest.source.contains("fixture") {
         warnings.push("Synthetic or fixture data: use only to verify the workflow.".into());
     }
     let age = now - last.timestamp.as_nanos() / 1_000_000;
-    if age
-        > if interval == "1m" {
-            120_000
-        } else {
-            4 * 86_400_000
-        }
+    if !q.fresh
+        && age
+            > if interval == "1m" {
+                120_000
+            } else {
+                4 * 86_400_000
+            }
     {
         warnings.push("Historical data: the forecast is relative to the displayed bar, not the current market.".into());
     }
     warnings.push("Training-symbol compatibility and out-of-sample status are not certified for this selection.".into());
+    if identity.is_some() {
+        warnings.push("Historical REST bars may be revised; close-time availability is estimated, not a first-publication record. Corporate-action adjustments are disabled.".into());
+        warnings.push("Global exchange holidays and missing session bars are not independently validated. Horizon is measured in observed bars.".into());
+    }
+    let now = chrono::Utc::now().timestamp_millis();
     Ok(Forecast {
+        market: identity,
+        input_mode: if q.fresh { "fresh" } else { "recorded" }.into(),
+        fetched_at_ms,
+        data_age_ms: now - last.timestamp.as_nanos() / 1_000_000,
+        feed_latency: "unknown".into(),
         model: q.model.clone(),
         dataset: q.dataset.clone(),
         symbol: q.symbol.clone(),
@@ -284,6 +360,7 @@ mod tests {
         assert!(run(
             root.path(),
             &ForecastQuery {
+                fresh: false,
                 model: "../outside".into(),
                 dataset: "x".into(),
                 symbol: "AAPL".into()
@@ -293,6 +370,7 @@ mod tests {
         assert!(run(
             root.path(),
             &ForecastQuery {
+                fresh: false,
                 model: "x".into(),
                 dataset: "x".into(),
                 symbol: "../secret".into()

@@ -15,6 +15,7 @@ const env = { ...process.env };
 delete env.QUANTCTL_LIVE_SYMBOLS;
 delete env.APCA_API_KEY_ID;
 delete env.APCA_API_SECRET_KEY;
+delete env.TWELVE_DATA_API_KEY;
 const child = spawn(resolve('../rust/target/debug/quantctl' + (process.platform === 'win32' ? '.exe' : '')), ['serve', '--port', '8788', '--root', root], { stdio: 'inherit', env });
 for (const event of ['SIGTERM', 'SIGINT']) process.on(event, () => child.kill(event));
 child.on('exit', code => process.exit(code ?? 1));

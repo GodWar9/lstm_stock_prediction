@@ -63,3 +63,15 @@ def test_rejects_changed_bytes_and_missing_manifest(tmp_path):
         load_arrow_training_dataset(path, manifest)
     with pytest.raises(ValueError, match="manifest is required"):
         load_arrow_training_dataset(path)
+
+
+def test_preserves_global_market_identity_and_source(tmp_path):
+    path, manifest = _write_dataset(tmp_path)
+    value = json.loads(manifest.read_text())
+    market = {"provider_symbol": "INFY", "exchange": "NSE", "currency": "INR", "timezone": "Asia/Kolkata", "instrument_type": "Common Stock", "periods_per_year": 252}
+    value.update(market=market, source="twelve_data:unadjusted:rest_snapshot", symbol="INFY_NSE")
+    manifest.write_text(json.dumps(value))
+    dataset = load_arrow_training_dataset(path, manifest)
+    assert dataset.integrity["market"] == market
+    assert dataset.integrity["source"] == value["source"]
+    assert dataset.integrity["symbol"] == "INFY_NSE"
