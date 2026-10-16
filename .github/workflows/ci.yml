@@ -194,10 +194,13 @@ jobs:
         working-directory: web
         run: npm run test:deployment
       - uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: browser-test-results
-          path: web/test-results
+          path: |
+            web/test-results
+            web/playwright-report
+          retention-days: 7
 
   container-test:
     name: Backend Container

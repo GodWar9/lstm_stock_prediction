@@ -152,3 +152,13 @@ services to the last known-good commit if acceptance fails.
 5. Show the fresh global data mode and explain its key, trained-model and exchange
    requirements. Account-specific live connectivity, durable hosted training jobs
    and private multi-user workspaces remain outside the verified deployment.
+
+## Interactive browser verification (2026-10-16)
+
+From `web`, use `npm run test:e2e`, `npm run test:e2e:ui`, and
+`npm run test:e2e:report`. The suite rebuilds the production assets and Rust
+application, uses isolated deterministic fixtures, and retains an HTML report.
+CI uploads both `web/playwright-report` and failure traces in `web/test-results`.
+All 50 desktop/mobile tests passed locally, followed by `npm run test:deployment`
+with real Rust inference, authenticated bridge, Arrow data and SSE reconnect on
+two viewports. This does not validate a credentialed external market feed.
