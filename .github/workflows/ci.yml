@@ -190,6 +190,9 @@ jobs:
         run: npm run test:e2e
       - name: Verify public artifact bundle
         run: python scripts/test_deployment_bundle.py
+      - name: Docker-free native app and real browser inference
+        working-directory: web
+        run: npm run test:native
       - name: Real inference through deployment bridge and browser
         working-directory: web
         run: npm run test:deployment

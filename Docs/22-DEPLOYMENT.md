@@ -162,3 +162,44 @@ CI uploads both `web/playwright-report` and failure traces in `web/test-results`
 All 50 desktop/mobile tests passed locally, followed by `npm run test:deployment`
 with real Rust inference, authenticated bridge, Arrow data and SSE reconnect on
 two viewports. This does not validate a credentialed external market feed.
+
+
+## Run locally without Docker
+
+The native demo uses the sealed public artifact bundle, real Rust ONNX inference,
+and the production UI embedded in the binary. No API keys, Docker daemon, hosting
+account or Python training libraries are needed. Install Node 22.12+, Rust/Cargo with a native compiler toolchain (MSVC on Windows),
+and Python 3.14 first; the initial dependency installation and build need network access.
+
+From the repository's web directory:
+
+```sh
+npm ci
+npm run demo
+```
+
+Open the loopback URL printed by the launcher. It selects an available port;
+`npm run demo -- --port 8788` requests a fixed port. The included AAPL dataset is
+synthetic, so its forecasts demonstrate the software and are not market forecasts.
+Live feeds and network acquisition are disabled in this demo.
+
+Each launch verifies and extracts the bundle into a new temporary workspace.
+Ctrl+C stops the server and removes that workspace; demo changes do not persist.
+A forced process termination or power loss can leave a temporary directory behind.
+Set `PYTHON` to a Python executable if it is not on PATH. An explicit
+`QUANTCTL_BIN` skips Cargo compilation and uses that existing binary; build it
+after the frontend to keep its embedded UI current.
+
+For the native acceptance check, build the frontend and Rust binary first, install
+Playwright Chromium, then run:
+
+```sh
+npm run build
+cargo build --locked --manifest-path ../rust/Cargo.toml --bin quantctl
+npx playwright install chromium
+npm run test:native
+```
+
+The check generates real forecasts on desktop and mobile, verifies deep links and
+disabled live feeds, and checks cleanup after both success and startup failure.
+It runs in CI alongside the separate container and deployment-bridge checks.

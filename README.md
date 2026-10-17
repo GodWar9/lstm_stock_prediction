@@ -18,6 +18,23 @@ Rust owns features, CPU inference through **tract-onnx**, portfolio accounting, 
 - [Original implementation plan](Docs/11-IMPLEMENTATION-PLAN.md)
 - [Frontend design](web/DESIGN.md)
 
+## Quick start without Docker or API keys
+
+With Node 22.12+, Rust and its native compiler toolchain (MSVC on Windows), and
+Python 3.14 installed:
+
+```sh
+cd web
+npm ci
+npm run demo
+```
+
+Open the printed local URL. This builds the app and runs real inference against
+the bundled synthetic dataset, without installing the Python training stack.
+Ctrl+C stops the app and removes its temporary demo workspace. See the
+[native demo guide](Docs/22-DEPLOYMENT.md#run-locally-without-docker) for port
+selection and Playwright acceptance tests. Use the full setup below for training.
+
 ## Setup
 
 Use current stable Rust with a native compiler toolchain, Python 3.14, uv, and Node 22. Windows requires MSVC build tools. Run from the repository root:
