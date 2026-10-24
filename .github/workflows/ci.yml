@@ -193,6 +193,9 @@ jobs:
       - name: Docker-free native app and real browser inference
         working-directory: web
         run: npm run test:native
+      - name: Unified container app and private backend
+        working-directory: web
+        run: npm run test:container-app
       - name: Real inference through deployment bridge and browser
         working-directory: web
         run: npm run test:deployment

@@ -14,3 +14,16 @@ rust/target/
 !deploy/
 !deploy/artifacts.tar.gz
 !deploy/artifacts.tar.json
+
+!Dockerfile.vercel
+!web/
+!web/package.json
+!web/package-lock.json
+!web/index.html
+!web/tsconfig*.json
+!web/vite.config.ts
+!web/src/
+!web/src/**
+!web/api/
+!web/api/bridge.js
+!web/api/container.mjs

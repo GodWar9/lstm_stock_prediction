@@ -6,6 +6,7 @@ Rust owns features, CPU inference through **tract-onnx**, portfolio accounting, 
 
 ## Documentation
 
+- [Publish the full website on Vercel Hobby](Docs/26-VERCEL-WEBSITE.md)
 - [Deploy on Vercel and Render Free](Docs/22-DEPLOYMENT.md)
 - [Live capture, fresh research and forecast runbook](Docs/19-LIVE-INGESTION.md)
 - [Production checklist and release gates](Docs/20-PRODUCTION-CHECKLIST.md)

@@ -1,0 +1,29 @@
+FROM node:22-bookworm-slim AS frontend
+WORKDIR /source/web
+COPY web/package.json web/package-lock.json ./
+RUN npm ci
+COPY web/index.html web/tsconfig*.json web/vite.config.ts ./
+COPY web/src/ src/
+RUN npm run build
+
+FROM rust:1.96-bookworm AS inference
+WORKDIR /source
+COPY rust/ rust/
+RUN CARGO_BUILD_JOBS=2 cargo build --locked --release --manifest-path rust/Cargo.toml --bin quantctl
+
+FROM python:3.14-slim-bookworm AS artifacts
+WORKDIR /source
+COPY scripts/deployment_bundle.py scripts/deployment_bundle.py
+COPY deploy/artifacts.tar.gz deploy/artifacts.tar.json deploy/
+RUN python scripts/deployment_bundle.py extract --output /artifacts
+
+FROM node:22-bookworm-slim AS runtime
+COPY --from=inference /source/rust/target/release/quantctl /usr/local/bin/quantctl
+COPY --from=artifacts --chown=node:node /artifacts /app
+COPY --from=frontend /source/web/dist /site
+WORKDIR /server
+COPY web/api/bridge.js web/api/container.mjs web/package.json ./
+USER node
+ENV PORT=8080
+EXPOSE 8080
+CMD ["node", "container.mjs"]

@@ -1,5 +1,9 @@
 # Deploy LSTM on free services
 
+For the newer single-account container deployment, use the
+[unified Vercel website guide](26-VERCEL-WEBSITE.md). The split-host setup below
+remains available as an alternative.
+
 This release serves the React frontend on Vercel and Rust inference on a separate
 Render Free web service. Visitors can inspect saved backtests, compare model
 evidence and request actual ONNX forecasts from recorded datasets.
