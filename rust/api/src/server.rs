@@ -911,6 +911,16 @@ pub async fn serve_with_options(
     port: u16,
     options: ServerOptions,
 ) -> anyhow::Result<()> {
+    serve_with_ready(root, port, options, |_| {}).await
+}
+
+/// Invoke the local launcher only after binding successfully and initializing feeds.
+pub async fn serve_with_ready(
+    root: PathBuf,
+    port: u16,
+    options: ServerOptions,
+    ready: impl FnOnce(std::net::SocketAddr),
+) -> anyhow::Result<()> {
     anyhow::ensure!(root.is_dir(), "Artifact root must be an existing directory");
     let bind = if options.token_hash.is_some() {
         std::net::Ipv4Addr::UNSPECIFIED
@@ -920,6 +930,7 @@ pub async fn serve_with_options(
     let listener = tokio::net::TcpListener::bind((bind, port)).await?;
     let (live, task) = crate::live::start(&root).await;
     println!("Research inspector: http://{}", listener.local_addr()?);
+    ready(listener.local_addr()?);
     let shutdown = Arc::new(AtomicBool::new(false));
     let result = axum::serve(
         listener,

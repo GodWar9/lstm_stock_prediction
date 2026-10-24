@@ -7,7 +7,13 @@ edition.workspace = true
 name = "quantctl"
 path = "src/main.rs"
 
+[[bin]]
+name = "lstm-inspector"
+path = "src/desktop.rs"
+
 [dependencies]
+flate2 = "1"
+tar = "0.4"
 uuid.workspace = true
 quant_config.workspace = true
 quant_instruments.workspace = true

@@ -15,7 +15,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "demo": "node scripts/native-demo.mjs",
-    "test:native": "node --test scripts/native-demo.test.mjs"
+    "test:native": "node --test scripts/native-demo.test.mjs",
+    "test:standalone": "node --test scripts/standalone.test.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.0",

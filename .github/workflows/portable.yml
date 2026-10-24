@@ -1,0 +1,83 @@
+name: Portable Windows App
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'rust/**'
+      - 'web/**'
+      - 'deploy/artifacts.tar.*'
+      - 'scripts/package_standalone.py'
+      - 'scripts/test_standalone_shutdown.py'
+      - 'Docs/24-PORTABLE-APP.md'
+      - 'Docs/25-PORTABLE-VERIFICATION.md'
+      - '.github/workflows/portable.yml'
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      CARGO_BUILD_JOBS: '2'
+      RUSTFLAGS: '-C target-feature=+crt-static'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            rust/target
+          key: windows-portable-static-v1-${{ hashFiles('rust/Cargo.lock') }}
+      - name: Build the embedded interface
+        working-directory: web
+        run: |
+          npm ci
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          npm run build
+      - name: Verify bundle extraction
+        run: cargo test --locked --target x86_64-pc-windows-msvc --manifest-path rust/Cargo.toml --bin lstm-inspector
+      - name: Build portable binary
+        run: cargo build --release --locked --target x86_64-pc-windows-msvc --manifest-path rust/Cargo.toml --bin lstm-inspector
+      - name: Install acceptance browser
+        working-directory: web
+        run: npx playwright install chromium
+      - name: Test the copied executable without developer tools
+        working-directory: web
+        env:
+          LSTM_INSPECTOR_BIN: ${{ github.workspace }}/rust/target/x86_64-pc-windows-msvc/release/lstm-inspector.exe
+        run: npm run test:standalone
+      - name: Verify OS shutdown and cleanup
+        run: python scripts/test_standalone_shutdown.py --binary rust/target/x86_64-pc-windows-msvc/release/lstm-inspector.exe
+      - name: Package verified executable
+        run: python scripts/package_standalone.py --binary rust/target/x86_64-pc-windows-msvc/release/lstm-inspector.exe --output dist/lstm-inspector-windows-x64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lstm-inspector-windows-x64
+          path: |
+            dist/lstm-inspector-windows-x64.zip
+            dist/lstm-inspector-windows-x64.zip.sha256
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: portable-app-browser-evidence
+          path: web/test-results/standalone
+          if-no-files-found: ignore

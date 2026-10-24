@@ -6,6 +6,7 @@ import json
 import math
 from pathlib import Path
 import re
+import time
 from tempfile import TemporaryDirectory
 
 
@@ -67,6 +68,23 @@ def validate_package(directory: Path, model_id: str) -> None:
         raise ValueError("Model package requires a passing Rust runtime parity gate")
 
 
+def publish_directory(stage: Path, destination: Path) -> None:
+    """Keep atomic publication while tolerating brief Windows scanner/sync locks."""
+    for attempt in range(6):
+        if destination.exists() or destination.is_symlink():
+            raise FileExistsError(f"Model artifact already exists: {destination}")
+        try:
+            stage.rename(destination)
+            return
+        except OSError as exc:
+            # Retry only native Windows access/sharing/lock violations, for at
+            # most 3.1 seconds. Persistent denial and all other errors propagate.
+            # Never copy into the visible destination or replace another model.
+            if getattr(exc, "winerror", None) not in (5, 32, 33) or attempt == 5:
+                raise
+            time.sleep(0.1 * 2 ** attempt)
+
+
 @contextmanager
 def staged_model(models_root: Path, model_id: str):
     """Reserve an ID and atomically rename its validated export into place.
@@ -105,6 +123,6 @@ def staged_model(models_root: Path, model_id: str):
             seal_package(stage, model_id)
             if destination.exists() or destination.is_symlink():
                 raise FileExistsError(f"Model artifact already exists: {destination}")
-            stage.rename(destination)
+            publish_directory(stage, destination)
     finally:
         lock.rmdir()

@@ -124,3 +124,23 @@ test('complete audit table navigates without skipping rows', async ({ page, requ
   await expect(page.getByText('Records 101-200 of 205', { exact: false })).toBeVisible();
   expect(offsets).toEqual([0, 100, 200]);
 });
+
+
+test('changing run filters and selection keeps the current research screen', async ({ page, request }) => {
+  const runs = await (await request.get('/api/runs')).json();
+  const simulation = runs.find((run: { kind: string }) => run.kind === 'simulation');
+  const backtest = runs.find((run: { kind: string }) => run.kind === 'backtest');
+  await page.goto('/risk');
+  await page.getByLabel('Include in-sample and unverified runs').check();
+  await expect(page).toHaveURL(/\/risk\?inSample=true/);
+  await page.getByLabel('Active run').selectOption(simulation.run_id);
+  await expect(page.getByRole('heading', { name: 'Outcome distributions' })).toBeVisible();
+  expect(new URL(page.url()).pathname).toBe('/risk');
+  await page.getByRole('link', { name: 'Backtest', exact: true }).click();
+  await page.getByLabel('Active run').selectOption(backtest.run_id);
+  await expect(page.getByRole('heading', { name: 'Backtest inspection' })).toBeVisible();
+  expect(new URL(page.url()).pathname).toBe('/backtest');
+  await page.getByLabel('Include in-sample and unverified runs').uncheck();
+  await expect(page.getByLabel('Include in-sample and unverified runs')).not.toBeChecked();
+  expect(new URL(page.url()).pathname).toBe('/backtest');
+});

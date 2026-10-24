@@ -18,6 +18,14 @@ Rust owns features, CPU inference through **tract-onnx**, portfolio accounting, 
 - [Original implementation plan](Docs/11-IMPLEMENTATION-PLAN.md)
 - [Frontend design](web/DESIGN.md)
 
+## Portable Windows app
+
+The standalone **lstm-inspector.exe** bundles the interface, Rust inference engine
+and verified synthetic research artifacts. Double-click it to open the app; no
+Node, Rust, Python, Docker or API key is needed to run the release.
+See the [portable app guide](Docs/24-PORTABLE-APP.md) for downloads, build commands,
+verification and the distinction between the recorded sample and live research.
+
 ## Quick start without Docker or API keys
 
 With Node 22.12+, Rust and its native compiler toolchain (MSVC on Windows), and

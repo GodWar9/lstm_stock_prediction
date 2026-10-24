@@ -1,5 +1,9 @@
 # Production readiness checklist
 
+The [portable Windows recorded-research release](25-PORTABLE-VERIFICATION.md)
+passed its local release checks on 24 October 2026. The broader hosted/intraday
+gates below remain separate and retain their original status.
+
 Baseline: `4c004f0`. Started 2026-09-28; scope clarified 2026-09-29:
 end-to-end intraday research and backtesting, with public website access and
 forecast generation. Automated order execution is outside this release.

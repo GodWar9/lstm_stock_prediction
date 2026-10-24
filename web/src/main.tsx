@@ -23,7 +23,8 @@ function Provenance({ run }: { run?: Run }) {
 }
 function Shell() {
   const search = rootRoute.useSearch();
-  const livePage = useRouterState({ select: state => ['/live', '/forecast'].includes(state.location.pathname) });
+  const currentPage = useRouterState({ select: state => pages.find(([path]) => path === state.location.pathname)?.[0] ?? '/' });
+  const livePage = currentPage === '/live' || currentPage === '/forecast';
   const navigate = useNavigate({ from: '/' });
   const queryClient = useQueryClient();
   const runs = useQuery({ queryKey: ['runs'], queryFn: () => json<Run[]>('/api/runs'), staleTime: 0, enabled: !livePage });
@@ -39,7 +40,7 @@ function Shell() {
     return () => events.close();
   }, [queryClient]);
   return <div className="app"><aside><Link className="brand" to="/" search={search}><span className="brand-mark">q</span><span>Quant<br /><small>Research inspector</small></span></Link><nav aria-label="Main navigation">{pages.map(([to, label]) => <Link key={to} to={to} search={search} activeProps={{ className: 'active' }} activeOptions={{ exact: true }}>{label}</Link>)}</nav><p className="sidebar-note">Quantitative research workspace<br />Live feed and recorded research</p></aside>
-    <div className="workspace"><header><div><span className="muted">Inspect the evidence</span><h1>Research workspace</h1></div>{!livePage && <div className="run-controls"><label htmlFor="run">Active run</label><select id="run" value={selected?.run_id ?? ''} onChange={e => void navigate({ search: { ...search, run: e.target.value } })}>{!visible.length && <option value="">No eligible runs</option>}{visible.map(r => <option key={r.run_id} value={r.run_id}>{r.kind} · {r.instruments.map(i => i.id).join(', ')} · {r.created_at.slice(0, 16)} · {r.run_id.slice(0, 8)}</option>)}</select><label className="checkbox"><input type="checkbox" checked={search.inSample} onChange={e => void navigate({ search: { run: undefined, inSample: e.target.checked } })} />Include in-sample and unverified runs</label></div>}</header>
+    <div className="workspace"><header><div><span className="muted">Inspect the evidence</span><h1>Research workspace</h1></div>{!livePage && <div className="run-controls"><label htmlFor="run">Active run</label><select id="run" value={selected?.run_id ?? ''} onChange={e => void navigate({ to: currentPage, search: { ...search, run: e.target.value } })}>{!visible.length && <option value="">No eligible runs</option>}{visible.map(r => <option key={r.run_id} value={r.run_id}>{r.kind} · {r.instruments.map(i => i.id).join(', ')} · {r.created_at.slice(0, 16)} · {r.run_id.slice(0, 8)}</option>)}</select><label className="checkbox"><input type="checkbox" checked={search.inSample} onChange={e => void navigate({ to: currentPage, search: { run: undefined, inSample: e.target.checked } })} />Include in-sample and unverified runs</label></div>}</header>
       <main id="main"><RunContext.Provider value={selected}>
         {!livePage && search.inSample && <div className="warning">In-sample and unverified results can overstate performance. Check the split and source before comparing runs.</div>}
         {selected && <div className="run-strip"><span className="badge">{selected.split === 'test' ? 'Held-out test' : selected.split}</span><strong>{selected.instruments.map(i => i.id).join(', ')}</strong><span>{selected.kind}</span><span>Source: {selected.provenance.source}</span><span>Model: {selected.provenance.model_artifact_id}</span></div>}
