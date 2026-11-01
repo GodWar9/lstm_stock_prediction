@@ -23,6 +23,35 @@ pub struct Price {
     pub received_at_ms: i64,
 }
 
+#[derive(Clone, Debug, Serialize, ToSchema)]
+pub struct LiveBar {
+    pub timestamp: String,
+    pub close_time_ms: i64,
+    pub availability_ms: i64,
+    pub open: f64,
+    pub high: f64,
+    pub low: f64,
+    pub close: f64,
+    pub volume: u64,
+}
+
+#[derive(Clone, Debug, Serialize, ToSchema)]
+pub struct LiveForecast {
+    pub symbol: String,
+    pub as_of_ms: i64,
+    pub available_at_ms: i64,
+    pub generated_at_ms: i64,
+    pub data_age_ms: i64,
+    pub feed_latency: String,
+    pub last_close: f64,
+    pub predicted_log_return: f64,
+    pub predicted_return: f64,
+    pub implied_close: f64,
+    pub bars_in_window: usize,
+    pub status: String,
+    pub warnings: Vec<String>,
+}
+
 #[derive(Clone, Serialize, ToSchema)]
 pub struct Snapshot {
     pub status: String,
@@ -30,6 +59,10 @@ pub struct Snapshot {
     pub feed: String,
     pub symbols: Vec<String>,
     pub prices: BTreeMap<String, Price>,
+    #[serde(default)]
+    pub latest_bars: BTreeMap<String, LiveBar>,
+    #[serde(default)]
+    pub live_forecasts: BTreeMap<String, LiveForecast>,
     pub received_events: u64,
     pub reconnects: u64,
     pub journal: Option<String>,
@@ -38,6 +71,9 @@ pub struct Snapshot {
     pub last_message_at_ms: Option<i64>,
     pub journal_bytes: u64,
     pub durable_seq: u64,
+    #[schema(ignore)]
+    #[serde(skip)]
+    pub bar_buffers: BTreeMap<String, Vec<quant_data::Bar>>,
 }
 pub type Live = Arc<RwLock<Snapshot>>;
 
@@ -46,8 +82,10 @@ pub fn disabled() -> Live {
         status: "disabled".into(),
         message: "Set QUANTCTL_LIVE_SYMBOLS, APCA_API_KEY_ID and APCA_API_SECRET_KEY in the server environment, then restart quantctl serve.".into(),
         feed: "iex".into(), symbols: vec![], prices: BTreeMap::new(),
+        latest_bars: BTreeMap::new(), live_forecasts: BTreeMap::new(),
         received_events: 0, reconnects: 0, journal: None, server_time_ms: 0,
         connection_attempts: 0, last_message_at_ms: None, journal_bytes: 0, durable_seq: 0,
+        bar_buffers: BTreeMap::new(),
     }))
 }
 
@@ -367,6 +405,11 @@ async fn session(
                     } else {
                         None
                     };
+                    let bar = if event["T"] == "b" {
+                        Some(parse_bar(&event, now)?)
+                    } else {
+                        None
+                    };
                     journal
                         .append(&json!({"type":"market","feed":config.feed,"received_at_ms":now,"event":event}))
                         .await?;
@@ -379,6 +422,22 @@ async fn session(
                         });
                         if newer {
                             s.prices.insert(symbol.into(), price);
+                        }
+                    }
+                    if let Some((sym, q_bar, live_bar)) = bar {
+                        let buffer = s.bar_buffers.entry(sym.clone()).or_default();
+                        let valid = if let Some(last) = buffer.last() {
+                            q_bar.availability_timestamp > last.availability_timestamp
+                                && q_bar.timestamp > last.timestamp
+                        } else {
+                            true
+                        };
+                        if valid {
+                            if buffer.len() >= 300 {
+                                buffer.remove(0);
+                            }
+                            buffer.push(q_bar);
+                            s.latest_bars.insert(sym, live_bar);
                         }
                     }
                 }
@@ -437,6 +496,66 @@ fn parse_trade(event: &Value, received_at_ms: i64) -> Result<Price, Failure> {
         _ => Err(Failure::Fatal(
             "Invalid trade price, size or timestamp; ingestion stopped".into(),
         )),
+    }
+}
+
+fn parse_bar(
+    event: &Value,
+    received_at_ms: i64,
+) -> Result<(String, quant_data::Bar, LiveBar), Failure> {
+    let o = event["o"].as_f64().filter(|p| p.is_finite() && *p > 0.0);
+    let h = event["h"].as_f64().filter(|p| p.is_finite() && *p > 0.0);
+    let l = event["l"].as_f64().filter(|p| p.is_finite() && *p > 0.0);
+    let c = event["c"].as_f64().filter(|p| p.is_finite() && *p > 0.0);
+    let v = event["v"].as_u64();
+    let symbol = event["S"].as_str();
+    let timestamp_str = event["t"].as_str();
+
+    match (o, h, l, c, v, symbol, timestamp_str) {
+        (Some(open), Some(high), Some(low), Some(close), Some(volume), Some(sym), Some(ts_str)) => {
+            if !(high >= open.max(close) && low <= open.min(close) && high >= low) {
+                return Err(Failure::Fatal("Invalid minute bar OHLC bounds".into()));
+            }
+            let start = DateTime::parse_from_rfc3339(ts_str)
+                .map_err(|_| Failure::Fatal("Invalid minute bar timestamp".into()))?
+                .to_utc();
+            let close_time = start + chrono::Duration::minutes(1);
+            let close_ns = close_time
+                .timestamp_nanos_opt()
+                .ok_or_else(|| Failure::Fatal("Timestamp overflow".into()))?;
+            let avail_ns = received_at_ms
+                .checked_mul(1_000_000)
+                .ok_or_else(|| Failure::Fatal("Availability timestamp overflow".into()))?;
+
+            if avail_ns < close_ns {
+                return Err(Failure::Fatal(
+                    "Point-in-time violation: minute bar arrived before its close".into(),
+                ));
+            }
+
+            let q_bar = quant_data::Bar::new(
+                quant_data::Timestamp(close_ns),
+                quant_data::Timestamp(avail_ns),
+                open,
+                high,
+                low,
+                close,
+                volume,
+                false,
+            );
+            let live_bar = LiveBar {
+                timestamp: close_time.to_rfc3339(),
+                close_time_ms: close_time.timestamp_millis(),
+                availability_ms: received_at_ms,
+                open,
+                high,
+                low,
+                close,
+                volume,
+            };
+            Ok((sym.to_string(), q_bar, live_bar))
+        }
+        _ => Err(Failure::Fatal("Invalid minute bar fields".into())),
     }
 }
 
@@ -574,6 +693,43 @@ mod tests {
             bad[field] = value;
             assert!(parse_trade(&bad, 42).is_err());
         }
+    }
+
+    #[test]
+    fn parses_valid_and_rejects_invalid_minute_bars() {
+        let valid_start = "2026-09-28T14:00:00Z";
+        // 14:00:00Z + 1 min = 14:01:00Z = 1790604060000 ms
+        let received_at_ms = 1790604060500;
+        let valid_bar = json!({
+            "T": "b",
+            "S": "AAPL",
+            "o": 100.0,
+            "h": 105.0,
+            "l": 99.0,
+            "c": 103.0,
+            "v": 500,
+            "t": valid_start
+        });
+        let (sym, q_bar, live_bar) = parse_bar(&valid_bar, received_at_ms).unwrap();
+        assert_eq!(sym, "AAPL");
+        assert_eq!(q_bar.open, 100.0);
+        assert_eq!(q_bar.close, 103.0);
+        assert_eq!(live_bar.open, 100.0);
+        assert!(q_bar.availability_timestamp >= q_bar.timestamp);
+
+        // Point-in-time violation: received before bar closed
+        let early_received_ms = 1790604059000;
+        assert!(parse_bar(&valid_bar, early_received_ms).is_err());
+
+        // Invalid bounds (high < open)
+        let mut bad_bounds = valid_bar.clone();
+        bad_bounds["h"] = json!(95.0);
+        assert!(parse_bar(&bad_bounds, received_at_ms).is_err());
+
+        // Negative price
+        let mut neg_price = valid_bar.clone();
+        neg_price["c"] = json!(-10.0);
+        assert!(parse_bar(&neg_price, received_at_ms).is_err());
     }
 
     async fn exchange(responses: Vec<Value>) -> (Live, String, Failure) {

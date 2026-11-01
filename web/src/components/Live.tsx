@@ -47,6 +47,16 @@ export function Live() {
         })}
       </tbody></table></div>
     </section>
+    {snapshot?.live_forecasts && Object.keys(snapshot.live_forecasts).length > 0 && (
+      <section className="panel"><h2>Live streaming forecasts</h2>
+        <p>Real-time inferences updated from completed minute bars under point-in-time constraints.</p>
+        <div className="table-scroll"><table aria-label="Live forecasts"><thead><tr><th>Symbol</th><th>Last close</th><th>Predicted return</th><th>Implied close</th><th>Latency</th><th>Status</th></tr></thead><tbody>
+          {Object.entries(snapshot.live_forecasts).map(([sym, f]) => (
+            <tr key={sym}><th scope="row">{sym}</th><td>{number(f.last_close, 2)}</td><td>{(f.predicted_return * 100).toFixed(2)}%</td><td>{number(f.implied_close, 2)}</td><td>{f.feed_latency}</td><td>{f.status}</td></tr>
+          ))}
+        </tbody></table></div>
+      </section>
+    )}
     <section className="panel"><h2>Run fresh intraday research</h2><p>Stop the capture server cleanly with Ctrl+C, set the symbol and dates in configs/intraday.yaml, then run:</p><pre>quantctl --config configs/intraday.yaml research --journal {snapshot?.journal ?? 'datasets/live/SESSION_ID'} --paths 100</pre><p>This creates a new dataset and model, runs walk-forward training, backtests held-out predictions, and produces a new simulation. Restart the inspector to view the published runs. Check the CLI log if the capture has missing minutes or insufficient training history.</p></section>
     <p className="method-note">These are observed trades, not executable quotes or model signals. Quotes, minute bars, revisions and trade corrections are retained in the journal; the price table does not reconstruct corrected trade history. Reconnect gaps are recorded and are not backfilled. Intraday research imports first-published regular-session minute bars from a clean capture. Revisions stay in the journal; captures with gaps are rejected. Daily models cannot be used with minute data.</p>
   </>;

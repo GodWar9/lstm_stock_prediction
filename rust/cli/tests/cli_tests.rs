@@ -100,6 +100,7 @@ fn captured_minutes_train_fresh_model_backtest_and_simulation() {
     // trained and sealed ONNX package, not a mocked prediction response.
     let mut query = quant_api::forecast::ForecastQuery {
         fresh: false,
+        live: false,
         model: id.into(),
         dataset: id.into(),
         symbol: "AAPL".into(),

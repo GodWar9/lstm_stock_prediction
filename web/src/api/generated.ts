@@ -259,6 +259,46 @@ export interface components {
             id: string;
             kind: string;
         };
+        LiveBar: {
+            /** Format: int64 */
+            availability_ms: number;
+            /** Format: double */
+            close: number;
+            /** Format: int64 */
+            close_time_ms: number;
+            /** Format: double */
+            high: number;
+            /** Format: double */
+            low: number;
+            /** Format: double */
+            open: number;
+            timestamp: string;
+            /** Format: int64 */
+            volume: number;
+        };
+        LiveForecast: {
+            /** Format: int64 */
+            as_of_ms: number;
+            /** Format: int64 */
+            available_at_ms: number;
+            bars_in_window: number;
+            /** Format: int64 */
+            data_age_ms: number;
+            feed_latency: string;
+            /** Format: int64 */
+            generated_at_ms: number;
+            /** Format: double */
+            implied_close: number;
+            /** Format: double */
+            last_close: number;
+            /** Format: double */
+            predicted_log_return: number;
+            /** Format: double */
+            predicted_return: number;
+            status: string;
+            symbol: string;
+            warnings: string[];
+        };
         LiveHealth: {
             capture_ready: boolean;
             /** Format: int64 */
@@ -327,6 +367,12 @@ export interface components {
             journal_bytes: number;
             /** Format: int64 */
             last_message_at_ms?: number | null;
+            latest_bars?: {
+                [key: string]: components["schemas"]["LiveBar"];
+            };
+            live_forecasts?: {
+                [key: string]: components["schemas"]["LiveForecast"];
+            };
             message: string;
             prices: {
                 [key: string]: components["schemas"]["Price"];
@@ -404,6 +450,7 @@ export interface operations {
         parameters: {
             query: {
                 fresh?: boolean;
+                live?: boolean;
                 model: string;
                 dataset: string;
                 symbol: string;

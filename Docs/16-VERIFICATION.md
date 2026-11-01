@@ -1,3 +1,72 @@
+# Full-stack verification — 2026-11-01
+
+Verification date: 2026-11-01. Commit: `67a74c3` (Deploy research website as
+one authenticated Vercel container). Environment: Windows, Rust 1.96.0,
+Node 24.12.0, Python 3.14.4. All commands ran from the repository root.
+CI uses Ubuntu and Node 22; local results do not establish a remote CI pass.
+
+## Results summary
+
+| Check | Command | Result |
+|---|---|---|
+| Rust formatting | `cargo fmt --all -- --check` | ✅ Pass |
+| Clippy | `cargo clippy --workspace --all-targets -- -D warnings` | ✅ Pass (0 warnings) |
+| Rust tests | `cargo test --workspace` | ✅ **194 passed**, 0 failed (35 suites, ~34 s) |
+| Python tests | `pytest python/tests -q` | ✅ **56 passed**, 39 warnings in 42 s |
+| Contract check | `npm run contract:check` | ✅ Pass |
+| Web unit tests | `npm test` (vitest) | ✅ **13 passed** (2 files, 1.2 s) |
+| Production build | `npm run build` (tsc + vite) | ✅ 324 modules, 189 kB gzipped, 4 s |
+| Browser e2e | `npm run test:e2e` (Playwright) | ✅ **52 passed** (desktop + mobile, 46.9 s) |
+
+**Totals: 315 tests passed, 0 failed.**
+
+## Rust workspace breakdown (194 tests)
+
+- `quant_api`: 20 tests (2.0 s) — API pagination, filters, cancellation
+- `quant_backtest`: 3 tests — replay, deterministic fills
+- `quant_calendar`: 3 tests — trading calendar
+- `quant_config`: 3 tests — config validation
+- `quant_data`: 1 test — data pipeline
+- `quant_execution`: 6 unit + 1 doc-test — execution realism, scratch allocator
+- `quant_features`: 9 unit + 19 integration + 4 golden + 53 export + 1 doc-test — indicators, IPC, feature store
+- `quant_inference`: 12 tests (1.0 s) — ONNX/tract providers, scaler, integrity
+- `quant_instruments`: 4 tests — equity, derivatives
+- `quant_portfolio`: 9 tests — Kelly, QP optimiser, sector classification
+- `quant_risk`: 1 test — risk engine
+- `quant_signals`: 8 tests — signal calibration, transforms
+- `quant_simulation`: 6 tests — guardrails, regime detection, Monte Carlo
+- `lstm_inspector`: 4 tests — bundle extraction, path traversal
+- `quantctl` (CLI integration): 10 tests (30 s) — full pipeline end-to-end
+
+## Python test details (56 tests, 39 warnings)
+
+Warnings are PyTorch ONNX legacy exporter deprecation, tracer conversion and
+batch-size advisories. All relate to `torch.onnx.export` internals and do not
+affect correctness. Key suites: ONNX numerical parity (6 configurations × 2
+batch sizes), walk-forward orchestration (3 folds with ONNX + tract export).
+
+## Browser e2e details (52 tests)
+
+Playwright against the embedded Rust server (`quantctl`) serving the production
+Vite build. Desktop (Chromium) and mobile viewports tested in parallel across
+6 workers. Covers: inspector routes, run/backtest/data/model/signal/risk views,
+forecast page (empty datasets, incompatible intervals, forecast evidence,
+credential errors, provider failures), live price feed (SSE freshness,
+disconnect, reconnect, stale expiry, entitlement errors), audit table
+pagination, run filter persistence, chart rendering and simulation toggle.
+
+## What was NOT verified
+
+- Remote CI (GitHub Actions) run — not triggered from local machine.
+- Docker container build and `container_smoke.py` — requires Docker daemon.
+- Benchmark execution gate (`cargo bench`) — not run to save time.
+- Live market data download (Twelve Data / Alpaca) — no API keys configured.
+- Deployment to Vercel / Render — not exercised.
+- Numeric performance regression thresholds or latency SLA.
+- Live order placement (out of scope by design).
+
+---
+
 # Engineering follow-up verification - 2026-09-27
 
 Complete audit-table pagination, bounded artifact workers and working-source
@@ -17,7 +86,7 @@ performance SLA, production concurrency/RSS benchmark or remote CI result is cla
 
 ---
 
-# Current-product completion verification � 2026-09-27
+# Current-product completion verification — 2026-09-27
 
 The resumed implementation passes 153 Rust tests (including documentation tests),
 42 Python tests, 4 frontend unit tests and 24 desktop/mobile Playwright checks.

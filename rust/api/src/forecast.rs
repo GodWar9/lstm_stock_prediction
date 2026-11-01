@@ -18,6 +18,9 @@ pub struct ForecastQuery {
     #[serde(default)]
     #[param(required = false)]
     pub fresh: bool,
+    #[serde(default)]
+    #[param(required = false)]
+    pub live: bool,
     pub model: String,
     pub dataset: String,
     pub symbol: String,
@@ -149,6 +152,15 @@ pub(crate) fn run_with_market(
     q: &ForecastQuery,
     market_service: &crate::market::MarketService,
 ) -> Result<Forecast> {
+    run_with_market_and_live(root, q, market_service, &crate::live::disabled())
+}
+
+pub(crate) fn run_with_market_and_live(
+    root: &Path,
+    q: &ForecastQuery,
+    market_service: &crate::market::MarketService,
+    live: &crate::live::Live,
+) -> Result<Forecast> {
     quant_data::validate_storage_id(&q.symbol)?;
     let model = directory(&root.join("models"), &q.model)?;
     let dataset = directory(&root.join("datasets/market"), &q.dataset)?;
@@ -247,7 +259,51 @@ pub(crate) fn run_with_market(
             "Model feature annualization differs from the market"
         );
     }
-    if q.fresh {
+    let mut feed_latency_str = "unknown".to_string();
+    if q.live {
+        let live_state = live.blocking_read();
+        ensure!(
+            live_state.status != "disabled",
+            "Live price feed is disabled. Set QUANTCTL_LIVE_SYMBOLS, APCA_API_KEY_ID and APCA_API_SECRET_KEY in the server environment to enable live streaming forecasts."
+        );
+        ensure!(
+            live_state.symbols.contains(&q.symbol),
+            "Symbol '{}' is not among configured live streaming symbols: {:?}",
+            q.symbol,
+            live_state.symbols
+        );
+        ensure!(
+            interval == "1m",
+            "Model uses {interval} bars; live stream produces 1m minute bars. Train an interval-matched model."
+        );
+        let live_bars = live_state
+            .bar_buffers
+            .get(&q.symbol)
+            .cloned()
+            .unwrap_or_default();
+        if !live_bars.is_empty() {
+            let first_live = live_bars.first().unwrap();
+            let mut hist_prefix: Vec<Bar> = bars
+                .into_iter()
+                .filter(|b| {
+                    b.availability_timestamp < first_live.availability_timestamp
+                        && b.timestamp < first_live.timestamp
+                })
+                .collect();
+            hist_prefix.extend(live_bars);
+            bars = hist_prefix;
+        }
+        ensure!(
+            bars.len() >= provider.lookback(),
+            "Insufficient bars in feature window for live forecasting (have {}, lookback is {})",
+            bars.len(),
+            provider.lookback()
+        );
+        let last_bar = bars.last().unwrap();
+        let latency = (last_bar.availability_timestamp.as_nanos() / 1_000_000)
+            .saturating_sub(last_bar.timestamp.as_nanos() / 1_000_000);
+        feed_latency_str = format!("{latency} ms");
+    } else if q.fresh {
         ensure!(meta["source"].as_str() == Some("twelve_data:unadjusted:rest_snapshot")
             && manifest.source == "twelve_data:unadjusted:rest_snapshot"
             && meta["training_symbol"].as_str() == Some(q.symbol.as_str()),
@@ -295,18 +351,25 @@ pub(crate) fn run_with_market(
         "Invalid model output"
     );
     let mut warnings = vec![
-        if q.fresh {
+        if q.live {
+            "Live price stream forecast; feature window updated from Alpaca WebSocket feed with strict point-in-time guarantees.".into()
+        } else if q.fresh {
             "Fresh REST snapshot forecast; feed delay and exchange entitlement are not independently verified.".into()
         } else {
             "Recorded dataset forecast; this request does not consume the live price stream.".into()
         },
         "Implied close is a model estimate, not a calibrated price interval or probability.".into(),
     ];
+    if q.live {
+        warnings
+            .push("Point-in-time invariant: live bars available only after complete close.".into());
+    }
     if manifest.source.contains("synthetic") || manifest.source.contains("fixture") {
         warnings.push("Synthetic or fixture data: use only to verify the workflow.".into());
     }
     let age = now - last.timestamp.as_nanos() / 1_000_000;
     if !q.fresh
+        && !q.live
         && age
             > if interval == "1m" {
                 120_000
@@ -324,15 +387,26 @@ pub(crate) fn run_with_market(
     let now = chrono::Utc::now().timestamp_millis();
     Ok(Forecast {
         market: identity,
-        input_mode: if q.fresh { "fresh" } else { "recorded" }.into(),
+        input_mode: if q.live {
+            "live"
+        } else if q.fresh {
+            "fresh"
+        } else {
+            "recorded"
+        }
+        .into(),
         fetched_at_ms,
         data_age_ms: now - last.timestamp.as_nanos() / 1_000_000,
-        feed_latency: "unknown".into(),
+        feed_latency: feed_latency_str,
         model: q.model.clone(),
         dataset: q.dataset.clone(),
         symbol: q.symbol.clone(),
         interval: interval.into(),
-        source: manifest.source,
+        source: if q.live {
+            "alpaca:live_stream".into()
+        } else {
+            manifest.source
+        },
         as_of_ms: last.timestamp.as_nanos() / 1_000_000,
         available_at_ms: last.availability_timestamp.as_nanos() / 1_000_000,
         generated_at_ms: now,
@@ -361,6 +435,7 @@ mod tests {
             root.path(),
             &ForecastQuery {
                 fresh: false,
+                live: false,
                 model: "../outside".into(),
                 dataset: "x".into(),
                 symbol: "AAPL".into()
@@ -371,11 +446,28 @@ mod tests {
             root.path(),
             &ForecastQuery {
                 fresh: false,
+                live: false,
                 model: "x".into(),
                 dataset: "x".into(),
                 symbol: "../secret".into()
             }
         )
         .is_err());
+    }
+
+    #[test]
+    fn live_forecast_rejects_when_live_stream_disabled() {
+        let root = tempfile::tempdir().unwrap();
+        let res = run(
+            root.path(),
+            &ForecastQuery {
+                fresh: false,
+                live: true,
+                model: "inspector_demo".into(),
+                dataset: "x".into(),
+                symbol: "AAPL".into(),
+            },
+        );
+        assert!(res.is_err());
     }
 }

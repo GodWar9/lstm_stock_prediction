@@ -65,6 +65,14 @@
             }
           },
           {
+            "name": "live",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
             "name": "model",
             "in": "query",
             "required": true,
@@ -595,6 +603,124 @@
           }
         }
       },
+      "LiveBar": {
+        "type": "object",
+        "required": [
+          "timestamp",
+          "close_time_ms",
+          "availability_ms",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume"
+        ],
+        "properties": {
+          "availability_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "close": {
+            "type": "number",
+            "format": "double"
+          },
+          "close_time_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "high": {
+            "type": "number",
+            "format": "double"
+          },
+          "low": {
+            "type": "number",
+            "format": "double"
+          },
+          "open": {
+            "type": "number",
+            "format": "double"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "volume": {
+            "type": "integer",
+            "format": "int64",
+            "minimum": 0
+          }
+        }
+      },
+      "LiveForecast": {
+        "type": "object",
+        "required": [
+          "symbol",
+          "as_of_ms",
+          "available_at_ms",
+          "generated_at_ms",
+          "data_age_ms",
+          "feed_latency",
+          "last_close",
+          "predicted_log_return",
+          "predicted_return",
+          "implied_close",
+          "bars_in_window",
+          "status",
+          "warnings"
+        ],
+        "properties": {
+          "as_of_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "available_at_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bars_in_window": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "data_age_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "feed_latency": {
+            "type": "string"
+          },
+          "generated_at_ms": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "implied_close": {
+            "type": "number",
+            "format": "double"
+          },
+          "last_close": {
+            "type": "number",
+            "format": "double"
+          },
+          "predicted_log_return": {
+            "type": "number",
+            "format": "double"
+          },
+          "predicted_return": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "LiveHealth": {
         "type": "object",
         "required": [
@@ -857,6 +983,24 @@
               "null"
             ],
             "format": "int64"
+          },
+          "latest_bars": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/LiveBar"
+            },
+            "propertyNames": {
+              "type": "string"
+            }
+          },
+          "live_forecasts": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/LiveForecast"
+            },
+            "propertyNames": {
+              "type": "string"
+            }
           },
           "message": {
             "type": "string"

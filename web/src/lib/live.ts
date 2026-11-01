@@ -10,8 +10,9 @@ export function parseLiveSnapshot(value: unknown): LiveSnapshot {
     || !Array.isArray(value.symbols) || value.symbols.length > 30 || !value.symbols.every(s => typeof s === 'string' && /^[A-Z0-9.-]{1,15}$/.test(s))
     || new Set(value.symbols).size !== value.symbols.length || !record(value.prices)
     || !timestamp(value.server_time_ms) || !['received_events', 'reconnects', 'connection_attempts', 'journal_bytes', 'durable_seq'].every(k => counter(value[k]))
-    || !(value.last_message_at_ms === null || timestamp(value.last_message_at_ms))
-    || !(value.journal === null || typeof value.journal === 'string')) throw new Error('Invalid live snapshot');
+    || !(value.journal === null || typeof value.journal === 'string')
+    || !(value.latest_bars === undefined || record(value.latest_bars))
+    || !(value.live_forecasts === undefined || record(value.live_forecasts))) throw new Error('Invalid live snapshot');
   for (const [symbol, price] of Object.entries(value.prices)) {
     if (!value.symbols.includes(symbol) || !record(price) || price.symbol !== symbol
       || typeof price.price !== 'number' || !Number.isFinite(price.price) || price.price <= 0

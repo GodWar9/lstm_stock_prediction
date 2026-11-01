@@ -523,7 +523,7 @@ async fn forecast(
     Query(q): Query<crate::forecast::ForecastQuery>,
 ) -> ApiResult<Json<crate::forecast::Forecast>> {
     blocking(s, move |s| {
-        crate::forecast::run_with_market(&s.root, &q, &s.market)
+        crate::forecast::run_with_market_and_live(&s.root, &q, &s.market, &s.live)
             .map(Json)
             .map_err(|e| error(StatusCode::UNPROCESSABLE_ENTITY, "forecast_unavailable", e))
     })
@@ -748,6 +748,8 @@ async fn live_events(
         crate::forecast::Forecast,
         crate::live::Snapshot,
         crate::live::Price,
+        crate::live::LiveBar,
+        crate::live::LiveForecast,
         LiveHealth
     ))
 )]
