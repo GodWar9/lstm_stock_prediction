@@ -1,150 +1,143 @@
-# Quant research inspector
+# Quant Research Inspector
 
-A Rust/PyTorch quantitative research platform with a React inspector, real ONNX forecasts and a free-tier deployment configuration. Build validated datasets, train versioned models, replay held-out predictions with simulated execution costs, and inspect the resulting evidence.
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](#license)
+[Live demo](https://lstm-research.vercel.app)
 
-Rust owns features, CPU inference through **tract-onnx**, portfolio accounting, backtesting, bootstrap simulation and the API. Python owns training and export. Local serving needs no Node process; the Vercel deployment uses a Node API bridge. This is a research simulator; it does not place live orders. Synthetic demo results are labelled.
+A Rust/PyTorch quantitative research platform for **leakage-safe, reproducible** model research. Build validated datasets, train versioned LSTM models, replay held-out predictions through a cost-aware backtester, stress-test results with bootstrap simulation, and inspect every run in a React UI.
 
-## Documentation
+> **Research simulator only.** It does not place live orders. Synthetic demo results are always labelled as such and are not evidence of trading performance.
 
-- [Publish the full website on Vercel Hobby](Docs/26-VERCEL-WEBSITE.md)
-- [Deploy on Vercel and Render Free](Docs/22-DEPLOYMENT.md)
-- [Live capture, fresh research and forecast runbook](Docs/19-LIVE-INGESTION.md)
-- [Production checklist and release gates](Docs/20-PRODUCTION-CHECKLIST.md)
-- [Forecast website and public deployment scope](Docs/21-WEB-FORECAST-DEPLOYMENT.md)
-- [System audit, offline setup, required inputs and remaining work](SYSTEM_AUDIT_AND_OFFLINE_GUIDE.md)
-- [Complete capability breakdown](Docs/14-CAPABILITIES.md)
-- [Software-only and hardware-aware improvement roadmap](Docs/15-IMPROVEMENTS.md)
-- [Verification results](Docs/16-VERIFICATION.md)
-- [Artifact and API contract](Docs/13-ARTIFACT-API.md)
-- [Original implementation plan](Docs/11-IMPLEMENTATION-PLAN.md)
-- [Frontend design](web/DESIGN.md)
+## Why this exists
 
-## Portable Windows app
+Most LSTM stock demos leak future data, skip transaction costs, and can't be reproduced. This project treats the *evidence chain* as the product:
 
-The standalone **lstm-inspector.exe** bundles the interface, Rust inference engine
-and verified synthetic research artifacts. Double-click it to open the app; no
-Node, Rust, Python, Docker or API key is needed to run the release.
-See the [portable app guide](Docs/24-PORTABLE-APP.md) for downloads, build commands,
-verification and the distinction between the recorded sample and live research.
+- **Point-in-time correctness** — leakage/purge-embargo validation on every dataset
+- **Immutable, hashed artifacts** — datasets, models and reports carry SHA-256 provenance
+- **Parity-gated models** — a model is only published if PyTorch, ONNX Runtime and tract agree
+- **Honest scope** — unsupported capabilities show explicit empty states, never fabricated numbers
 
-## Quick start without Docker or API keys
+## Architecture
 
-With Node 22.12+, Rust and its native compiler toolchain (MSVC on Windows), and
-Python 3.14 installed:
+| Layer | Owner | Responsibility |
+|---|---|---|
+| Data, features, Arrow IPC | **Rust** | Ingestion, validation, feature store |
+| Inference | **Rust** (`tract-onnx`) | CPU ONNX inference, no Python at serve time |
+| Portfolio, risk, execution, backtest, Monte Carlo | **Rust** | Cost-aware replay, bootstrap + regime analysis |
+| API + CLI (`quantctl`) | **Rust** | Serves the inspector and artifacts |
+| Training + ONNX export | **Python** (PyTorch, uv) | The only Python in the loop |
+| Inspector UI | **React/Vite** (`web/`) | Plots Rust-computed metrics; never recomputes them |
 
-```sh
+Local serving needs no Node process. The Vercel deployment uses a thin Node API bridge to a Rust backend.
+
+## Status
+
+| Area | State |
+|---|---|
+| Versioned ingestion, validation, leakage checks | ✅ Done |
+| Rust feature store + Arrow IPC | ✅ Done |
+| PyTorch training, ONNX export, 3-way parity gate | ✅ Done |
+| Integrity manifests (`integrity.json`, SHA-256) | ✅ Done |
+| Walk-forward training (`--walk-forward --folds N`) | ✅ Done |
+| Backtester, Monte Carlo, regime analysis | ✅ Done |
+| React inspector + `/forecast` page | ✅ Done |
+| CI gates (fmt, clippy, tests, pytest, benches) | ✅ Done |
+| Vercel + Render free-tier deployment | ✅ Done |
+| Portable Windows app (`lstm-inspector.exe`) | ✅ Done |
+| Live price stream → forecast feature window | ⏳ Not connected yet |
+| Multi-asset replay, full inspector datasets | ⏳ Future work |
+| Multi-horizon, conformal, Kelly/sector-neutral, nonlinear impact, derivatives in default CLI | ⏳ Libraries exist; not all selected by default |
+
+See the [capability guide](Docs/14-CAPABILITIES.md) for exactly what is wired into the default pipeline versus available as a library, and the [verification report](Docs/16-VERIFICATION.md) for measured results.
+
+## Quick start (no Docker, no API keys)
+
+Requires Node 22.12+, Rust (+ MSVC on Windows), Python 3.14.
+
+```bash
 cd web
 npm ci
 npm run demo
 ```
 
-Open the printed local URL. This builds the app and runs real inference against
-the bundled synthetic dataset, without installing the Python training stack.
-Ctrl+C stops the app and removes its temporary demo workspace. See the
-[native demo guide](Docs/22-DEPLOYMENT.md#run-locally-without-docker) for port
-selection and Playwright acceptance tests. Use the full setup below for training.
+Open the printed URL. This runs **real inference** on a bundled synthetic dataset. Ctrl+C removes the temporary workspace.
 
-## Setup
+**Or** download the portable `lstm-inspector.exe` — no Node, Rust, Python or Docker required. See the [portable app guide](Docs/24-PORTABLE-APP.md).
 
-Use current stable Rust with a native compiler toolchain, Python 3.14, uv, and Node 22. Windows requires MSVC build tools. Run from the repository root:
+## Full setup (training)
 
-```powershell
-cd python
-uv sync --locked
-cd ../web
-npm ci
-npm run build
-cd ..
-cargo build --manifest-path rust/Cargo.toml --bin quantctl --release
+```bash
+cd python && uv sync --locked
+cd ../web && npm ci && npm run build
+cd .. && cargo build --manifest-path rust/Cargo.toml --bin quantctl --release
 ```
 
-Build web assets **before** compiling Rust. A backend-only build serves a setup page and the API. Rebuild Rust after changing the SPA. The compiled application requires no Node process.
+> Build the web assets **before** Rust. Rebuild Rust after any SPA change.
 
-Open `/forecast` on the running inspector to generate an ONNX forecast from a
-selected model and recorded dataset. The result includes the actual data timestamp,
-horizon and provenance; historical and synthetic inputs are explicit. The live
-price stream is not yet connected to the forecast feature window. An authenticated remote backend and Vercel bridge are available; follow the
-[deployment guide](Docs/22-DEPLOYMENT.md). The default CLI server remains local.
-
-## Reproducible demo
-
-The demo explicitly selects synthetic data and a small two-epoch model. It exercises the real pipeline; its results are not evidence of trading performance.
+## Reproducible demo pipeline
 
 ```powershell
-$quantctl = './rust/target/release/quantctl.exe'
-& $quantctl --config configs/demo.yaml data ingest
-& $quantctl --config configs/demo.yaml data validate
-& $quantctl --config configs/demo.yaml features build
-& $quantctl --config configs/demo.yaml train
-& $quantctl --config configs/demo.yaml predict --model inspector_demo --symbol AAPL
-& $quantctl --config configs/demo.yaml backtest run --model inspector_demo --split test
-& $quantctl serve --root . --port 8787
+$q = './rust/target/release/quantctl.exe'
+& $q --config configs/demo.yaml data ingest
+& $q --config configs/demo.yaml data validate
+& $q --config configs/demo.yaml features build
+& $q --config configs/demo.yaml train
+& $q --config configs/demo.yaml predict --model inspector_demo --symbol AAPL
+& $q --config configs/demo.yaml backtest run --model inspector_demo --split test
+& $q serve --root . --port 8787
 ```
 
-On Linux/macOS use `./rust/target/release/quantctl` without `.exe`. Open [the local inspector](http://127.0.0.1:8787).
+Linux/macOS: drop `.exe`. Then open <http://127.0.0.1:8787>.
 
-The backtest prints a run ID. Preserve provenance by simulating its immutable report:
+Stress-test a finished run (its report is immutable):
 
-```text
+```bash
 quantctl simulate --report reports/runs/<run-id>/report.json --paths 500
 ```
 
-Enable the explicit in-sample/unverified toggle to inspect the new simulation. A bootstrap scenario is not a newly verified OOS forecast.
+Rolling evaluation:
 
-Training reserves the model ID and exports under `models/.staging`. Only a complete package with passing ONNX parity checks is renamed into the final model directory. Failed attempts clean up automatically; interrupted processes may leave hidden stages and locks that need inspection after the process has stopped. Choose a new `training.model_id` for a new experiment; existing models cannot be overwritten. Test reuse requires deliberate `--allow-reuse`. Run commands from one repository root so artifact paths remain consistent.
+```bash
+quantctl --config configs/demo.yaml train --walk-forward --folds 3
+```
 
-## Market data and models
+## Data
 
-Edit a copy of `configs/default.yaml` with distinct dataset/model versions and the desired date range. The default `csv` provider reads `datasets/import/<symbol>.csv` (or `data.input_dir`). Use the exact header `timestamp,open,high,low,close,volume`, RFC3339 timestamps with timezones, strictly increasing bars, valid OHLC prices and integer volume. Dates select UTC `[start_date, end_date)`. Ingest before building features; an existing market dataset version cannot be overwritten. Feature building processes configured symbols; training/backtest require exactly one symbol per run.
+- **Default:** CSV import from `datasets/import/<symbol>.csv` with header `timestamp,open,high,low,close,volume` (RFC3339 timestamps with timezone, strictly increasing, valid OHLC, integer volume).
+- **Fresh global forecasts:** Twelve Data stock/ETF ingestion — see [Docs/23](Docs/23-GLOBAL-MARKET-FORECASTS.md).
+- **Offline by default.** Yahoo acquisition requires `QUANTCTL_ALLOW_NETWORK=1` plus the optional `yfinance` dependency. Failures never fall back to synthetic data.
+- Existing dataset or model versions are never overwritten; choose a new `training.model_id` per experiment.
 
-Operation is offline after the one-time dependency setup. Yahoo acquisition is disabled unless `QUANTCTL_ALLOW_NETWORK=1` is explicitly set on a connected acquisition machine; it additionally requires the optional Python `yfinance` dependency. Failures never fall back to synthetic data. The [offline guide](SYSTEM_AUDIT_AND_OFFLINE_GUIDE.md) covers preparation, CSV inputs, checks and the distinction between application policy and machine-level isolation.
+## Model integrity
 
-Legacy `lstm_v1` metadata references synthetic feature names. Retrain on the Rust Arrow dataset; unavailable model features are rejected, never replaced with fabricated values.
+Training stages into `models/.staging` and only renames a package into place after ONNX parity passes. Each package ships `integrity.json`; Rust verifies it before predict/backtest. Missing manifests or modified files are rejected. Hashes detect accidental change, not deliberate replacement of the manifest itself.
 
-New training runs publish `integrity.json` with SHA-256 hashes for every model-package file. Rust verifies the manifest before prediction or backtesting. Missing manifests and modified files are rejected; retrain older models to produce a verified package. Hashes detect accidental changes relative to the manifest, not deliberate replacement of the manifest itself.
+> Legacy `lstm_v1` metadata references synthetic feature names — retrain on the Rust Arrow dataset.
 
-## Inspector
+## Verification
 
-Overview, Backtest, Data and validation, Models, Signals, Risk and simulation, and Run activity share a run selector and copyable provenance footer. Rust supplies metrics, Arrow series and split records. The browser formats and plots them without recomputing financial metrics. Unsupported capabilities have explicit empty states. Desktop/mobile layouts, keyboard focus, accessible tables and browser tests are included.
-
-By default, the server binds to `127.0.0.1`. Remote mode requires a backend token. There is no visitor account system or job-launching API. Published run files are immutable resources.
-
-## Verification and development
-
-```powershell
-cargo fmt --manifest-path rust/Cargo.toml --all -- --check
+```bash
+cargo fmt    --manifest-path rust/Cargo.toml --all -- --check
 cargo clippy --manifest-path rust/Cargo.toml --workspace --all-targets -- -D warnings
-cargo test --manifest-path rust/Cargo.toml --workspace
-python/.venv/Scripts/python.exe -m pytest python/tests -q
-cd web
-npm run contract:check
-npm test
-npm run build
-npx playwright install chromium
-npm run test:e2e
+cargo test   --manifest-path rust/Cargo.toml --workspace
+python -m pytest python/tests -q
+cd web && npm run contract:check && npm test && npm run build && npm run test:e2e
 ```
 
-`scripts/verify.ps1` runs the main checks on Windows using installed dependencies and offline Cargo resolution. `-Benchmarks` also runs benchmark smoke checks. Dependency installation is opt-in via `-InstallDependencies`; install Python and Playwright Chromium during connected setup. `python/.venv/Scripts/python.exe scripts/offline_doctor.py` checks local readiness. CLI integration tests perform real small-model training and create uniquely versioned, git-ignored artifacts. They require the Python environment but no live market downloads.
+Windows shortcut: `scripts/verify.ps1` (`-Benchmarks`, `-InstallDependencies`). Readiness check: `python scripts/offline_doctor.py`.
 
-For frontend development, serve Rust on port 8787 and run `npm run dev` in `web`. Vite proxies `/api`. After API edits run `npm run contract` and commit generated TypeScript and `Docs/openapi.json`.
+Benchmarks: `cargo bench --manifest-path rust/Cargo.toml --bench feature_benchmarks` (and `simulation_benchmarks`). Compare on the same machine; smoke tests do not establish a latency SLA.
 
-```text
-cargo bench --manifest-path rust/Cargo.toml --bench feature_benchmarks
-cargo bench --manifest-path rust/Cargo.toml --bench simulation_benchmarks
-```
+## Security
 
-Compare benchmarks on the same machine and workload. Compilation and smoke tests do not establish a latency SLA.
+Server binds to `127.0.0.1` by default. Remote mode requires a backend token. No visitor accounts, no job-launching API; published run files are immutable.
 
-## Scope
+## Documentation
 
-Advanced libraries such as multi-horizon training, conformal calibration, Kelly/sector-neutral optimization, nonlinear impact, regime overlays and derivatives are not all selected by the default CLI. Full multi-asset replay and research inspector datasets remain future work. The capability guide distinguishes operational integration from library availability and lists statistical limitations.
+- [Capabilities](Docs/14-CAPABILITIES.md) · [Verification](Docs/16-VERIFICATION.md) · [Improvements roadmap](Docs/15-IMPROVEMENTS.md)
+- [Artifact & API contract](Docs/13-ARTIFACT-API.md) · [Frontend design](web/DESIGN.md)
+- [Deployment](Docs/22-DEPLOYMENT.md) · [Vercel website](Docs/26-VERCEL-WEBSITE.md) · [Live ingestion](Docs/19-LIVE-INGESTION.md)
+- [Production checklist](Docs/20-PRODUCTION-CHECKLIST.md) · [System audit & offline guide](SYSTEM_AUDIT_AND_OFFLINE_GUIDE.md)
 
-License: MIT OR Apache-2.0.
+## License
 
-## Rolling evaluation
-
-Use `quantctl --config configs/demo.yaml train --walk-forward --folds 3` with a new model ID and enough rows for every train/validation/test window. Each fold has an exported model and Rust parity evidence. The root model is the last fold; `backtest run` replays that fold, while pooled prediction metrics are recorded separately in `validation.json`. New backtests also supply benchmark, positions, realized signal outcomes and terminal risk evidence to the inspector.
-
-### Fresh global market forecasts
-
-[Global market setup and API keys](Docs/23-GLOBAL-MARKET-FORECASTS.md) covers Twelve Data stock/ETF ingestion, market-matched training, fresh forecast controls and optional hosting configuration. Recorded demo forecasts remain available without any API key.
+MIT OR Apache-2.0
