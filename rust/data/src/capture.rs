@@ -43,6 +43,36 @@ pub fn verify(path: &Path) -> Result<CaptureAudit> {
     scan(path, |_| Ok(()))
 }
 
+/// Live inference uses the same regular-session clock as capture research.
+pub fn regular_minute(close: Timestamp) -> bool {
+    let close = DateTime::from_timestamp_nanos(close.as_nanos());
+    let start = close - Duration::minutes(1);
+    start.timestamp() % 60 == 0
+        && start.timestamp_subsec_nanos() == 0
+        && UsEquityCalendar::new("NYSE")
+            .session(start.date_naive())
+            .is_some_and(|session| start >= session.open_utc && close <= session.close_utc)
+}
+
+pub fn consecutive_minutes(previous: Timestamp, current: Timestamp) -> bool {
+    if !regular_minute(previous) || !regular_minute(current) {
+        return false;
+    }
+    let calendar = UsEquityCalendar::new("NYSE");
+    let previous = DateTime::from_timestamp_nanos(previous.as_nanos());
+    let session = calendar.session(previous.date_naive()).unwrap();
+    let expected = if previous < session.close_utc {
+        previous + Duration::minutes(1)
+    } else {
+        calendar
+            .session(calendar.next_trading_day(previous.date_naive()))
+            .unwrap()
+            .open_utc
+            + Duration::minutes(1)
+    };
+    expected.timestamp_nanos_opt() == Some(current.as_nanos())
+}
+
 fn scan(path: &Path, mut accept: impl FnMut(&Value) -> Result<()>) -> Result<CaptureAudit> {
     ensure!(
         path.is_dir() && !fs::symlink_metadata(path)?.file_type().is_symlink(),

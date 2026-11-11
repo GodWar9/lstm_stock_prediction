@@ -1,5 +1,16 @@
 import { test, expect, type Page } from '@playwright/test';
 
+test('completed minute bars reflect connection freshness', async ({ page }) => {
+  await controlledFeed(page);
+  const now = Date.now();
+  const bar = { timestamp: new Date(now - 500).toISOString(), close_time_ms: now - 500, availability_ms: now, open: 100, high: 101, low: 99, close: 100, volume: 10 };
+  await emit(page, { latest_bars: { AAPL: bar } });
+  await expect(page.getByRole('table', { name: 'Live minute bars' })).toContainText('Fresh');
+  await emit(page, { status: 'reconnecting', latest_bars: { AAPL: bar }, live_forecasts: {} });
+  await expect(page.getByRole('table', { name: 'Live minute bars' })).toContainText('Stale');
+  await expect(page.getByRole('table', { name: 'Live forecasts' })).toHaveCount(0);
+});
+
 // Browser transport harness: the Rust tests separately exercise a real local
 // WebSocket peer, including authentication, subscriptions, journals and errors.
 async function controlledFeed(page: Page) {
@@ -57,7 +68,7 @@ test('incoming prices update and old exchange timestamps remain stale', async ({
   page.on('pageerror', error => errors.push(error.message));
   await controlledFeed(page);
   await emit(page);
-  const row = page.getByRole('row').filter({ has: page.getByRole('rowheader', { name: 'AAPL' }) });
+  const row = page.getByRole('table', { name: 'Live prices' }).getByRole('row').filter({ has: page.getByRole('rowheader', { name: 'AAPL' }) });
   await expect(row).toContainText('123.4500');
   await expect(row).toContainText('Fresh');
   await emit(page, { prices: { AAPL: { symbol: 'AAPL', price: 124.5, size: 2, exchange_timestamp: '2020-01-01T00:00:00Z', received_at_ms: Date.now() } }, received_events: 2 });
@@ -95,7 +106,7 @@ test('stalled browser stream expires freshness even without an error event', asy
 test('missing trades, entitlement failures and test feed are explicit', async ({ page }) => {
   await controlledFeed(page);
   await emit(page, { prices: {} });
-  await expect(page.getByRole('cell', { name: 'Waiting', exact: true })).toBeVisible();
+  await expect(page.getByRole('table', { name: 'Live prices' }).getByRole('cell', { name: 'Waiting', exact: true })).toBeVisible();
   await emit(page, { status: 'error', message: 'Alpaca rejected the stream (code 409)' });
   await expect(page.getByRole('alert')).toContainText('409');
   await expect(page.getByRole('cell', { name: 'Stale', exact: true })).toBeVisible();

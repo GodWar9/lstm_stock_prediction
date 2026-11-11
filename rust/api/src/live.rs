@@ -37,6 +37,8 @@ pub struct LiveBar {
 
 #[derive(Clone, Debug, Serialize, ToSchema)]
 pub struct LiveForecast {
+    pub model: String,
+    pub dataset: String,
     pub symbol: String,
     pub as_of_ms: i64,
     pub available_at_ms: i64,
@@ -265,6 +267,10 @@ async fn update_storage(live: &Live, journal: &Journal) {
 
 async fn set_status(live: &Live, status: &str, message: &str) {
     let mut s = live.write().await;
+    if status != "connected" {
+        s.bar_buffers.clear();
+        s.live_forecasts.clear();
+    }
     s.status = status.into();
     s.message = message.into();
 }
@@ -425,26 +431,38 @@ async fn session(
                         }
                     }
                     if let Some((sym, q_bar, live_bar)) = bar {
-                        let buffer = s.bar_buffers.entry(sym.clone()).or_default();
-                        let valid = if let Some(last) = buffer.last() {
-                            q_bar.availability_timestamp > last.availability_timestamp
-                                && q_bar.timestamp > last.timestamp
-                        } else {
-                            true
-                        };
-                        if valid {
-                            if buffer.len() >= 300 {
-                                buffer.remove(0);
-                            }
-                            buffer.push(q_bar);
-                            s.latest_bars.insert(sym, live_bar);
-                        }
+                        ingest_bar(&mut s, sym, q_bar, live_bar);
                     }
                 }
                 _ => {}
             }
         }
     }
+}
+
+fn ingest_bar(state: &mut Snapshot, symbol: String, bar: quant_data::Bar, display: LiveBar) {
+    if !quant_data::capture::regular_minute(bar.timestamp) {
+        return;
+    }
+    let buffer = state.bar_buffers.entry(symbol.clone()).or_default();
+    if let Some(last) = buffer.last() {
+        // First publication wins. Older originals stay journal-only.
+        if bar.timestamp <= last.timestamp {
+            return;
+        }
+        if !quant_data::capture::consecutive_minutes(last.timestamp, bar.timestamp)
+            || last.availability_timestamp >= bar.timestamp
+            || bar.availability_timestamp <= last.availability_timestamp
+        {
+            buffer.clear();
+        }
+    }
+    if buffer.len() >= 300 {
+        buffer.remove(0);
+    }
+    buffer.push(bar);
+    state.live_forecasts.remove(&symbol);
+    state.latest_bars.insert(symbol, display);
 }
 
 fn classify_socket_error(error: tokio_tungstenite::tungstenite::Error) -> Failure {
@@ -667,7 +685,10 @@ mod tests {
             .await
             .unwrap()
             .unwrap();
-        server.await.unwrap();
+        tokio::time::timeout(Duration::from_secs(5), server)
+            .await
+            .unwrap()
+            .unwrap();
         let audit = quant_data::capture::verify(&path).unwrap();
         assert!(audit.clean_shutdown);
         assert_eq!(audit.gaps, 1);
@@ -732,6 +753,31 @@ mod tests {
         assert!(parse_bar(&neg_price, received_at_ms).is_err());
     }
 
+    #[tokio::test]
+    async fn minute_buffers_keep_first_publication_reset_gaps_and_disconnects() {
+        let live = disabled();
+        let mut state = live.write().await;
+        for (time, expected) in [
+            ("2026-09-28T14:00:00Z", 1),
+            ("2026-09-28T14:00:00Z", 1),
+            ("2026-09-28T14:01:00Z", 2),
+            ("2026-09-28T14:03:00Z", 1),
+            ("2026-09-28T22:00:00Z", 1),
+        ] {
+            let now = DateTime::parse_from_rfc3339(time)
+                .unwrap()
+                .timestamp_millis()
+                + 60_500;
+            let event = json!({"S":"AAPL","t":time,"o":100,"h":101,"l":99,"c":100,"v":10});
+            let (symbol, bar, display) = parse_bar(&event, now).unwrap();
+            ingest_bar(&mut state, symbol, bar, display);
+            assert_eq!(state.bar_buffers["AAPL"].len(), expected);
+        }
+        drop(state);
+        set_status(&live, "reconnecting", "gap").await;
+        assert!(live.read().await.bar_buffers.is_empty());
+    }
+
     async fn exchange(responses: Vec<Value>) -> (Live, String, Failure) {
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let endpoint = format!("ws://{}", listener.local_addr().unwrap());
@@ -786,7 +832,10 @@ mod tests {
         .unwrap()
         .unwrap_err();
         journal.sync().await.unwrap();
-        server.await.unwrap();
+        tokio::time::timeout(Duration::from_secs(5), server)
+            .await
+            .unwrap()
+            .unwrap();
         let contents = tokio::fs::read_to_string(path.join("000001.ndjson"))
             .await
             .unwrap();

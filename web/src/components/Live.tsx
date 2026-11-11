@@ -47,12 +47,18 @@ export function Live() {
         })}
       </tbody></table></div>
     </section>
+    <section className="panel"><h2>Completed minute bars</h2>
+      <p>First-published regular-session bars feed live forecasts. Select a matching Alpaca minute model on the <a href="/forecast">forecast page</a>. Forecasts run on request.</p>
+      <div className="table-scroll"><table aria-label="Live minute bars"><thead><tr><th>Symbol</th><th>Close</th><th>Bar close (UTC)</th><th>Freshness</th></tr></thead><tbody>
+        {snapshot?.symbols.map(symbol => { const bar = snapshot.latest_bars?.[symbol]; return <tr key={symbol}><th scope="row">{symbol}</th><td>{bar ? number(bar.close, 4) : '—'}</td><td>{bar?.timestamp ?? 'Awaiting completed minute'}</td><td>{!bar ? 'Waiting' : !disconnected && snapshot.status === 'connected' && serverNow >= bar.close_time_ms && serverNow - bar.close_time_ms <= 120_000 ? 'Fresh' : 'Stale'}</td></tr>; })}
+      </tbody></table></div>
+    </section>
     {snapshot?.live_forecasts && Object.keys(snapshot.live_forecasts).length > 0 && (
       <section className="panel"><h2>Live streaming forecasts</h2>
-        <p>Real-time inferences updated from completed minute bars under point-in-time constraints.</p>
-        <div className="table-scroll"><table aria-label="Live forecasts"><thead><tr><th>Symbol</th><th>Last close</th><th>Predicted return</th><th>Implied close</th><th>Latency</th><th>Status</th></tr></thead><tbody>
+        <p>Latest requested forecasts from completed minute bars. A new bar or interrupted connection clears these results.</p>
+        <div className="table-scroll"><table aria-label="Live forecasts"><thead><tr><th>Symbol</th><th>Model</th><th>Last close</th><th>Predicted return</th><th>Implied close</th><th>Latency</th><th>Status</th></tr></thead><tbody>
           {Object.entries(snapshot.live_forecasts).map(([sym, f]) => (
-            <tr key={sym}><th scope="row">{sym}</th><td>{number(f.last_close, 2)}</td><td>{(f.predicted_return * 100).toFixed(2)}%</td><td>{number(f.implied_close, 2)}</td><td>{f.feed_latency}</td><td>{f.status}</td></tr>
+            <tr key={sym}><th scope="row">{sym}</th><td>{f.model}</td><td>{number(f.last_close, 2)}</td><td>{(f.predicted_return * 100).toFixed(2)}%</td><td>{number(f.implied_close, 2)}</td><td>{f.feed_latency}</td><td>{disconnected || snapshot.status !== 'connected' || serverNow - f.as_of_ms > 120_000 ? 'Stale' : f.status}</td></tr>
           ))}
         </tbody></table></div>
       </section>

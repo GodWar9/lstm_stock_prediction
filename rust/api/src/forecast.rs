@@ -161,6 +161,10 @@ pub(crate) fn run_with_market_and_live(
     market_service: &crate::market::MarketService,
     live: &crate::live::Live,
 ) -> Result<Forecast> {
+    ensure!(
+        !(q.live && q.fresh),
+        "Choose either live or fresh input mode"
+    );
     quant_data::validate_storage_id(&q.symbol)?;
     let model = directory(&root.join("models"), &q.model)?;
     let dataset = directory(&root.join("datasets/market"), &q.dataset)?;
@@ -262,47 +266,24 @@ pub(crate) fn run_with_market_and_live(
     let mut feed_latency_str = "unknown".to_string();
     if q.live {
         let live_state = live.blocking_read();
-        ensure!(
-            live_state.status != "disabled",
-            "Live price feed is disabled. Set QUANTCTL_LIVE_SYMBOLS, APCA_API_KEY_ID and APCA_API_SECRET_KEY in the server environment to enable live streaming forecasts."
-        );
-        ensure!(
-            live_state.symbols.contains(&q.symbol),
-            "Symbol '{}' is not among configured live streaming symbols: {:?}",
-            q.symbol,
-            live_state.symbols
-        );
+        let source = format!("alpaca:{}:first_publication", live_state.feed);
         ensure!(
             interval == "1m",
-            "Model uses {interval} bars; live stream produces 1m minute bars. Train an interval-matched model."
+            "Live forecasts require a 1m model and dataset"
         );
-        let live_bars = live_state
-            .bar_buffers
-            .get(&q.symbol)
-            .cloned()
-            .unwrap_or_default();
-        if !live_bars.is_empty() {
-            let first_live = live_bars.first().unwrap();
-            let mut hist_prefix: Vec<Bar> = bars
-                .into_iter()
-                .filter(|b| {
-                    b.availability_timestamp < first_live.availability_timestamp
-                        && b.timestamp < first_live.timestamp
-                })
-                .collect();
-            hist_prefix.extend(live_bars);
-            bars = hist_prefix;
-        }
         ensure!(
-            bars.len() >= provider.lookback(),
-            "Insufficient bars in feature window for live forecasting (have {}, lookback is {})",
-            bars.len(),
-            provider.lookback()
+            manifest.source == source
+                && meta["source"].as_str() == Some(source.as_str())
+                && meta["training_symbol"].as_str() == Some(q.symbol.as_str()),
+            "Live forecasts require a model and dataset trained on the same symbol and Alpaca feed"
         );
+        bars = live_inputs(&live_state, &q.symbol, bars, now)?;
         let last_bar = bars.last().unwrap();
         let latency = (last_bar.availability_timestamp.as_nanos() / 1_000_000)
             .saturating_sub(last_bar.timestamp.as_nanos() / 1_000_000);
         feed_latency_str = format!("{latency} ms");
+        manifest.content_sha256 =
+            format!("{:x}", Sha256::digest(serde_json::to_vec_pretty(&bars)?));
     } else if q.fresh {
         ensure!(meta["source"].as_str() == Some("twelve_data:unadjusted:rest_snapshot")
             && manifest.source == "twelve_data:unadjusted:rest_snapshot"
@@ -385,7 +366,7 @@ pub(crate) fn run_with_market_and_live(
         warnings.push("Global exchange holidays and missing session bars are not independently validated. Horizon is measured in observed bars.".into());
     }
     let now = chrono::Utc::now().timestamp_millis();
-    Ok(Forecast {
+    let result = Forecast {
         market: identity,
         input_mode: if q.live {
             "live"
@@ -421,7 +402,107 @@ pub(crate) fn run_with_market_and_live(
             Sha256::digest(read(&model.join("integrity.json"), 8 * 1024 * 1024)?)
         ),
         warnings,
-    })
+    };
+    if q.live {
+        let mut state = live.blocking_write();
+        // An inference that raced a reconnect or another minute is not current.
+        if state.status == "connected"
+            && state
+                .bar_buffers
+                .get(&q.symbol)
+                .and_then(|bars| bars.last())
+                .is_some_and(|bar| {
+                    bar.timestamp.as_nanos() / 1_000_000 == result.as_of_ms
+                        && bar.availability_timestamp.as_nanos() / 1_000_000
+                            == result.available_at_ms
+                })
+        {
+            state.live_forecasts.insert(
+                q.symbol.clone(),
+                crate::live::LiveForecast {
+                    model: q.model.clone(),
+                    dataset: q.dataset.clone(),
+                    symbol: q.symbol.clone(),
+                    as_of_ms: result.as_of_ms,
+                    available_at_ms: result.available_at_ms,
+                    generated_at_ms: result.generated_at_ms,
+                    data_age_ms: result.data_age_ms,
+                    feed_latency: result.feed_latency.clone(),
+                    last_close: result.last_close,
+                    predicted_log_return: result.predicted_log_return,
+                    predicted_return: result.predicted_return,
+                    implied_close: result.implied_close,
+                    bars_in_window: bars.len(),
+                    status: "ready".into(),
+                    warnings: result.warnings.clone(),
+                },
+            );
+        }
+    }
+    Ok(result)
+}
+
+fn live_inputs(
+    state: &crate::live::Snapshot,
+    symbol: &str,
+    history: Vec<Bar>,
+    now: i64,
+) -> Result<Vec<Bar>> {
+    ensure!(
+        state.status == "connected",
+        "Live feed is not connected; wait for ingestion to recover"
+    );
+    ensure!(
+        matches!(state.feed.as_str(), "iex" | "sip"),
+        "Test and delayed feeds cannot produce live forecasts"
+    );
+    ensure!(
+        state.symbols.iter().any(|s| s == symbol),
+        "Symbol is not subscribed to the live feed"
+    );
+    let live = state
+        .bar_buffers
+        .get(symbol)
+        .filter(|bars| !bars.is_empty())
+        .context("Waiting for the first completed regular-session live minute bar")?;
+    let last = live.last().unwrap();
+    ensure!(
+        (0..=120_000).contains(&(now - last.timestamp.as_nanos() / 1_000_000))
+            && (0..=120_000).contains(&(now - last.availability_timestamp.as_nanos() / 1_000_000)),
+        "Live minute bars are stale or future-dated; wait for a new completed bar"
+    );
+    let first = &live[0];
+    let mut bars: Vec<_> = history
+        .into_iter()
+        .filter(|b| {
+            b.timestamp < first.timestamp && b.availability_timestamp < first.availability_timestamp
+        })
+        .collect();
+    // Old history cannot conceal a capture gap.
+    if bars.last().is_some_and(|b| {
+        !quant_data::capture::consecutive_minutes(b.timestamp, first.timestamp)
+            || b.availability_timestamp >= first.timestamp
+    }) {
+        bars.clear();
+    }
+    bars.extend_from_slice(live);
+    quant_data::validate_bars_monotonic_and_sound(&bars)?;
+    ensure!(
+        bars.iter()
+            .all(|b| quant_data::capture::regular_minute(b.timestamp)
+                && b.availability_timestamp >= b.timestamp
+                && b.availability_timestamp.as_nanos() / 1_000_000 <= now),
+        "Invalid live minute availability or session"
+    );
+    ensure!(
+        bars.windows(2)
+            .all(
+                |p| quant_data::capture::consecutive_minutes(p[0].timestamp, p[1].timestamp)
+                    && p[0].availability_timestamp < p[1].timestamp
+            ),
+        "Missing or late minute bars in live feature window"
+    );
+    Ok(bars)
 }
 
 #[cfg(test)]
@@ -453,6 +534,60 @@ mod tests {
             }
         )
         .is_err());
+    }
+
+    fn minute(time: &str) -> Bar {
+        let ns = chrono::DateTime::parse_from_rfc3339(time)
+            .unwrap()
+            .timestamp_nanos_opt()
+            .unwrap();
+        Bar::new(
+            quant_data::Timestamp(ns),
+            quant_data::Timestamp(ns + 500_000_000),
+            100.0,
+            101.0,
+            99.0,
+            100.0,
+            10,
+            false,
+        )
+    }
+
+    #[test]
+    fn live_inputs_require_connected_fresh_real_bars_and_continuity() {
+        let live = crate::live::disabled();
+        let mut state = live.blocking_write();
+        state.symbols = vec!["AAPL".into()];
+        let bar = minute("2026-09-28T14:01:00Z");
+        let now = bar.availability_timestamp.as_nanos() / 1_000_000;
+        assert!(live_inputs(&state, "AAPL", vec![bar.clone()], now).is_err());
+        state.status = "connected".into();
+        assert!(live_inputs(&state, "AAPL", vec![bar.clone()], now)
+            .unwrap_err()
+            .to_string()
+            .contains("first completed"));
+        state.bar_buffers.insert("AAPL".into(), vec![bar.clone()]);
+        let history = vec![minute("2026-09-28T14:00:00Z")];
+        assert_eq!(live_inputs(&state, "AAPL", history, now).unwrap().len(), 2);
+        // Distant history is discarded, so feature warmup must come from new bars.
+        assert_eq!(
+            live_inputs(&state, "AAPL", vec![minute("2026-09-28T13:59:00Z")], now)
+                .unwrap()
+                .len(),
+            1
+        );
+        assert!(live_inputs(&state, "AAPL", vec![], now + 120_001).is_err());
+        assert!(live_inputs(&state, "AAPL", vec![], now - 1000).is_err());
+        assert!(live_inputs(&state, "MSFT", vec![], now).is_err());
+        state.feed = "test".into();
+        assert!(live_inputs(&state, "AAPL", vec![], now).is_err());
+        state.feed = "iex".into();
+        state
+            .bar_buffers
+            .get_mut("AAPL")
+            .unwrap()
+            .insert(0, minute("2026-09-28T13:59:00Z"));
+        assert!(live_inputs(&state, "AAPL", vec![], now).is_err());
     }
 
     #[test]

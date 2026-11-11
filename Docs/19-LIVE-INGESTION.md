@@ -96,8 +96,24 @@ a prediction. Rust verifies hashes and interval compatibility, reconstructs the
 training feature graph, applies the fitted scaler, and runs ONNX inference. The
 response includes data availability time, horizon, source and package hashes.
 The implied close is `last_close * exp(predicted_log_return)`; it is not a
-confidence bound. This is a recorded-dataset forecast, not automatic inference
-from the currently open capture. Historical and synthetic inputs are labeled.
+confidence bound. Recorded mode uses only the selected dataset. For an open capture, choose
+**Live streaming price feed** on `/forecast` and generate a forecast on request.
+The model and dataset must use `1m` bars, the same training symbol, and the same
+`alpaca:iex:first_publication` or `alpaca:sip:first_publication` source as the feed.
+Test, delayed, disconnected, empty and stale streams are rejected. The latest
+completed regular-session bar must be at most two minutes old.
+
+Live inference retains at most 300 first-published regular-session bars per symbol.
+Duplicates and revisions cannot rewrite inputs. Missing minutes, late bars and
+reconnects reset the inference window. Recorded history is prepended only when it
+joins the live window without a session-minute gap; otherwise the stream must
+collect enough bars for feature warmup and model lookback. There is no hidden
+backfill. The forecast input hash covers the actual merged bars.
+
+The Live page shows completed minute bars and the latest successful requested
+forecast, including its model. New bars and disconnects clear the cached forecast;
+retained results are marked stale after two minutes. Inference is on request,
+not an automatic background trading service. Historical and synthetic inputs are labeled.
 
 ## Operations
 
@@ -117,6 +133,19 @@ versions. Host-specific supervision, alerting and backup restore drills remain
 release gates in the production checklist.
 
 ## Verification
+
+Follow-up verified on 2026-11-11 against base commit `372d0d0`:
+
+- API: 24 unit tests and 3 contract tests passed, including local WebSocket
+  authentication, reconnects, journaling and minute-window reset behavior.
+- Data: 19 unit tests and 4 point-in-time property tests passed.
+- Frontend: 14 unit tests and 24 focused desktop/mobile live and forecast browser
+  checks passed. The production UI and embedded `quantctl` executable built.
+- Generated contract check, Rust formatting and Clippy for API/data targets passed.
+  Windows emitted incremental-cache hard-link warnings; compilation succeeded.
+- Local WebSocket/browser tests required execution outside the restricted sandbox.
+  Alpaca credentials and live symbols were not configured, so real-provider
+  connectivity, entitlement and live model inference were not verified.
 
 ```powershell
 cargo test --manifest-path rust/Cargo.toml -p quant_api --locked

@@ -653,6 +653,8 @@
       "LiveForecast": {
         "type": "object",
         "required": [
+          "model",
+          "dataset",
           "symbol",
           "as_of_ms",
           "available_at_ms",
@@ -684,6 +686,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "dataset": {
+            "type": "string"
+          },
           "feed_latency": {
             "type": "string"
           },
@@ -698,6 +703,9 @@
           "last_close": {
             "type": "number",
             "format": "double"
+          },
+          "model": {
+            "type": "string"
           },
           "predicted_log_return": {
             "type": "number",

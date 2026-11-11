@@ -284,6 +284,7 @@ export interface components {
             bars_in_window: number;
             /** Format: int64 */
             data_age_ms: number;
+            dataset: string;
             feed_latency: string;
             /** Format: int64 */
             generated_at_ms: number;
@@ -291,6 +292,7 @@ export interface components {
             implied_close: number;
             /** Format: double */
             last_close: number;
+            model: string;
             /** Format: double */
             predicted_log_return: number;
             /** Format: double */

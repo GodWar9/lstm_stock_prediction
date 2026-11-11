@@ -11,7 +11,7 @@ export function Forecast() {
   const models = useQuery({ queryKey: ['models'], queryFn: () => json<Model[]>('/api/models'), staleTime: 0 });
   const datasets = useQuery({ queryKey: ['datasets'], queryFn: () => json<Dataset[]>('/api/datasets'), staleTime: 0 });
   const marketStatus = useQuery({ queryKey: ['market-status'], queryFn: () => json<components['schemas']['MarketStatus']>('/api/market/status'), staleTime: 60_000 });
-  const liveStatus = useQuery({ queryKey: ['live-status'], queryFn: () => json<components['schemas']['Snapshot']>('/api/live'), staleTime: 5000 });
+  const liveStatus = useQuery({ queryKey: ['live-status'], queryFn: () => json<components['schemas']['Snapshot']>('/api/live'), staleTime: 5000, refetchInterval: 5000 });
   const [dataMode, setDataMode] = useState<'recorded' | 'fresh' | 'live'>('recorded');
   const fresh = dataMode === 'fresh';
   const live = dataMode === 'live';
@@ -45,7 +45,7 @@ export function Forecast() {
       </div>}
       {live && <div className="warning">
         <p>{liveStatus.data?.status === 'disabled' ? 'Live market feed is disabled on the server. Set QUANTCTL_LIVE_SYMBOLS, APCA_API_KEY_ID and APCA_API_SECRET_KEY in server environment.' : `Live feed: ${liveStatus.data?.status ?? 'connecting…'} · Provider: Alpaca (${liveStatus.data?.feed ?? 'iex'}) · Symbols: ${liveStatus.data?.symbols.join(', ') || 'none'}`}</p>
-        <p>Live streaming mode updates the model feature window from real-time WebSocket bars under strict point-in-time constraints. Requires an interval-matched model (1m bars).</p>
+        <p>Live streaming mode updates the model feature window from real-time WebSocket bars under strict point-in-time constraints. Requires a 1m model trained on the same Alpaca feed and symbol, and a fresh completed regular-session minute. Requests do not refresh automatically.</p>
       </div>}
       {(models.isPending || datasets.isPending) && <p role="status">The backend may take a minute to wake up. Loading models and datasets…</p>}
       {(models.error || datasets.error) && <div role="alert">{models.error?.message ?? datasets.error?.message}<button onClick={() => { void models.refetch(); void datasets.refetch(); }}>Reload inputs</button></div>}
@@ -57,7 +57,7 @@ export function Forecast() {
       {!!selected?.market && <p>Market: {String(datasetMarket.provider_symbol)} · {String(datasetMarket.exchange)} · {String(datasetMarket.currency)} · {String(datasetMarket.timezone)}</p>}
       {marketMismatch && <p role="alert">Model and dataset market identities differ. Select the same symbol, exchange, currency and feature settings.</p>}
       {mismatch && <p role="alert">Model uses {interval} bars; this dataset uses {selected?.interval}. Select matching intervals.</p>}
-      <button disabled={!model || !selected || mismatch || marketMismatch || forecast.isPending || (fresh && (!marketStatus.data?.configured || !freshCompatible)) || (live && liveStatus.data?.status === 'disabled')} onClick={() => { if (selected) forecast.mutate(new URLSearchParams({ model: modelId, dataset: selected.dataset, symbol: selected.symbol, fresh: String(fresh), live: String(live) })); }}>{forecast.isPending ? 'Computing forecast…' : 'Generate forecast'}</button>
+      <button disabled={!model || !selected || mismatch || marketMismatch || forecast.isPending || (fresh && (!marketStatus.data?.configured || !freshCompatible)) || (live && (liveStatus.data?.status !== 'connected' || interval !== '1m' || !liveStatus.data.symbols.includes(selected?.symbol ?? '')))} onClick={() => { if (selected) forecast.mutate(new URLSearchParams({ model: modelId, dataset: selected.dataset, symbol: selected.symbol, fresh: String(fresh), live: String(live) })); }}>{forecast.isPending ? 'Computing forecast…' : 'Generate forecast'}</button>
       {forecast.isPending && <p role="status">Verifying artifact hashes, building features and running inference…</p>}
       {forecast.error && <div role="alert"><h3>Forecast unavailable</h3><p>{forecast.error.message}</p><p>Use a complete, integrity-sealed model and a compatible dataset. Legacy packages must be retrained.</p></div>}
     </section>

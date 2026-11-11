@@ -19,3 +19,12 @@ describe('live snapshot contract', () => {
     expect(freshTrade({ ...price, received_at_ms: now + 1 }, now)).toBe(false);
   });
 });
+
+test('validates completed bars and forecasts before rendering', () => {
+  const bar = { timestamp: new Date(now).toISOString(), close_time_ms: now, availability_ms: now + 500, open: 100, high: 101, low: 99, close: 100, volume: 10 };
+  expect(parseLiveSnapshot({ ...snapshot, latest_bars: { AAPL: bar } }).latest_bars?.AAPL.close).toBe(100);
+  for (const latest_bars of [{ AAPL: {} }, { AAPL: { ...bar, close: Infinity } }, { MSFT: bar }, { AAPL: { ...bar, availability_ms: now - 1 } }]) {
+    expect(() => parseLiveSnapshot({ ...snapshot, latest_bars })).toThrow();
+  }
+  expect(() => parseLiveSnapshot({ ...snapshot, live_forecasts: { AAPL: { predicted_return: null } } })).toThrow();
+});
