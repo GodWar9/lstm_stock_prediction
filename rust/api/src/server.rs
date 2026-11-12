@@ -892,7 +892,7 @@ async fn access_policy(
             .insert(header::CACHE_CONTROL, "private, no-store".parse().unwrap());
     }
     response.headers_mut().insert(header::CONTENT_SECURITY_POLICY,
-        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; worker-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'".parse().unwrap());
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.exchange.coinbase.com wss://ws-feed.exchange.coinbase.com; worker-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'".parse().unwrap());
     response
         .headers_mut()
         .insert(header::X_CONTENT_TYPE_OPTIONS, "nosniff".parse().unwrap());

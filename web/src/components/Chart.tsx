@@ -4,7 +4,7 @@ import 'uplot/dist/uPlot.min.css';
 import type { Columns } from '../arrow/decode';
 import { number, utc } from '../lib/format';
 
-export function Chart({ title, data, x, ys, time = false }: { title: string; data: Columns; x: string; ys: string[]; time?: boolean }) {
+export function Chart({ title, data, x, ys, time = false, intraday = false }: { title: string; data: Columns; x: string; ys: string[]; time?: boolean; intraday?: boolean }) {
   const container = useRef<HTMLDivElement>(null);
   const [table, setTable] = useState(false);
   useEffect(() => {
@@ -13,14 +13,14 @@ export function Chart({ title, data, x, ys, time = false }: { title: string; dat
     const palette = ['#2454cb', '#147d72', '#b83352'];
     const plot = new uPlot({ width: el.clientWidth || 600, height: 290,
       scales: { x: { time: false } },
-      axes: [{ space: time ? 110 : 50, values: (_u, ticks) => ticks.map(t => time ? utc(t) : number(t, 0)) }, { size: 80 }],
-      series: [{ label: time ? 'UTC date' : x }, ...ys.map((label, i) => ({ label, stroke: palette[i % palette.length], width: 2, points: { show: false } }))],
+      axes: [{ space: time ? 110 : 50, values: (_u, ticks) => ticks.map(t => time ? (intraday ? new Date(t).toISOString().slice(11, 16) : utc(t)) : number(t, 0)) }, { size: 80 }],
+      series: [{ label: time ? (intraday ? 'UTC time' : 'UTC date') : x }, ...ys.map((label, i) => ({ label, stroke: palette[i % palette.length], width: 2, points: { show: false } }))],
       legend: { show: true }, cursor: { drag: { x: true, y: false } },
     }, [data[x], ...ys.map(y => data[y] ?? [])], el);
     const observer = new ResizeObserver(() => plot.setSize({ width: el.clientWidth, height: 290 }));
     observer.observe(el);
     return () => { observer.disconnect(); plot.destroy(); };
-  }, [data, x, ys.join(','), time]);
+  }, [data, x, ys.join(','), time, intraday]);
   return <section className="panel"><div className="panel-heading"><h2>{title}</h2><button onClick={() => setTable(!table)} aria-expanded={table}>{table ? 'Hide data table' : 'View data table'}</button></div>
     {data[x]?.length ? <div ref={container} role="img" aria-label={`${title}. ${data[x].length} observations. Data table available below.`} /> : <p>No observations in this range.</p>}
     {table && <DataTable data={data} columns={[x, ...ys]} />}

@@ -9,10 +9,10 @@ import { createBridge } from './bridge.js';
 const headers = {
   'x-content-type-options': 'nosniff',
   'referrer-policy': 'no-referrer',
-  'content-security-policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; worker-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
+  'content-security-policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.exchange.coinbase.com wss://ws-feed.exchange.coinbase.com; worker-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
 };
 const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png' };
-const pages = new Set(['/', '/forecast', '/live', '/backtest', '/validation', '/models', '/signals', '/risk', '/jobs']);
+const pages = new Set(['/terminal', '/', '/forecast', '/live', '/backtest', '/validation', '/models', '/signals', '/risk', '/jobs']);
 
 export async function startContainerApp({ binary = '/usr/local/bin/quantctl', root = '/app',
   assets = '/site', port = Number(process.env.PORT ?? 8080), host = '0.0.0.0' } = {}) {
