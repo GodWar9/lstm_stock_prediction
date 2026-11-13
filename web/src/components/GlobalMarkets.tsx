@@ -14,7 +14,34 @@ export function SecuritiesExplorer({ asset, selected, onSelect }: { asset: strin
     {query.data && <><div className="catalog-pages"><button disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - 50))}>Previous</button><span>{offset + (query.data.items.length ? 1 : 0)}–{offset + query.data.items.length} / {query.data.total.toLocaleString()}</span><button disabled={offset + 50 >= query.data.total} onClick={() => setOffset(offset + 50)}>Next</button></div><p className="panel-caption">Twelve Data catalogue{query.data.asOf ? ` · ${query.data.asOf.slice(0,10)}` : ''}. Listings do not imply price entitlement.</p></>}
   </>;
 }
-export function GlobalMarketPanels({ security }: { security: Security | null }) {
+type ReferenceHistory = {
+  symbol: string; currency: string; source: string; sourceUrl: string; asOf: string; stale: boolean;
+  points: { date: string; rate: number }[];
+  metrics: { last: number; changePct: number | null; low30: number; high30: number; mean30: number; observations: number; windowObservations: number };
+};
+
+function ForexReferencePanels({ security }: { security: Security | null }) {
+  const symbol = security?.symbol ?? 'EUR/USD';
+  const [range, setRange] = useState(90);
+  const history = useQuery({ queryKey: ['forex-reference', symbol], queryFn: () => json<ReferenceHistory>('/api/markets/reference?' + new URLSearchParams({ symbol })), staleTime: 6 * 3600000, refetchInterval: 6 * 3600000, retry: false });
+  const data = history.data, metrics = data?.metrics;
+  const points = data?.points.filter(p => p.date >= new Date(Date.parse(data.asOf) - range * 86400000).toISOString().slice(0,10)) ?? [];
+  const fmt = (n: number | null | undefined) => n == null ? '—' : n.toLocaleString('en-US', { maximumFractionDigits: 5 });
+  const low = Math.min(...points.map(p => p.rate)), high = Math.max(...points.map(p => p.rate));
+  const span = high - low || high * .01 || 1;
+  const first = Date.parse(points[0]?.date ?? ''), duration = Date.parse(points.at(-1)?.date ?? '') - first || 1;
+  const x = (date: string) => 30 + (Date.parse(date) - first) / duration * 760;
+  const y = (rate: number) => 35 + (high - rate) / span * 230;
+  return <><section className="instrument-overview"><span className="terminal-eyebrow">FREE DAILY FOREX</span><h3>{symbol}</h3><p>Currency reference rate · {symbol.split('/')[1]} per {symbol.split('/')[0]}</p><div className="last-price">{fmt(metrics?.last)}</div><div className="terminal-metrics">{[['Change vs previous observation', metrics?.changePct == null ? '—' : `${fmt(metrics.changePct)}%`], ['30-observation low', fmt(metrics?.low30)], ['30-observation high', fmt(metrics?.high30)], ['30-observation mean', fmt(metrics?.mean30)]].map(([name,value]) => <div key={name}><span>{name}</span><strong>{value}</strong></div>)}</div><p className="panel-caption">{data ? `Observation date: ${data.asOf}. ${data.stale ? 'Stale: over seven days old.' : 'Daily reference; not a live quote.'}` : 'Loading daily reference history…'}</p>{history.error && <p role="alert">Free reference history unavailable for {symbol}. <button onClick={() => void history.refetch()}>Retry</button></p>}</section>
+    <section className="terminal-panel terminal-chart"><div className="chart-toolbar"><h3>{symbol} · Reference history</h3><select aria-label="Reference history range" value={range} onChange={e => setRange(Number(e.target.value))}><option value={30}>1 month</option><option value={90}>3 months</option><option value={365}>1 year</option></select></div>{history.isFetching && <p role="status">Loading reference rates…</p>}{points.length ? <svg viewBox="0 0 900 330" role="img" aria-label={`${symbol} daily reference rates. ${points.length} observations.`} style={{width:'100%'}}><polyline points={points.map(p => `${x(p.date)},${y(p.rate)}`).join(' ')} fill="none" stroke="#e99650" strokeWidth="2"/>{[0,1,2,3,4].map(i => { const rate = high - span * i / 4; return <g key={i}><line x1="30" x2="790" y1={y(rate)} y2={y(rate)} stroke="#39413d" strokeDasharray="3 5"/><text x="805" y={y(rate)+4} fill="#aab5af" fontSize="12">{fmt(rate)}</text></g>; })}<text x="30" y="310" fill="#aab5af" fontSize="12">{points[0].date}</text><text x="790" y="310" textAnchor="end" fill="#aab5af" fontSize="12">{points.at(-1)?.date}</text></svg> : <div className="chart-empty">No reference observations available.</div>}<p className="panel-caption">Daily reference rates from <a href="https://frankfurter.dev/" target="_blank" rel="noreferrer">Frankfurter</a>. No intraday OHLC or volume is inferred. Missing dates are not filled; lines connect observations.</p><details className="candle-table"><summary>View reference observations</summary><div><table><thead><tr><th>Date</th><th>{symbol.split('/')[1]} per {symbol.split('/')[0]}</th></tr></thead><tbody>{points.slice().reverse().map(p => <tr key={p.date}><td>{p.date}</td><td>{fmt(p.rate)}</td></tr>)}</tbody></table></div></details></section>
+    <section className="terminal-panel global-info"><h3>Reference analytics</h3><dl><dt>Source</dt><dd>Frankfurter · blended daily rates</dd><dt>History observations</dt><dd>{metrics?.observations ?? '—'}</dd><dt>Metric window</dt><dd>{metrics ? `${metrics.windowObservations} observations` : '—'}</dd><dt>Monthly data cost</dt><dd>₹0 · No API key</dd></dl><p className="panel-caption">Range, mean and change are calculated from observed reference rates. They are descriptive statistics, not LSTM forecasts. Use the forecast workspace below for model inference on its named dataset.</p></section></>;
+}
+
+export function GlobalMarketPanels({ security, asset }: { security: Security | null; asset: string }) {
+  return asset === 'Forex' ? <ForexReferencePanels key={security?.symbol ?? 'EUR/USD'} security={security}/> : <StockMarketPanels security={security}/>;
+}
+
+function StockMarketPanels({ security }: { security: Security | null }) {
   const [interval, setInterval] = useState('1day');
   const status = useQuery({ queryKey: ['global-status'], queryFn: () => json<{configured: boolean}>('/api/markets/status'), staleTime: 60000 });
   const snapshot = useQuery({ queryKey: ['global-snapshot', security?.symbol, security?.exchange, security?.currency, interval], enabled: !!security && status.data?.configured === true, queryFn: () => json<{ bars: number[][]; currency: string; asOf: number; delay: string; volumeAvailable: boolean }>('/api/markets/snapshot?' + new URLSearchParams({ symbol: security!.symbol, exchange: security!.exchange, currency: security!.currency, interval })), staleTime: 60000, retry: false });

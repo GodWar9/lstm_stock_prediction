@@ -8,6 +8,59 @@ async function call(handler, url, method = 'GET') {
   return { status, body };
 }
 const history = { meta: { symbol: 'AAPL', exchange: 'NASDAQ', currency: 'USD' }, values: [{ datetime: '2026-11-12', low: '99', high: '102', open: '100', close: '101', volume: '20' }] };
+const referenceRows = [
+  { date: '2026-11-10', base: 'EUR', quote: 'USD', rate: 1.1 },
+  { date: '2026-11-12', base: 'EUR', quote: 'USD', rate: 1.21 },
+];
+
+test('free forex uses no credential, preserves gaps and calculates observed metrics', async () => {
+  let requests = 0;
+  let clock = Date.parse('2026-11-13T12:00:00Z');
+  const api = createMarkets({ env: { TWELVE_DATA_API_KEY: 'secret' }, now: () => clock, fetchImpl: async (url, options) => {
+    requests++;
+    assert.equal(url.origin, 'https://api.frankfurter.dev');
+    assert.equal(url.pathname, '/v2/rates');
+    assert.equal(url.searchParams.get('base'), 'EUR');
+    assert.equal(url.searchParams.get('quotes'), 'USD');
+    assert.deepEqual(options.headers, {});
+    return Response.json(referenceRows.slice().reverse());
+  } });
+  const [a, b] = await Promise.all([call(api, '/api/markets/reference?symbol=EUR/USD'), call(api, '/api/markets/reference?symbol=EUR/USD')]);
+  assert.equal(a.status, 200); assert.deepEqual(a, b); assert.equal(requests, 1);
+  assert.deepEqual(a.body.points, referenceRows.map(({ date, rate }) => ({ date, rate })));
+  assert.ok(Math.abs(a.body.metrics.changePct - 10) < 1e-10);
+  assert.equal(a.body.metrics.mean30, 1.155);
+  assert.equal(a.body.metrics.observations, 2); assert.equal(a.body.stale, false);
+  assert.equal(a.body.bars, undefined); // Reference rates must never be invented OHLC bars.
+  await call(api, '/api/markets/reference?symbol=EUR/USD'); assert.equal(requests, 1);
+  clock += 6 * 3600000 + 1;
+  await call(api, '/api/markets/reference?symbol=EUR/USD'); assert.equal(requests, 2);
+});
+
+test('reference validation rejects invalid pairs without network access', async () => {
+  const api = createMarkets({ fetchImpl: () => assert.fail('invalid request must not reach provider') });
+  for (const symbol of ['EUR/EUR', 'https://evil', 'EUR/USD,GBP', 'BTC-USD']) {
+    assert.equal((await call(api, '/api/markets/reference?symbol=' + encodeURIComponent(symbol))).status, 400);
+  }
+});
+
+test('reference history rejects wrong instruments, malformed dates, duplicates and nonpositive rates', async () => {
+  const valid = referenceRows[0];
+  for (const rows of [[{...valid,quote:'JPY'}], [{...valid,rate:0}], [{...valid,rate:'1.1'}], [{...valid,date:'2026-02-30'}], [{...valid,date:'2099-01-01'}], [valid,valid]]) {
+    const api = createMarkets({ now: () => Date.parse('2026-11-13'), fetchImpl: async () => Response.json(rows) });
+    assert.equal((await call(api, '/api/markets/reference?symbol=EUR/USD')).status, 502);
+  }
+});
+
+test('reference empty, stale and failed providers have honest states', async () => {
+  const make = rows => createMarkets({ now: () => Date.parse('2026-11-13'), fetchImpl: async () => Response.json(rows) });
+  assert.equal((await call(make([]), '/api/markets/reference?symbol=EUR/USD')).status, 404);
+  const stale = await call(make([{...referenceRows[0], date:'2026-10-01'}]), '/api/markets/reference?symbol=EUR/USD');
+  assert.equal(stale.body.stale, true); assert.equal(stale.body.metrics.changePct, null);
+  const failed = createMarkets({ fetchImpl: async () => { throw new Error('sensitive upstream detail'); } });
+  const result = await call(failed, '/api/markets/reference?symbol=EUR/USD');
+  assert.equal(result.status, 502); assert.ok(!JSON.stringify(result).includes('sensitive'));
+});
 test('packaged global catalog works offline with a dated source', async () => {
   const api = createMarkets({env:{},fetchImpl:()=>assert.fail('catalog should be packaged')});
   const stocks = await call(api,'/api/markets/catalog?asset=stocks&q=AAPL');

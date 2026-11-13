@@ -50,7 +50,29 @@ export function createMarkets({ env = process.env, fetchImpl = fetch, now = Date
     try {
       const url = new URL(req.url, 'http://local');
       const action = url.pathname.split('/').pop();
-      if (action === 'status') return send(200, { configured: configured(), provider: 'Twelve Data', priceMode: 'snapshot', displayConfirmed: env.TWELVE_DATA_PUBLIC_DISPLAY === '1' });
+      if (action === 'status') return send(200, { configured: configured(), provider: 'Twelve Data', priceMode: 'snapshot', displayConfirmed: env.TWELVE_DATA_PUBLIC_DISPLAY === '1', freeForex: { provider: 'Frankfurter', mode: 'daily-reference', keyRequired: false } });
+      if (action === 'reference') {
+        const symbol = url.searchParams.get('symbol') ?? '';
+        if (!/^[A-Z]{3}\/[A-Z]{3}$/.test(symbol)) return send(400, { message: 'Choose a currency pair such as EUR/USD.' });
+        const [base, quote] = symbol.split('/');
+        if (base === quote) return send(400, { message: 'Choose two different currencies.' });
+        const end = new Date(now()).toISOString().slice(0, 10);
+        const start = new Date(now() - 365 * 86400000).toISOString().slice(0, 10);
+        const raw = await load('https://api.frankfurter.dev/v2/rates', { base, quotes: quote, from: start, to: end }, 6 * 3600000);
+        if (!Array.isArray(raw)) throw new Error('Invalid reference series');
+        const seen = new Set();
+        const points = raw.map(r => {
+          const date = typeof r.date === 'string' ? r.date : '';
+          const stamp = Date.parse(date + 'T00:00:00Z');
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(stamp) || new Date(stamp).toISOString().slice(0,10) !== date || date < start || date > end || r.base !== base || r.quote !== quote || typeof r.rate !== 'number' || !Number.isFinite(r.rate) || r.rate <= 0 || seen.has(date)) throw new Error('Invalid reference observation');
+          seen.add(date);
+          return { date, rate: r.rate };
+        }).sort((a, b) => a.date.localeCompare(b.date));
+        if (!points.length) return send(404, { message: 'No free daily reference history is available for this pair.' });
+        const last = points.at(-1), previous = points.at(-2);
+        const recent = points.slice(-30).map(p => p.rate);
+        return send(200, { symbol, currency: quote, source: 'Frankfurter blended reference rates', sourceUrl: 'https://frankfurter.dev/', mode: 'daily-reference', asOf: last.date, fetchedAt: new Date(now()).toISOString(), stale: now() - Date.parse(last.date + 'T00:00:00Z') > 7 * 86400000, points, metrics: { last: last.rate, changePct: previous ? (last.rate / previous.rate - 1) * 100 : null, low30: Math.min(...recent), high30: Math.max(...recent), mean30: recent.reduce((a,b) => a+b, 0) / recent.length, observations: points.length, windowObservations: recent.length }, delay: 'Daily reference rates, not executable or streaming quotes. Missing dates are not filled.' });
+      }
       if (action === 'catalog') {
         const asset = url.searchParams.get('asset');
         if (!['stocks', 'forex'].includes(asset)) return send(400, { message: 'Choose stocks or forex' });
