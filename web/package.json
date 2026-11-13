@@ -10,7 +10,7 @@
     "test:e2e": "playwright test",
     "contract": "node scripts/contract.mjs",
     "contract:check": "node scripts/contract.mjs --check",
-    "test:bridge": "node --test scripts/bridge.test.mjs",
+    "test:bridge": "node --test scripts/bridge.test.mjs scripts/markets.test.mjs",
     "test:deployment": "node scripts/deployment-smoke.mjs",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",

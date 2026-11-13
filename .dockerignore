@@ -27,3 +27,6 @@ rust/target/
 !web/api/
 !web/api/bridge.js
 !web/api/container.mjs
+!web/api/markets.mjs
+!web/data/
+!web/data/securities.json.gz

@@ -10,10 +10,10 @@ export function Chart({ title, data, x, ys, time = false, intraday = false }: { 
   useEffect(() => {
     if (!container.current || !data[x]?.length) return;
     const el = container.current;
-    const palette = ['#2454cb', '#147d72', '#b83352'];
+    const palette = ['#ed9b50', '#63c195', '#e98285'];
     const plot = new uPlot({ width: el.clientWidth || 600, height: 290,
       scales: { x: { time: false } },
-      axes: [{ space: time ? 110 : 50, values: (_u, ticks) => ticks.map(t => time ? (intraday ? new Date(t).toISOString().slice(11, 16) : utc(t)) : number(t, 0)) }, { size: 80 }],
+      axes: [{ stroke: '#9ba8a8', grid: { stroke: '#303a3a' }, space: time ? 110 : 50, values: (_u, ticks) => ticks.map(t => time ? (intraday ? new Date(t).toISOString().slice(11, 16) : utc(t)) : number(t, 0)) }, { size: 80, stroke: '#9ba8a8', grid: { stroke: '#303a3a' } }],
       series: [{ label: time ? (intraday ? 'UTC time' : 'UTC date') : x }, ...ys.map((label, i) => ({ label, stroke: palette[i % palette.length], width: 2, points: { show: false } }))],
       legend: { show: true }, cursor: { drag: { x: true, y: false } },
     }, [data[x], ...ys.map(y => data[y] ?? [])], el);

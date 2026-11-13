@@ -5,6 +5,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { resolve, sep, extname } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createBridge } from './bridge.js';
+import { createMarkets } from './markets.mjs';
 
 const headers = {
   'x-content-type-options': 'nosniff',
@@ -19,8 +20,10 @@ export async function startContainerApp({ binary = '/usr/local/bin/quantctl', ro
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('Invalid public port');
   assets = resolve(assets);
   const token = randomBytes(32).toString('hex');
-  const env = { ...process.env, QUANTCTL_BACKEND_TOKEN: token, QUANTCTL_ALLOW_NETWORK: '0' };
-  for (const key of ['QUANTCTL_LIVE_SYMBOLS', 'APCA_API_KEY_ID', 'APCA_API_SECRET_KEY', 'TWELVE_DATA_API_KEY']) delete env[key];
+  const globalEnabled = process.env.TWELVE_DATA_PUBLIC_DISPLAY === '1' && Boolean(process.env.TWELVE_DATA_API_KEY);
+  const env = { ...process.env, QUANTCTL_BACKEND_TOKEN: token, QUANTCTL_ALLOW_NETWORK: globalEnabled ? '1' : '0' };
+  if (!globalEnabled) delete env.TWELVE_DATA_API_KEY;
+  for (const key of ['QUANTCTL_LIVE_SYMBOLS', 'APCA_API_KEY_ID', 'APCA_API_SECRET_KEY']) delete env[key];
   const child = spawn(binary, ['serve', '--remote', '--workers', '1', '--port', '0', '--root', root], {
     cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -52,8 +55,10 @@ export async function startContainerApp({ binary = '/usr/local/bin/quantctl', ro
       });
     });
     const bridge = createBridge({ env: { QUANTCTL_BACKEND_URL: backend, QUANTCTL_BACKEND_TOKEN: token } });
+    const markets = createMarkets();
     server = createServer(async (req, res) => {
       for (const [key, value] of Object.entries(headers)) res.setHeader(key, value);
+      if (req.url?.startsWith('/api/markets/')) return markets(req, res);
       if (req.url?.startsWith('/api/')) return bridge(req, res);
       try {
         if (!['GET', 'HEAD'].includes(req.method)) {

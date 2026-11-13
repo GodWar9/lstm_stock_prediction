@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { candles, levels, numeric } from './market';
+import { candles, levels, numeric, parseCatalog } from './market';
 describe('public market validation', () => {
   it('orders candles chronologically and rejects impossible OHLC', () => {
     expect(candles([[120, 1, 3, 2, 3, 5], [60, 1, 3, 2, 2, 4]]).map(r => r[0])).toEqual([60, 120]);
@@ -12,4 +12,8 @@ describe('public market validation', () => {
   it('rejects missing, negative and nonfinite values', () => {
     for (const v of [null, '', -1, 'NaN', Infinity, false]) expect(() => numeric(v)).toThrow();
   });
+});
+
+it('filters inactive and unsafe instrument identifiers', () => {
+ expect(parseCatalog([{id:'ETH-EUR',base_currency:'ETH',quote_currency:'EUR',status:'online'}, {id:'BTC-USD',base_currency:'BTC',quote_currency:'USD',status:'offline'}, {id:'../secret',status:'online'}]).map(p=>p.id)).toEqual(['ETH-EUR']);
 });

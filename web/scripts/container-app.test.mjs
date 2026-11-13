@@ -62,6 +62,16 @@ test('single-container website preserves real inference, private backend and res
       await page.screenshot({ path: resolve(`test-results/container-app/${label}-simulation.png`), fullPage: true });
       await page.goto(app.url + '/live');
       await page.waitForFunction(() => document.querySelector('[role="status"]')?.textContent?.includes('disabled'));
+      await page.route('https://api.exchange.coinbase.com/**', route => route.fulfill({ status: 503 }));
+      await page.routeWebSocket('wss://ws-feed.exchange.coinbase.com', () => {});
+      await page.goto(app.url + '/terminal');
+      await page.getByRole('button', { name: 'Generate forecast', exact: true }).click();
+      const dashboardResult = page.getByLabel('Dashboard forecast result');
+      await dashboardResult.waitFor();
+      assert.match(await dashboardResult.innerText(), /96\.0497/);
+      assert.match(await page.locator('.research-panel').innerText(), /Synthetic demonstration/);
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+      await page.screenshot({ path: resolve(`test-results/container-app/${label}-terminal.png`), fullPage: true });
       await page.close();
     }
     assert.deepEqual(errors, []);

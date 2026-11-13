@@ -4,6 +4,7 @@ COPY web/package.json web/package-lock.json ./
 RUN npm ci
 COPY web/index.html web/tsconfig*.json web/vite.config.ts ./
 COPY web/src/ src/
+COPY web/api/markets.mjs api/markets.mjs
 RUN npm run build
 
 FROM rust:1.96-bookworm AS inference
@@ -21,8 +22,9 @@ FROM node:22-bookworm-slim AS runtime
 COPY --from=inference /source/rust/target/release/quantctl /usr/local/bin/quantctl
 COPY --from=artifacts --chown=node:node /artifacts /app
 COPY --from=frontend /source/web/dist /site
+COPY web/data/securities.json.gz /data/securities.json.gz
 WORKDIR /server
-COPY web/api/bridge.js web/api/container.mjs web/package.json ./
+COPY web/api/bridge.js web/api/markets.mjs web/api/container.mjs web/package.json ./
 USER node
 ENV PORT=8080
 EXPOSE 8080
