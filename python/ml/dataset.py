@@ -5,6 +5,20 @@ import numpy as np
 import pandas as pd
 
 
+def validate_split_indices(splits, n_samples: int, purge_bars: int, embargo_bars: int):
+    """Reject invalid externally supplied folds before fitting or evaluating."""
+    if purge_bars < 0 or embargo_bars < 0:
+        raise ValueError("Purge and embargo must be nonnegative")
+    for indices in splits:
+        if (len(indices) == 0 or not np.issubdtype(indices.dtype, np.integer)
+                or indices[0] < 0 or indices[-1] >= n_samples
+                or np.any(np.diff(indices) <= 0)):
+            raise ValueError("Split indices must be nonempty, ordered and in bounds")
+    for left, right in zip(splits, splits[1:]):
+        if right[0] - left[-1] - 1 < purge_bars + embargo_bars:
+            raise ValueError("Split violates purge and embargo separation")
+
+
 class PurgedWalkForwardSplitter:
     """Purged and embargoed cross-validation splitter for financial time series.
     

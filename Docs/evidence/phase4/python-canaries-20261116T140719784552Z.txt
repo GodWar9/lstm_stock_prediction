@@ -1,0 +1,33 @@
+{
+  "command": [
+    ".\\python\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "python/tests/test_validity_canaries.py",
+    "-v",
+    "-s"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T140719784552Z",
+  "commit": "48269b4155f170437d8a07d403ef2f9784762490",
+  "status": " M python/ml/dataset.py\n M python/ml/train_orchestrator.py\n M rust/data/tests/pit_property_tests.rs\n?? python/tests/test_validity_canaries.py\n",
+  "working_diff_sha256": "8d28a966caf5b9a7353a8e9834a30505ca2811d446cd0f9f931cbfd878e8c5b2"
+}
+
+============================= test session starts =============================
+platform win32 -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python
+configfile: pyproject.toml
+collecting ... collected 3 items
+
+python\tests\test_validity_canaries.py::test_orchestrator_rejects_purge_embargo_violation [Python ML] Training model 'canary' (lookback=4, hidden=64, epochs=5)...
+PASSED
+python\tests\test_validity_canaries.py::test_orchestrator_scaler_sees_only_train_fold [Python ML] Training model 'canary' (lookback=4, hidden=64, epochs=5)...
+PASSED
+python\tests\test_validity_canaries.py::test_shuffled_labels_have_no_heldout_ic SYNTHETIC CANARY ONLY: IC=0.009497525170445442; p=0.6675185561180115; CI99=ConfidenceInterval(low=np.float32(-0.047426652), high=np.float32(0.06636022))
+PASSED
+
+============================= 3 passed in 17.08s ==============================
+
+EXIT_CODE=0

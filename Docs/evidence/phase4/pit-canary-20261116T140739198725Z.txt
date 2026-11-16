@@ -1,0 +1,38 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "-p",
+    "quant_data",
+    "--locked",
+    "lookahead_feature_canary"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T140739198725Z",
+  "commit": "48269b4155f170437d8a07d403ef2f9784762490",
+  "status": " M python/ml/dataset.py\n M python/ml/train_orchestrator.py\n M rust/data/tests/pit_property_tests.rs\n?? Docs/evidence/phase4/\n?? python/tests/test_validity_canaries.py\n",
+  "working_diff_sha256": "8d28a966caf5b9a7353a8e9834a30505ca2811d446cd0f9f931cbfd878e8c5b2"
+}
+
+   Compiling quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\pit_property_tests-0gevlcxkirjrs\s-ho7t80npgq-1a3ohav-working`
+
+warning: `quant_data` (test "pit_property_tests") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.40s
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_data-48e0981adc73e256.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.00s
+
+     Running tests\pit_property_tests.rs (rust\target\debug\deps\pit_property_tests-03589c7b88d58057.exe)
+
+running 1 test
+test lookahead_feature_canary_rejects_future_close ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+EXIT_CODE=0

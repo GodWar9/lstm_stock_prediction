@@ -1,0 +1,242 @@
+{
+  "command": [
+    ".\\python\\.venv\\Scripts\\python.exe",
+    "scripts/check_canary_mutations.py"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T140816381471Z",
+  "commit": "48269b4155f170437d8a07d403ef2f9784762490",
+  "status": " M python/ml/dataset.py\n M python/ml/train_orchestrator.py\n M rust/data/tests/pit_property_tests.rs\n?? Docs/evidence/phase4/\n?? python/tests/test_validity_canaries.py\n?? scripts/check_canary_mutations.py\n",
+  "working_diff_sha256": "8d28a966caf5b9a7353a8e9834a30505ca2811d446cd0f9f931cbfd878e8c5b2"
+}
+
+
+MUTATION future-feature: rust/data/src/validate.rs
+COMMAND ['cargo', 'test', '--manifest-path', 'rust/Cargo.toml', '-p', 'quant_data', '--locked', 'lookahead_feature_canary']
+ORIGINAL_SHA256 1430808d361930d4842caf3a9cfda7265e752d6f54689a5868983ca8df41f935
+   Compiling quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_data-1egjdfi3whan7\s-ho7t8lr9hy-0scxgqh-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_data-2qghyrkwo5h9l\s-ho7t8lrg9x-10s3a1h-working`
+
+warning: `quant_data` (lib test) generated 1 warning
+warning: `quant_data` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\pit_property_tests-0gevlcxkirjrs\s-ho7t8ohyw8-0db1xvj-working`
+
+warning: `quant_data` (test "pit_property_tests") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.41s
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_data-48e0981adc73e256.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.00s
+
+     Running tests\pit_property_tests.rs (rust\target\debug\deps\pit_property_tests-03589c7b88d58057.exe)
+
+running 1 test
+test lookahead_feature_canary_rejects_future_close ... FAILED
+
+failures:
+
+---- lookahead_feature_canary_rejects_future_close stdout ----
+
+thread 'lookahead_feature_canary_rejects_future_close' (12732) panicked at data\tests\pit_property_tests.rs:15:5:
+assertion failed: check_feature_target_leakage(future_close_availability,
+        decision_time).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    lookahead_feature_canary_rejects_future_close
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p quant_data --test pit_property_tests`
+
+MUTATION DETECTED exit=101
+RESTORED rust/data/src/validate.rs
+
+MUTATION purge-embargo: python/ml/dataset.py
+COMMAND ['C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\python\\.venv\\Scripts\\python.exe', '-m', 'pytest', '-v', '-s', 'python/tests/test_validity_canaries.py::test_orchestrator_rejects_purge_embargo_violation']
+ORIGINAL_SHA256 9344590b847295ed7bba83f6acc6a9f7489081604b264a09917ef0e48a5b078a
+============================= test session starts =============================
+platform win32 -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python
+configfile: pyproject.toml
+collecting ... collected 1 item
+
+python\tests\test_validity_canaries.py::test_orchestrator_rejects_purge_embargo_violation [Python ML] Training model 'canary' (lookback=4, hidden=64, epochs=5)...
+FAILED
+
+================================== FAILURES ===================================
+______________ test_orchestrator_rejects_purge_embargo_violation ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002B15911D220>
+tmp_path = WindowsPath('C:/Users/Sahil/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/AC/#!sandbox.{0ccc472c-7003-403e-b850-5cf7a7f86dd7}/Temp/pytest-of-Sahil/pytest-0/test_orchestrator_rejects_purg0')
+
+    def test_orchestrator_rejects_purge_embargo_violation(monkeypatch, tmp_path):
+        _, cfg = fixture(monkeypatch)
+        # No label overlap, but fewer unused rows than the declared purge+embargo.
+        args = SimpleNamespace(walk_forward=False, _indices=(
+            np.arange(100), np.arange(102, 200), np.arange(210, 400)))
+        def must_not_fit(*args):
+            pytest.fail('Invalid fold reached scaler fitting')
+        monkeypatch.setattr(FeatureScaler, 'fit_transform', must_not_fit)
+        with pytest.raises(ValueError, match='purge and embargo'):
+>           orchestrator.train_and_export(args, cfg, 'canary', tmp_path)
+
+python\tests\test_validity_canaries.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python\ml\train_orchestrator.py:243: in train_and_export
+    scaled_train = scaler.fit_transform(raw_features[train_idx])
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+args = (<python.ml.dataset.FeatureScaler object at 0x000002B1107D5A90>, array([[  0.,   1.,   2.],
+       [  3.,   4.,   5.],...  [288., 289., 290.],
+       [291., 292., 293.],
+       [294., 295., 296.],
+       [297., 298., 299.]], dtype=float32))
+
+    def must_not_fit(*args):
+>       pytest.fail('Invalid fold reached scaler fitting')
+E       Failed: Invalid fold reached scaler fitting
+
+python\tests\test_validity_canaries.py:34: Failed
+=========================== short test summary info ===========================
+FAILED python\tests\test_validity_canaries.py::test_orchestrator_rejects_purge_embargo_violation
+============================== 1 failed in 7.52s ==============================
+
+MUTATION DETECTED exit=1
+RESTORED python/ml/dataset.py
+
+MUTATION train-only-scaler: python/ml/train_orchestrator.py
+COMMAND ['C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\python\\.venv\\Scripts\\python.exe', '-m', 'pytest', '-v', '-s', 'python/tests/test_validity_canaries.py::test_orchestrator_scaler_sees_only_train_fold']
+ORIGINAL_SHA256 4c89bbb1623b36f8493e5ed6906f2e1adfd3aaade976323683df3141b0a6e10c
+============================= test session starts =============================
+platform win32 -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python
+configfile: pyproject.toml
+collecting ... collected 1 item
+
+python\tests\test_validity_canaries.py::test_orchestrator_scaler_sees_only_train_fold [Python ML] Training model 'canary' (lookback=4, hidden=64, epochs=5)...
+FAILED
+
+================================== FAILURES ===================================
+________________ test_orchestrator_scaler_sees_only_train_fold ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000024D0A83D220>
+tmp_path = WindowsPath('C:/Users/Sahil/AppData/Local/Packages/OpenAI.Codex_2p2nqsd0c76g0/AC/#!sandbox.{0ccc472c-7003-403e-b850-5cf7a7f86dd7}/Temp/pytest-of-Sahil/pytest-1/test_orchestrator_scaler_sees_0')
+
+    def test_orchestrator_scaler_sees_only_train_fold(monkeypatch, tmp_path):
+        features, cfg = fixture(monkeypatch)
+        train, _, _ = PurgedWalkForwardSplitter(3, 4).split_train_test(400, .7, .15)
+        original = FeatureScaler.fit
+        class StopAfterScaling(Exception):
+            pass
+        def check_fit(self, values):
+            original(self, values)
+            np.testing.assert_array_equal(values, features[train])
+            np.testing.assert_allclose(self.mean_, features[train].mean(axis=0))
+            raise StopAfterScaling()
+        monkeypatch.setattr(FeatureScaler, 'fit', check_fit)
+        with pytest.raises(StopAfterScaling):
+>           orchestrator.train_and_export(SimpleNamespace(walk_forward=False), cfg, 'canary', tmp_path)
+
+python\tests\test_validity_canaries.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+python\ml\train_orchestrator.py:243: in train_and_export
+    scaled_train = scaler.fit_transform(raw_features)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+python\ml\dataset.py:127: in fit_transform
+    return self.fit(x).transform(x)
+           ^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <python.ml.dataset.FeatureScaler object at 0x0000024D41E65940>
+values = array([[0.0000e+00, 1.0000e+00, 2.0000e+00],
+       [3.0000e+00, 4.0000e+00, 5.0000e+00],
+       [6.0000e+00, 7.0000e+...1.1194e+04, 1.1195e+04, 1.1196e+04],
+       [1.1197e+04, 1.1198e+04, 1.1199e+04]],
+      shape=(400, 3), dtype=float32)
+
+    def check_fit(self, values):
+        original(self, values)
+>       np.testing.assert_array_equal(values, features[train])
+E       AssertionError: 
+E       Arrays are not equal
+E       
+E       (shapes (400, 3), (277, 3) mismatch)
+E        ACTUAL: array([[0.0000e+00, 1.0000e+00, 2.0000e+00],
+E              [3.0000e+00, 4.0000e+00, 5.0000e+00],
+E              [6.0000e+00, 7.0000e+00, 8.0000e+00],...
+E        DESIRED: array([[  0.,   1.,   2.],
+E              [  3.,   4.,   5.],
+E              [  6.,   7.,   8.],...
+
+python\tests\test_validity_canaries.py:48: AssertionError
+=========================== short test summary info ===========================
+FAILED python\tests\test_validity_canaries.py::test_orchestrator_scaler_sees_only_train_fold
+============================== 1 failed in 6.85s ==============================
+
+MUTATION DETECTED exit=1
+RESTORED python/ml/train_orchestrator.py
+
+MUTATION shuffled-label-control: python/tests/test_validity_canaries.py
+COMMAND ['C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\python\\.venv\\Scripts\\python.exe', '-m', 'pytest', '-v', '-s', 'python/tests/test_validity_canaries.py::test_shuffled_labels_have_no_heldout_ic']
+ORIGINAL_SHA256 c3fb8dadaae1b3f528c1c8356d8dc78aed8a8fad092347fa9a70ccd598386da5
+============================= test session starts =============================
+platform win32 -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python
+configfile: pyproject.toml
+collecting ... collected 1 item
+
+python\tests\test_validity_canaries.py::test_shuffled_labels_have_no_heldout_ic SYNTHETIC CANARY ONLY: IC=0.9972254037857056; p=0.0; CI99=ConfidenceInterval(low=np.float32(0.99689114), high=np.float32(0.9975238))
+FAILED
+
+================================== FAILURES ===================================
+___________________ test_shuffled_labels_have_no_heldout_ic ___________________
+
+    def test_shuffled_labels_have_no_heldout_ic():
+        # Frozen negative-control protocol: independent sequences, fixed seed, no tuning.
+        # Both train and heldout labels are permuted independently before any fitting.
+        # This is a synthetic test fixture, not the real study's final holdout.
+        previous_threads = torch.get_num_threads()
+        torch.set_num_threads(1)
+        try:
+            torch.manual_seed(819)
+            rng = np.random.default_rng(819)
+            x = rng.normal(size=(3072, 4, 3)).astype(np.float32)
+            target = x[:, -1, 0].copy()
+            train_y = target[:1024].copy()
+            test_y = target[1024:].copy()
+            model = LSTMForecaster(3, hidden_dim=8, num_layers=1, dropout=0)
+            trainer = ModelTrainer(model, torch.optim.Adam(model.parameters(), lr=.01),
+                                   torch.nn.MSELoss(), device=torch.device('cpu'))
+            loader = DataLoader(TensorDataset(torch.from_numpy(x[:1024]),
+                                             torch.from_numpy(train_y)), batch_size=128, shuffle=False)
+            for _ in range(40):
+                trainer.train_epoch(loader)
+            model.eval()
+            with torch.no_grad():
+                prediction = model(torch.from_numpy(x[1024:])).numpy().ravel()
+            result = pearsonr(prediction, test_y)
+            interval = result.confidence_interval(confidence_level=.99)
+            print(f'SYNTHETIC CANARY ONLY: IC={result.statistic}; p={result.pvalue}; CI99={interval}')
+            assert np.isfinite(result.statistic)
+>           assert interval.low <= 0 <= interval.high
+E           assert np.float32(0.99689114) <= 0
+E            +  where np.float32(0.99689114) = ConfidenceInterval(low=np.float32(0.99689114), high=np.float32(0.9975238)).low
+
+python\tests\test_validity_canaries.py:83: AssertionError
+=========================== short test summary info ===========================
+FAILED python\tests\test_validity_canaries.py::test_shuffled_labels_have_no_heldout_ic
+============================= 1 failed in 12.81s ==============================
+
+MUTATION DETECTED exit=1
+RESTORED python/tests/test_validity_canaries.py
+
+EXIT_CODE=0

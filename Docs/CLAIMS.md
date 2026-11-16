@@ -5,22 +5,24 @@ Read alongside [BLOCKED.md](BLOCKED.md) at every chunk boundary. VERIFIED requir
 | Capability | Status | Evidence or acceptance still needed |
 |---|---|---|
 | Rust workspace formatting | VERIFIED | [Phase 0 formatting](evidence/phase0/fmt-20261116T135218470334Z.txt) |
-| Versioned ingestion and leakage validation | IMPLEMENTED-UNVERIFIED | Full baseline and leakage canaries pending |
-| Rust feature store and Arrow training export | IMPLEMENTED-UNVERIFIED | Baseline tests pending |
-| LSTM training and ONNX parity publication | IMPLEMENTED-UNVERIFIED | Baseline tests pending |
-| Integrity hashes and immutable artifacts | IMPLEMENTED-UNVERIFIED | Baseline tests pending; hashes are not signatures |
-| Walk-forward training | IMPLEMENTED-UNVERIFIED | Baseline tests pending |
-| Cost-aware backtesting, risk and bootstrap simulation | IMPLEMENTED-UNVERIFIED | Baseline tests pending; no market-performance claim |
-| React inspector and requested forecasts | IMPLEMENTED-UNVERIFIED | Contract, unit and browser checks pending |
-| Alpaca minute bars feeding live forecast windows | IMPLEMENTED-UNVERIFIED | Source commits 372d0d0 and f538609; current acceptance pending |
+| Versioned ingestion and leakage validation in local fixtures | VERIFIED | [Rust baseline](evidence/phase0/rust-test-unrestricted-20261116T135433128565Z.txt); canaries tracked below |
+| Rust feature store and Arrow training export in local fixtures | VERIFIED | [Rust baseline](evidence/phase0/rust-test-unrestricted-20261116T135433128565Z.txt) |
+| LSTM training and ONNX parity publication in local fixtures | VERIFIED | [Python baseline](evidence/phase0/pytest-20261116T135417824610Z.txt) |
+| Integrity hashes and immutable artifact rejection in local fixtures | VERIFIED | [Rust baseline](evidence/phase0/rust-test-unrestricted-20261116T135433128565Z.txt); hashes are not signatures |
+| Walk-forward training in local fixtures | VERIFIED | [Python baseline](evidence/phase0/pytest-20261116T135417824610Z.txt) |
+| Cost-aware backtesting, risk and bootstrap simulation in local fixtures | VERIFIED | [Rust baseline](evidence/phase0/rust-test-unrestricted-20261116T135433128565Z.txt); no market-performance claim |
+| React inspector and requested forecasts in local fixtures | VERIFIED | [Browser acceptance](evidence/phase2/browser-20261116T140144706729Z.txt) |
+| Alpaca minute window rules under local protocol tests | VERIFIED | [API tests](evidence/phase2/api-tests-20261116T140100674278Z.txt); not real-provider acceptance |
 | Real Alpaca account and host acceptance | IMPLEMENTED-UNVERIFIED | Human session, entitlement, soak, restart, retention and restore pending |
-| Public crypto observation and global catalogues | IMPLEMENTED-UNVERIFIED | Bridge and browser checks pending; no model-input claim |
+| Public crypto observation and global catalogues | IMPLEMENTED-UNVERIFIED | [Bridge tests](evidence/phase3/bridge-20261116T140537097104Z.txt) pass; current actual-provider acceptance remains open |
 | Twelve Data fresh compatible-model forecasts | IMPLEMENTED-UNVERIFIED | Provider and compatible-model acceptance pending |
-| Daily forex reference analytics | IMPLEMENTED-UNVERIFIED | Bridge and browser checks pending; not LSTM predictions |
-| CSV default and optional Yahoo helper | IMPLEMENTED-UNVERIFIED | Baseline checks pending; Yahoo acquisition uses Python |
+| Daily forex reference analytics under provider fixtures | VERIFIED | [Bridge tests](evidence/phase3/bridge-20261116T140537097104Z.txt); not LSTM predictions or current provider acceptance |
+| CSV default and optional Yahoo helper | IMPLEMENTED-UNVERIFIED | Local CSV tests pass; actual Yahoo acquisition unverified and uses Python |
 | Offline synthetic demo and portable Windows app | IMPLEMENTED-UNVERIFIED | Current release acceptance pending |
 | Hosted Node bridge with private Rust backend | IMPLEMENTED-UNVERIFIED | Current host acceptance pending; deployment files are not deployment evidence |
-| CI validation gates | IMPLEMENTED-UNVERIFIED | Workflow exists; branch run unverified |
+| CI validation gates | IMPLEMENTED-UNVERIFIED | [actionlint](evidence/phase3/workflow-lint-unrestricted-20261116T140509224498Z.txt) passed; GitHub branch run pending |
+| Local Git history secret scan | VERIFIED | [gitleaks](evidence/phase3/secret-scan-unrestricted-20261116T140509784779Z.txt); scope is the logged revision |
+| Forecast provenance and synthetic banner | VERIFIED | [API](evidence/phase2/api-tests-20261116T140100674278Z.txt), [browser](evidence/phase2/browser-20261116T140144706729Z.txt), [packaged inference](evidence/phase2/container-provenance-20261116T140239408226Z.txt) |
 | Advanced research modules | IMPLEMENTED-UNVERIFIED | Library availability does not establish default CLI integration |
 | Multi-asset default replay | NOT-IMPLEMENTED | Default workflow remains single-symbol |
 | Live orders | NOT-IMPLEMENTED | Outside research scope |
@@ -39,4 +41,7 @@ Numbers in historical documents are not re-certified by this ledger. No study, b
 
 These verify local test scenarios, not real-provider access or model advantage.
 
-| Forecast provenance and synthetic banner | VERIFIED | [API](evidence/phase2/api-tests-20261116T140100674278Z.txt), [browser](evidence/phase2/browser-20261116T140144706729Z.txt), [packaged inference](evidence/phase2/container-provenance-20261116T140239408226Z.txt) |
+
+## Leakage canary acceptance
+
+VERIFIED for the synthetic test protocol: [mutation detection](evidence/phase4/mutations-20261116T140816381471Z.txt), [restored Python suite](evidence/phase4/restored-python-suite-20261116T140921089695Z.txt), and [restored Rust suite](evidence/phase4/restored-rust-suite-20261116T140938425784Z.txt). See [protocol and limits](VALIDITY-CANARIES.md). This does not establish actual-market predictive quality or survivorship coverage.

@@ -6,6 +6,16 @@ use quant_data::{
     Bar, Timestamp,
 };
 
+#[test]
+fn lookahead_feature_canary_rejects_future_close() {
+    // A feature deliberately borrowing tomorrow's close is only available tomorrow.
+    // This validator relies on truthful availability metadata; it cannot inspect math.
+    let decision_time = Timestamp(1_000);
+    let future_close_availability = Timestamp(2_000);
+    assert!(check_feature_target_leakage(future_close_availability, decision_time).is_err());
+    assert!(check_feature_target_leakage(Timestamp(900), decision_time).is_ok());
+}
+
 proptest! {
     #[test]
     fn prop_duplicate_timestamps_always_rejected(

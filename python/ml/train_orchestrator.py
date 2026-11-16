@@ -26,6 +26,7 @@ from python.ml.dataset import (
     PurgedWalkForwardSplitter,
     TimeSeriesTorchDataset,
     create_sliding_windows,
+    validate_split_indices,
 )
 from python.ml.evaluate import compute_metrics
 from python.ml.export_onnx import export_artifact_package
@@ -229,6 +230,7 @@ def train_and_export(args, cfg, model_id, stage):
         embargo_bars=embargo_gap,
     )
     train_idx, val_idx, test_idx = getattr(args, "_indices", None) or splitter.split_train_test(n_samples, train_ratio=0.7, val_ratio=0.15)
+    validate_split_indices((train_idx, val_idx, test_idx), n_samples, purge_gap, embargo_gap)
 
     for name, indices in [("train", train_idx), ("validation", val_idx), ("test", test_idx)]:
         if len(indices) < lookback + 1:

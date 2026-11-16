@@ -1,0 +1,34 @@
+{
+  "command": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T141121643235Z",
+  "commit": "48269b4155f170437d8a07d403ef2f9784762490",
+  "status": " M Docs/CLAIMS.md\n M python/ml/dataset.py\n M python/ml/train_orchestrator.py\n M rust/data/tests/pit_property_tests.rs\n?? Docs/VALIDITY-CANARIES.md\n?? Docs/evidence/phase4/\n?? python/tests/test_validity_canaries.py\n?? scripts/check_canary_mutations.py\n",
+  "working_diff_sha256": "08631ebbc8f82cfd84c0c87b829a6b86c18b3001e9955965226aa1c2766b9031"
+}
+
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+    Checking quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+    Checking quant_features v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\features)
+    Checking quant_execution v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\execution)
+    Checking quant_inference v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\inference)
+    Checking quant_signals v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\signals)
+    Checking quant_portfolio v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\portfolio)
+    Checking quant_risk v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\risk)
+    Checking quant_backtest v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\backtest)
+    Checking quant_simulation v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\simulation)
+    Checking quantctl v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.02s
+
+EXIT_CODE=0
