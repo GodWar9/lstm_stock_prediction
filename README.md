@@ -43,7 +43,7 @@ Local serving needs no Node process. The Vercel deployment uses a thin Node API 
 | CI gates (fmt, clippy, tests, pytest, benches) | ✅ Done |
 | Vercel + Render free-tier deployment | ✅ Done |
 | Portable Windows app (`lstm-inspector.exe`) | ✅ Done |
-| Live price stream → forecast feature window | ⏳ Not connected yet |
+| Alpaca live price stream → forecast feature window | ✅ Connected — completed minute bars feed on-request forecasts ([guide](Docs/19-LIVE-INGESTION.md#from-capture-to-research-and-forecasts)) |
 | Multi-asset replay, full inspector datasets | ⏳ Future work |
 | Multi-horizon, conformal, Kelly/sector-neutral, nonlinear impact, derivatives in default CLI | ⏳ Libraries exist; not all selected by default |
 
@@ -104,6 +104,7 @@ quantctl --config configs/demo.yaml train --walk-forward --folds 3
 
 - **Default:** CSV import from `datasets/import/<symbol>.csv` with header `timestamp,open,high,low,close,volume` (RFC3339 timestamps with timezone, strictly increasing, valid OHLC, integer volume).
 - **Fresh global forecasts:** Twelve Data stock/ETF ingestion — see [Docs/23](Docs/23-GLOBAL-MARKET-FORECASTS.md).
+- **Live forecast inputs:** Select **Live streaming price feed** on `/forecast` to use first-published regular-session Alpaca minute bars. Requires a matching `1m` model and dataset for the same symbol and IEX/SIP feed, enough history for feature warmup and model lookback, and a connected stream with a completed bar no more than two minutes old. See the [live ingestion guide](Docs/19-LIVE-INGESTION.md) for setup and limits.
 - **Offline by default.** Yahoo acquisition requires `QUANTCTL_ALLOW_NETWORK=1` plus the optional `yfinance` dependency. Failures never fall back to synthetic data.
 - Existing dataset or model versions are never overwritten; choose a new `training.model_id` per experiment.
 
