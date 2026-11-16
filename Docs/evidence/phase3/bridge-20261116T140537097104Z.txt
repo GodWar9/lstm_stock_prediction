@@ -1,0 +1,44 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "test:bridge"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T140537097104Z",
+  "commit": "a1620a29ce6b7c738f5193ce9bcc94fe84e7310d",
+  "status": " M .github/workflows/ci.yml\n M scripts/hardening_evidence.py\n M web/package-lock.json\n?? Docs/evidence/phase3/\n",
+  "working_diff_sha256": "56d5e09735ca99013e5d79ec34f072454fe74e14179ea92e16b243d9678dd972"
+}
+
+
+> quant-research-inspector@0.1.0 test:bridge
+> node --test scripts/bridge.test.mjs scripts/markets.test.mjs
+
+✔ injects only the server credential and preserves binary bytes, query and pagination headers (30.8111ms)
+✔ rejects unknown routes and mutation requests without contacting backend (13.0821ms)
+✔ missing, insecure, or ambiguous backend settings fail closed (12.5714ms)
+✔ preserves backend error status and hides backend authentication details (6.2027ms)
+✔ forwards SSE immediately and aborts upstream after browser disconnect (52.4426ms)
+✔ times out a stalled backend and limits oversized responses (53.2153ms)
+✔ global market status and fresh forecast queries pass through the server bridge (4.7977ms)
+✔ free forex uses no credential, preserves gaps and calculates observed metrics (25.08ms)
+✔ reference validation rejects invalid pairs without network access (0.2575ms)
+✔ reference history rejects wrong instruments, malformed dates, duplicates and nonpositive rates (1.2867ms)
+✔ reference empty, stale and failed providers have honest states (0.8654ms)
+✔ packaged global catalog works offline with a dated source (252.563ms)
+✔ global catalogue searches, paginates and caches without a key (0.8037ms)
+✔ missing key or display permission never requests paid data (0.5659ms)
+✔ snapshot sends credentials only in headers, coalesces requests and validates OHLC (0.4027ms)
+✔ provider errors are redacted and unsupported paths never call upstream (0.2897ms)
+✔ paid snapshot budget bounds distinct requests (0.5271ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 381.5196
+
+EXIT_CODE=0

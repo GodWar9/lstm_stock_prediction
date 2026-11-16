@@ -1,6 +1,7 @@
 """Run a command without a shell and retain dated, source-bound evidence."""
 import argparse
 import datetime
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -24,6 +25,9 @@ def main():
     metadata = dict(command=command, cwd=str(root / args.cwd), started_utc=stamp,
                     commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),
                     status=subprocess.check_output(['git', 'status', '--short'], cwd=root, text=True))
+    metadata['working_diff_sha256'] = hashlib.sha256(
+        subprocess.check_output(['git', 'diff', 'HEAD', '--binary'], cwd=root)
+    ).hexdigest()
     log = out / f'{args.name}-{stamp}.txt'
     env = os.environ.copy()
     env['QUANTCTL_PYTHON'] = str(root / 'python/.venv/Scripts/python.exe') if os.name == 'nt' else str(root / 'python/.venv/bin/python')

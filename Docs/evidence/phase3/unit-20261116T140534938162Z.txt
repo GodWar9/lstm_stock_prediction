@@ -1,0 +1,27 @@
+{
+  "command": [
+    "npm.cmd",
+    "test"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T140534938162Z",
+  "commit": "a1620a29ce6b7c738f5193ce9bcc94fe84e7310d",
+  "status": " M .github/workflows/ci.yml\n M scripts/hardening_evidence.py\n M web/package-lock.json\n?? Docs/evidence/phase3/\n",
+  "working_diff_sha256": "56d5e09735ca99013e5d79ec34f072454fe74e14179ea92e16b243d9678dd972"
+}
+
+
+> quant-research-inspector@0.1.0 test
+> vitest run src
+
+
+ RUN  v4.1.12 C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web
+
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  19:35:36
+   Duration  471ms (transform 109ms, setup 0ms, import 331ms, tests 44ms, environment 0ms)
+
+
+EXIT_CODE=0

@@ -1,0 +1,36 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "contract:check"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T140518623016Z",
+  "commit": "a1620a29ce6b7c738f5193ce9bcc94fe84e7310d",
+  "status": " M .github/workflows/ci.yml\n M web/package-lock.json\n?? Docs/evidence/phase3/\n"
+}
+
+
+> quant-research-inspector@0.1.0 contract:check
+> node scripts/contract.mjs --check
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_data-0so8ctw8gojut\s-ho20pdg78m-07199hl-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_features-1zhnd65nw07r2\s-ho20pemvy3-1gidiiu-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_execution-0h8zd4hpe6awt\s-ho20pen371-0h1lwvr-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-29nkq5fobpe1r\s-ho20pfol3f-1ez3j73-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-3g7mgs3qpci53\s-ho20pgiqd1-0bam7gq-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-2wcodempevz1v\s-ho20pgyzdn-1wxrc6f-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-07qhmqqf9rx11\s-ho20phfdcz-1mqqe5l-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-2h2h5k4delpeh\s-ho20phupy4-1b57a1b-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-18ai2x50xze18\s-ho20piizwh-0zo0zqz-working`
+
+
+EXIT_CODE=0

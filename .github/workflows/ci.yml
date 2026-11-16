@@ -2,9 +2,17 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'hardening/**']
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
@@ -17,6 +25,17 @@ env:
   CARGO_PROFILE_TEST_DEBUG: "0"
 
 jobs:
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   rust-check:
     name: Rust Check & Clippy
     runs-on: ubuntu-latest
@@ -44,7 +63,7 @@ jobs:
 
       - name: Run Clippy
         working-directory: rust
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
 
   rust-test:
     name: Rust Tests
@@ -64,7 +83,7 @@ jobs:
 
       - name: Install Python dependencies
         working-directory: python
-        run: uv sync
+        run: uv sync --locked
 
       - name: Use project venv in PATH
         run: echo "${{ github.workspace }}/python/.venv/bin" >> $GITHUB_PATH
@@ -111,7 +130,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: python
-        run: uv sync
+        run: uv sync --locked
 
       - uses: dtolnay/rust-toolchain@stable
 
@@ -120,7 +139,7 @@ jobs:
 
       - name: Run pytest suite
         working-directory: python
-        run: uv run pytest tests -v
+        run: uv run --locked pytest tests -v
 
   bench-gate:
     name: Benchmark Compilation & Execution Gate
@@ -151,7 +170,31 @@ jobs:
         run: cargo bench --bench feature_benchmarks --bench simulation_benchmarks -- --test
 
   web-test:
-    name: Frontend, Contract and Browser Tests
+    name: Frontend and Contract Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+      - name: Validate frontend and generated contract
+        working-directory: web
+        run: |
+          npm ci
+          npm run contract:check
+          npm test
+          npm run test:bridge
+          npm run build
+
+  web-e2e:
+    name: Browser and Packaged Application Tests
+    needs: web-test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -228,7 +271,7 @@ jobs:
   all-checks:
     name: All Checks Passed
     runs-on: ubuntu-latest
-    needs: [rust-check, rust-test, python-test, bench-gate, web-test, container-test]
+    needs: [rust-check, rust-test, python-test, bench-gate, web-test, web-e2e, container-test, secret-scan]
     if: always()
     steps:
       - name: Verify all jobs succeeded
@@ -238,6 +281,8 @@ jobs:
              [[ "${{ needs.python-test.result }}" != "success" ]] || \
              [[ "${{ needs.bench-gate.result }}" != "success" ]] || \
              [[ "${{ needs.web-test.result }}" != "success" ]] || \
+             [[ "${{ needs.web-e2e.result }}" != "success" ]] || \
+             [[ "${{ needs.secret-scan.result }}" != "success" ]] || \
              [[ "${{ needs.container-test.result }}" != "success" ]]; then
             echo "One or more CI jobs failed"
             exit 1
