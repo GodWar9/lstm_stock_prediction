@@ -1,0 +1,16 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T135854786349Z",
+  "commit": "63fbeccd523b2a3edc1805e4dd4672ab660d6e1c",
+  "status": " M Docs/04-INFERENCE.md\n M Docs/07-PERFORMANCE-TESTING.md\n M Docs/10-MIGRATION-PLAN.md\n M Docs/11-IMPLEMENTATION-PLAN.md\n M Docs/14-CAPABILITIES.md\n M Docs/20-PRODUCTION-CHECKLIST.md\n M Docs/26-VERCEL-WEBSITE.md\n M README.md\n?? Docs/CLAIMS.md\n"
+}
+
+warning: in the working copy of 'Docs/14-CAPABILITIES.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'Docs/20-PRODUCTION-CHECKLIST.md', CRLF will be replaced by LF the next time Git touches it
+
+EXIT_CODE=0

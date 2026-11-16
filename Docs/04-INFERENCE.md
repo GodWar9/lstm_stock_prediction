@@ -1,3 +1,5 @@
+> Historical design proposal. Runtime API sketches and tuning proposals below are not current capability claims. The implemented Rust runtime uses tract-onnx; Python ONNX Runtime remains a parity reference. Consult [CLAIMS.md](CLAIMS.md) and rust/inference/src/onnx_session.rs for current behavior.
+
 # 04 — Inference (Rust — Core Architecture, Not a Stretch Goal)
 
 ## Why This Moved From "Stretch" to "Core"

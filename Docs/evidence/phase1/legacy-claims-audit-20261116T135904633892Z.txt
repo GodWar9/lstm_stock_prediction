@@ -1,0 +1,29 @@
+{
+  "command": [
+    "rg",
+    "-n",
+    "\\bort\\b|production-grade|[Nn]ot connected yet",
+    "Docs",
+    "README.md",
+    "-g",
+    "*.md"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T135904633892Z",
+  "commit": "63fbeccd523b2a3edc1805e4dd4672ab660d6e1c",
+  "status": " M Docs/04-INFERENCE.md\n M Docs/07-PERFORMANCE-TESTING.md\n M Docs/10-MIGRATION-PLAN.md\n M Docs/11-IMPLEMENTATION-PLAN.md\n M Docs/14-CAPABILITIES.md\n M Docs/20-PRODUCTION-CHECKLIST.md\n M Docs/26-VERCEL-WEBSITE.md\n M README.md\n?? Docs/CLAIMS.md\n?? Docs/evidence/phase1/\n"
+}
+
+Docs\04-INFERENCE.md:8:`axum`/`ort` server as an optional add-on. That's backwards: if Rust only
+Docs\04-INFERENCE.md:25:    session: ort::Session,       // loaded once at startup, reused across calls
+Docs\04-INFERENCE.md:43:- One `ort::Session` per loaded model, created once at process startup (or on
+Docs\04-INFERENCE.md:45:- Thread pool sizing (`ort` intra/inter-op threads) is a config value, tuned
+Docs\04-INFERENCE.md:111:Rust ort::Session(model.onnx) output
+Docs\07-PERFORMANCE-TESTING.md:35:| ONNX inference (batch) | criterion + ort profiling | p50/p95/p99 latency, throughput |
+Docs\07-PERFORMANCE-TESTING.md:96:Already specified in doc 04 — PyTorch ≈ ONNX ≈ Rust `ort` output, tolerance
+Docs\10-MIGRATION-PLAN.md:46:- Extend the parity test chain to include the Rust `ort::Session` leg.
+Docs\13-ARTIFACT-API.md:6:The actual inference runtime is **tract-onnx**, not Microsoft's Rust ort binding.
+Docs\HANDOVER-2026-11-16.md:50:2. **Live input support.** Commits `372d0d0` and `f538609` connect Alpaca minute bars to forecast requests and add validation and forecast visibility. This closes the implementation gap previously described as “Not connected yet.”
+Docs\HANDOVER-2026-11-16.md:70:| `Docs/HANDOVER.md` | September baseline, old workspace path and `ort` runtime description; broad production-grade claims | Retain as history or mark superseded; runtime dependency is now `tract-onnx` |
+
+EXIT_CODE=0

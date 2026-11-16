@@ -53,7 +53,7 @@ remaining work is maintained in
 - PyTorch LSTMForecaster with forget gate initialization and directional loss
 - Purged/embargoed walk-forward cross-validation with scaler isolation
 - ONNX export with INT8 dynamic quantization and numerical parity verification
-- Rust ONNX Runtime CPU inference via `ort` crate
+- Rust CPU inference via `tract-onnx`
 - Signal calibration with deadband filtering and cross-sectional ranking
 - Volatility-targeted portfolio construction with drawdown de-risking
 - Execution simulation with spread, slippage, and market impact models

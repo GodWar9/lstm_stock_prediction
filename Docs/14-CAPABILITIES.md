@@ -230,6 +230,28 @@ Their absence is visible instead of being fabricated in the browser.
 
 ## Verification
 
+### Live inputs and market dashboard
+
+Alpaca first-published regular-session minute bars can feed requested forecasts.
+The model and dataset must match the symbol, minute interval and IEX/SIP source.
+Freshness, continuity and warmup gates reject unusable windows; no hidden backfill
+or order execution is provided. See [live ingestion](19-LIVE-INGESTION.md).
+
+The public terminal observes Coinbase spot markets in the browser. Its prices are
+separate from research model inputs. Global securities catalogues are listings,
+not price entitlements. Frankfurter daily forex references support descriptive
+analytics, not LSTM forecasts. Optional Twelve Data snapshots require server-side
+credentials and explicit public-display opt-in.
+
+Standalone Rust exposes `/api/market/*`, `/api/live*` and `/api/forecast`.
+The Node container and Vite middleware additionally expose `/api/markets/*`
+for catalogues, status, reference analytics and snapshots. The packaged container
+strips Alpaca credentials and symbols from its Rust child; standalone live
+configuration is not automatically enabled in that hosted mode.
+
+Current acceptance is tracked in [CLAIMS.md](CLAIMS.md), not inferred from
+historical test reports or from the existence of deployment configuration.
+
 Tests cover mathematical units, property checks, leakage/scaling boundaries,
 ONNX parity, persistence, realized accounting, long-period deterministic replay,
 HTTP routes/schema/errors, Arrow contracts and the full CLI pipeline. Frontend

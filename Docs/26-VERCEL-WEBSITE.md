@@ -16,12 +16,20 @@ Rust requests still require authentication. The existing standalone and split
 Render/Vercel configurations remain available independently.
 
 This publication includes the explicitly labelled synthetic historical AAPL
-dataset and sealed LSTM model. Acquisition and live feeds are disabled. Visitors
+dataset and sealed LSTM model. Alpaca acquisition remains disabled: the Node
+entrypoint removes Alpaca keys and live symbols from its Rust child environment.
+Optional Twelve Data access is enabled only when both `TWELVE_DATA_API_KEY` and
+`TWELVE_DATA_PUBLIC_DISPLAY=1` are set server-side after display permissions are
+confirmed. Public Coinbase observation and Frankfurter daily forex references do
+not require these credentials and do not train or supply arbitrary model inputs. Visitors
 can generate real ONNX inferences and inspect recorded backtests, validation,
 models, signals and bootstrap simulations. The app does not train in requests or
 promise persistent private workspaces.
 
 ## Verification
+
+This file describes repository configuration. Current deployed service state and
+branch acceptance must be verified separately; see [CLAIMS.md](CLAIMS.md).
 
 `cd web; npm run test:container-app` starts the actual Rust executable and this
 public server using isolated extracted artifacts. It checks unauthenticated

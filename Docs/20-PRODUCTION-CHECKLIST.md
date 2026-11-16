@@ -77,7 +77,7 @@ scope; synthetic protocol acceptance does not establish market performance.
 
 - [x] Browser forecast selection, missing-data errors, interval mismatches, historical labels and input-change reset: eight desktop/mobile forecast cases, 2026-09-29.
 - [x] Real ONNX forecast from a freshly trained minute model, timestamp/return/provenance assertions and incompatible interval rejection: CLI capture integration, 2026-09-29.
-- [ ] Wire open live capture into cadence-matched model features with warmup, gap and freshness gates. Current forecasts consume recorded datasets.
+- [ ] Revalidate the implemented open-capture forecast path at the hardening revision. Commits `372d0d0` and `f538609` wired Alpaca first-publication minute bars into requested forecasts with warmup, gap and freshness gates; see `19-LIVE-INGESTION.md` and `CLAIMS.md`. Implementation evidence does not close the real-provider or deployment gates.
 - [ ] Add authenticated hosted research job execution/status; current research launch is CLI-only.
 - [ ] Select hosting/domain/storage; configure authenticated HTTPS access and service supervision. **Owner: hosting details to follow.**
 - [ ] Deploy and test the public URL, access controls, SSE, restart and restore on the target host.

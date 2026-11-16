@@ -31,6 +31,9 @@ Local serving needs no Node process. The Vercel deployment uses a thin Node API 
 
 ## Status
 
+The table below describes implementation availability, not current release acceptance.
+See [Claims and evidence](Docs/CLAIMS.md) and [open blockers](Docs/BLOCKED.md) for verification status.
+
 | Area | State |
 |---|---|
 | Versioned ingestion, validation, leakage checks | ✅ Done |
@@ -131,6 +134,16 @@ Benchmarks: `cargo bench --manifest-path rust/Cargo.toml --bench feature_benchma
 ## Security
 
 Server binds to `127.0.0.1` by default. Remote mode requires a backend token. No visitor accounts, no job-launching API; published run files are immutable.
+
+## Limitations
+
+- No live orders; fills and execution costs are simulated.
+- The default training and replay workflow is single-symbol.
+- Complete corporate-action and survivorship coverage is not established.
+- The optional Yahoo acquisition adapter uses a Python helper.
+- Hash integrity detects changes relative to a manifest; it is not a signature or proof of authenticity.
+- Market displays do not automatically become model inputs. Synthetic demos do not establish predictive quality or alpha.
+- Real-provider and deployment acceptance remain separate from local tests; see the [claims ledger](Docs/CLAIMS.md).
 
 ## Documentation
 
