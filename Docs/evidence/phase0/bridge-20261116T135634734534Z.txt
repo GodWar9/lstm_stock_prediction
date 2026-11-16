@@ -1,0 +1,171 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "test:bridge"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T135634734534Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": " M Docs/04-INFERENCE.md\n M Docs/07-PERFORMANCE-TESTING.md\n M Docs/10-MIGRATION-PLAN.md\n M Docs/11-IMPLEMENTATION-PLAN.md\n M Docs/14-CAPABILITIES.md\n M Docs/20-PRODUCTION-CHECKLIST.md\n M Docs/26-VERCEL-WEBSITE.md\n M README.md\n?? Docs/BLOCKED.md\n?? Docs/CLAIMS.md\n?? Docs/HANDOVER-2026-11-16.md\n?? Docs/KNOWN-ISSUES.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+
+> quant-research-inspector@0.1.0 test:bridge
+> node --test scripts/bridge.test.mjs scripts/markets.test.mjs
+
+✖ injects only the server credential and preserves binary bytes, query and pagination headers (16.9827ms)
+✖ rejects unknown routes and mutation requests without contacting backend (5.2523ms)
+✖ missing, insecure, or ambiguous backend settings fail closed (1.9751ms)
+✖ preserves backend error status and hides backend authentication details (1.9787ms)
+✖ forwards SSE immediately and aborts upstream after browser disconnect (2.0479ms)
+✖ times out a stalled backend and limits oversized responses (1.7541ms)
+✖ global market status and fresh forecast queries pass through the server bridge (2.2124ms)
+✔ free forex uses no credential, preserves gaps and calculates observed metrics (23.4592ms)
+✔ reference validation rejects invalid pairs without network access (0.2835ms)
+✔ reference history rejects wrong instruments, malformed dates, duplicates and nonpositive rates (1.2997ms)
+✔ reference empty, stale and failed providers have honest states (0.8197ms)
+✔ packaged global catalog works offline with a dated source (260.7922ms)
+✔ global catalogue searches, paginates and caches without a key (0.8621ms)
+✔ missing key or display permission never requests paid data (0.5431ms)
+✔ snapshot sends credentials only in headers, coalesces requests and validates OHLC (0.3968ms)
+✔ provider errors are redacted and unsupported paths never call upstream (0.2894ms)
+✔ paid snapshot budget bounds distinct requests (0.5425ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 10
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 410.0535
+
+✖ failing tests:
+
+test at scripts\bridge.test.mjs:16:1
+✖ injects only the server credential and preserves binary bytes, query and pagination headers (16.9827ms)
+  TypeError: fetch failed
+      at node:internal/deps/undici/undici:15845:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async TestContext.<anonymous> (file:///C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web/scripts/bridge.test.mjs:23:20)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    [cause]: Error: connect EACCES 127.0.0.1:59396
+        at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+      errno: -4092,
+      code: 'EACCES',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 59396
+    }
+  }
+
+test at scripts\bridge.test.mjs:34:1
+✖ rejects unknown routes and mutation requests without contacting backend (5.2523ms)
+  TypeError: fetch failed
+      at node:internal/deps/undici/undici:15845:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async TestContext.<anonymous> (file:///C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web/scripts/bridge.test.mjs:37:35)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    [cause]: Error: connect EACCES 127.0.0.1:59398
+        at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+      errno: -4092,
+      code: 'EACCES',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 59398
+    }
+  }
+
+test at scripts\bridge.test.mjs:41:1
+✖ missing, insecure, or ambiguous backend settings fail closed (1.9751ms)
+  TypeError: fetch failed
+      at node:internal/deps/undici/undici:15845:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async TestContext.<anonymous> (file:///C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web/scripts/bridge.test.mjs:44:19)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    [cause]: Error: connect EACCES 127.0.0.1:59400
+        at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+      errno: -4092,
+      code: 'EACCES',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 59400
+    }
+  }
+
+test at scripts\bridge.test.mjs:49:1
+✖ preserves backend error status and hides backend authentication details (1.9787ms)
+  TypeError: fetch failed
+      at node:internal/deps/undici/undici:15845:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async TestContext.<anonymous> (file:///C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web/scripts/bridge.test.mjs:51:17)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    [cause]: Error: connect EACCES 127.0.0.1:59402
+        at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+      errno: -4092,
+      code: 'EACCES',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 59402
+    }
+  }
+
+test at scripts\bridge.test.mjs:56:1
+✖ forwards SSE immediately and aborts upstream after browser disconnect (2.0479ms)
+  TypeError: fetch failed
+      at node:internal/deps/undici/undici:15845:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async TestContext.<anonymous> (file:///C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web/scripts/bridge.test.mjs:63:20)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    [cause]: Error: connect EACCES 127.0.0.1:59404
+        at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+      errno: -4092,
+      code: 'EACCES',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 59404
+    }
+  }
+
+test at scripts\bridge.test.mjs:70:1
+✖ times out a stalled backend and limits oversized responses (1.7541ms)
+  TypeError: fetch failed
+      at node:internal/deps/undici/undici:15845:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async TestContext.<anonymous> (file:///C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web/scripts/bridge.test.mjs:72:17)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    [cause]: Error: connect EACCES 127.0.0.1:59406
+        at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+      errno: -4092,
+      code: 'EACCES',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 59406
+    }
+  }
+
+test at scripts\bridge.test.mjs:77:1
+✖ global market status and fresh forecast queries pass through the server bridge (2.2124ms)
+  TypeError: fetch failed
+      at node:internal/deps/undici/undici:15845:13
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async TestContext.<anonymous> (file:///C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web/scripts/bridge.test.mjs:80:17)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    [cause]: Error: connect EACCES 127.0.0.1:59408
+        at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1637:16) {
+      errno: -4092,
+      code: 'EACCES',
+      syscall: 'connect',
+      address: '127.0.0.1',
+      port: 59408
+    }
+  }
+
+EXIT_CODE=1

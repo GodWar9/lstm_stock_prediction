@@ -1,0 +1,27 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "test"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T135732783608Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": " M Docs/04-INFERENCE.md\n M Docs/07-PERFORMANCE-TESTING.md\n M Docs/10-MIGRATION-PLAN.md\n M Docs/11-IMPLEMENTATION-PLAN.md\n M Docs/14-CAPABILITIES.md\n M Docs/20-PRODUCTION-CHECKLIST.md\n M Docs/26-VERCEL-WEBSITE.md\n M README.md\n?? Docs/BLOCKED.md\n?? Docs/CLAIMS.md\n?? Docs/HANDOVER-2026-11-16.md\n?? Docs/KNOWN-ISSUES.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+
+> quant-research-inspector@0.1.0 test
+> vitest run src
+
+
+ RUN  v4.1.11 C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web
+
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  19:27:34
+   Duration  480ms (transform 81ms, setup 0ms, import 328ms, tests 48ms, environment 0ms)
+
+
+EXIT_CODE=0

@@ -1,0 +1,37 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "contract:check"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T135632813234Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": " M Docs/04-INFERENCE.md\n M Docs/07-PERFORMANCE-TESTING.md\n M Docs/10-MIGRATION-PLAN.md\n M Docs/11-IMPLEMENTATION-PLAN.md\n M Docs/14-CAPABILITIES.md\n M Docs/20-PRODUCTION-CHECKLIST.md\n M Docs/26-VERCEL-WEBSITE.md\n M README.md\n?? Docs/BLOCKED.md\n?? Docs/CLAIMS.md\n?? Docs/HANDOVER-2026-11-16.md\n?? Docs/KNOWN-ISSUES.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+
+> quant-research-inspector@0.1.0 contract:check
+> node scripts/contract.mjs --check
+
+node:internal/modules/esm/resolve:204
+  const resolvedOption = FSLegacyMainResolve(pkgPath, packageConfig.main, baseStringified);
+                         ^
+
+Error: Cannot find package 'C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\web\node_modules\openapi-typescript\index.js' imported from C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\web\scripts\contract.mjs
+    at legacyMainResolve (node:internal/modules/esm/resolve:204:26)
+    at packageResolve (node:internal/modules/esm/resolve:778:12)
+    at moduleResolve (node:internal/modules/esm/resolve:858:18)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:718:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:735:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:764:52)
+    at #resolve (node:internal/modules/esm/loader:700:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:620:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:143:33) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}
+
+Node.js v24.12.0
+
+EXIT_CODE=1

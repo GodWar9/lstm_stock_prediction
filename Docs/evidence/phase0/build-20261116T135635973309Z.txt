@@ -1,0 +1,20 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "build"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T135635973309Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": " M Docs/04-INFERENCE.md\n M Docs/07-PERFORMANCE-TESTING.md\n M Docs/10-MIGRATION-PLAN.md\n M Docs/11-IMPLEMENTATION-PLAN.md\n M Docs/14-CAPABILITIES.md\n M Docs/20-PRODUCTION-CHECKLIST.md\n M Docs/26-VERCEL-WEBSITE.md\n M README.md\n?? Docs/BLOCKED.md\n?? Docs/CLAIMS.md\n?? Docs/HANDOVER-2026-11-16.md\n?? Docs/KNOWN-ISSUES.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+
+> quant-research-inspector@0.1.0 build
+> tsc -b && vite build
+
+'tsc' is not recognized as an internal or external command,
+operable program or batch file.
+
+EXIT_CODE=1

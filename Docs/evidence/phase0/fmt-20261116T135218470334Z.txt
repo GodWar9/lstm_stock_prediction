@@ -1,0 +1,18 @@
+{
+  "command": [
+    "cargo",
+    "fmt",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "--all",
+    "--",
+    "--check"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T135218470334Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": "?? Docs/HANDOVER-2026-11-16.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+
+EXIT_CODE=0

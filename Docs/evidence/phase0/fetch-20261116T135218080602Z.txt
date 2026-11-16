@@ -1,0 +1,15 @@
+{
+  "command": [
+    "git",
+    "fetch",
+    "origin"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T135218080602Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": "?? Docs/HANDOVER-2026-11-16.md\n?? scripts/hardening_evidence.py\n"
+}
+
+fatal: unable to access 'https://github.com/GodWar9/lstm_stock_prediction/': getaddrinfo() thread failed to start
+
+EXIT_CODE=128

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "npm.cmd",
+    "ci"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T135507748954Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": "?? Docs/BLOCKED.md\n?? Docs/CLAIMS.md\n?? Docs/HANDOVER-2026-11-16.md\n?? Docs/KNOWN-ISSUES.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+npm error Exit handler never called!
+npm error This is an error with npm itself. Please report this error at:
+npm error   <https://github.com/npm/cli/issues>
+npm error A complete log of this run can be found in: C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{***}\npm-cache\_logs\2026-11-16T13_55_08_804Z-debug-0.log
+
+EXIT_CODE=1

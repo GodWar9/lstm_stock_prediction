@@ -1,0 +1,51 @@
+{
+  "command": [
+    "cargo",
+    "clippy",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "--workspace",
+    "--all-targets",
+    "--locked",
+    "--",
+    "-D",
+    "warnings"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T135356932069Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": "?? Docs/HANDOVER-2026-11-16.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0v8yaapsofh66\s-ho7sujc2j4-1xtnh3z-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-2z89uqjzmv6h7\s-ho7sujc2jh-16v2t9p-working`
+
+warning: `quant_api` (lib test) generated 1 warning
+warning: `quant_api` (lib) generated 1 warning
+    Checking quantctl v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\cli)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\cli_tests-16irfsnrwkoe5\s-ho7sup20q8-1d3exv3-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\openapi-2ze7hbnkdf69n\s-ho7sup2ast-0vziv52-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\contracts-3in7v6rx2p6ap\s-ho7sup2uc3-0g0ftls-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\lstm_inspector-1ynv37u38kjme\s-ho7sup350d-0aes277-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\lstm_inspector-32qclkkzn2znd\s-ho7sup3hjw-0q74102-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-1sni7qei7s4sl\s-ho7sup3utn-0ublf5r-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-1wsh5lvxknjh0\s-ho7sup4c72-03a2ffy-working`
+
+warning: `quant_api` (example "openapi") generated 1 warning
+warning: `quantctl` (test "cli_tests") generated 1 warning
+warning: `quant_api` (test "contracts") generated 1 warning
+warning: `quantctl` (bin "lstm-inspector") generated 1 warning
+warning: `quantctl` (bin "lstm-inspector" test) generated 1 warning
+warning: `quantctl` (bin "quantctl") generated 1 warning
+warning: `quantctl` (bin "quantctl" test) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 20.14s
+
+EXIT_CODE=0

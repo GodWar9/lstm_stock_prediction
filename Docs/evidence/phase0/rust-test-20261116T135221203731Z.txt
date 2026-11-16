@@ -1,0 +1,108 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "--workspace",
+    "--locked"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T135221203731Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": "?? Docs/HANDOVER-2026-11-16.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+   Compiling quantctl v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\cli)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\cli_tests-07i7au02rdeyk\s-ho7std18m5-13sw72a-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\lstm_inspector-05zh12hk0ukt9\s-ho7std18mh-0afmcmf-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-06n77pevjpbic\s-ho7std18m0-0mcc8l0-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\openapi-07nbzvk6va6j6\s-ho7stgqhri-1xgxbca-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-37ile8sinedh8\s-ho7stgqydb-1ihd1ju-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\lstm_inspector-127xx60rh30df\s-ho7stgqpph-1m5nhxk-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\contracts-0iplornkr2nub\s-ho7stgqba0-1dmtlfa-working`
+
+warning: `quantctl` (bin "quantctl" test) generated 1 warning
+warning: `quant_api` (example "openapi") generated 1 warning
+warning: `quantctl` (bin "lstm-inspector" test) generated 1 warning
+warning: `quantctl` (test "cli_tests") generated 1 warning
+warning: `quant_api` (test "contracts") generated 1 warning
+warning: `quant_api` (lib test) generated 1 warning
+warning: `quantctl` (bin "lstm-inspector") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 18s
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_api-4e16152ad74993ec.exe)
+
+running 24 tests
+test forecast::tests::live_forecast_rejects_when_live_stream_disabled ... ok
+test live::tests::configuration_and_error_classification_are_explicit ... ok
+test forecast::tests::rejects_paths_and_handles_empty_workspace ... ok
+test live::tests::parses_valid_and_rejects_invalid_minute_bars ... ok
+test live::tests::minute_buffers_keep_first_publication_reset_gaps_and_disconnects ... ok
+test live::tests::rejects_invalid_trades ... ok
+test market::tests::coalesces_requests_and_throttles_other_symbols_and_failures ... ok
+test server::tests::remote_configuration_requires_strong_token_and_bounded_workers ... ok
+test server::tests::rejects_paths_and_preserves_extremes ... ok
+test market::tests::cached_data_cannot_bypass_freshness_check ... ok
+test forecast::tests::live_inputs_require_connected_fresh_real_bars_and_continuity ... ok
+test server::tests::empty_list_missing_run_and_read_only ... ok
+test server::tests::cancelled_requests_keep_worker_permits_until_work_finishes ... ok
+test server::tests::remote_auth_covers_artifacts_streams_and_spa_but_allows_liveness ... ok
+test server::tests::rejects_remote_hosts_and_restricts_browser_connections ... ok
+test live::journal::tests::capacity_and_backward_clock_fail_closed ... ok
+test live::journal::tests::rotation_chain_durability_lock_and_clean_shutdown ... ok
+test provenance::tests::fingerprints_bytes_untracked_sources_and_deletions ... ok
+test server::tests::readiness_and_sse_clients_follow_state_and_shutdown ... ok
+test live::tests::provider_rejection_is_terminal_and_redacts_upstream_text ... FAILED
+test live::tests::invalid_trade_is_not_recorded_or_displayed ... FAILED
+test live::tests::websocket_authenticates_subscribes_persists_and_preserves_event_order ... FAILED
+test live::tests::incomplete_subscription_fails_instead_of_claiming_live ... FAILED
+test live::tests::reconnect_resubscribes_and_shutdown_seals_the_capture ... FAILED
+
+failures:
+
+---- live::tests::provider_rejection_is_terminal_and_redacts_upstream_text stdout ----
+
+thread 'live::tests::provider_rejection_is_terminal_and_redacts_upstream_text' (42232) panicked at api\src\live.rs:837:14:
+called `Result::unwrap()` on an `Err` value: Elapsed(())
+
+---- live::tests::invalid_trade_is_not_recorded_or_displayed stdout ----
+
+thread 'live::tests::invalid_trade_is_not_recorded_or_displayed' (39444) panicked at api\src\live.rs:837:14:
+called `Result::unwrap()` on an `Err` value: Elapsed(())
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- live::tests::websocket_authenticates_subscribes_persists_and_preserves_event_order stdout ----
+
+thread 'live::tests::websocket_authenticates_subscribes_persists_and_preserves_event_order' (48660) panicked at api\src\live.rs:837:14:
+called `Result::unwrap()` on an `Err` value: Elapsed(())
+
+---- live::tests::incomplete_subscription_fails_instead_of_claiming_live stdout ----
+
+thread 'live::tests::incomplete_subscription_fails_instead_of_claiming_live' (9788) panicked at api\src\live.rs:837:14:
+called `Result::unwrap()` on an `Err` value: Elapsed(())
+
+---- live::tests::reconnect_resubscribes_and_shutdown_seals_the_capture stdout ----
+
+thread 'live::tests::reconnect_resubscribes_and_shutdown_seals_the_capture' (38080) panicked at api\src\live.rs:682:10:
+called `Result::unwrap()` on an `Err` value: Elapsed(())
+
+
+failures:
+    live::tests::incomplete_subscription_fails_instead_of_claiming_live
+    live::tests::invalid_trade_is_not_recorded_or_displayed
+    live::tests::provider_rejection_is_terminal_and_redacts_upstream_text
+    live::tests::reconnect_resubscribes_and_shutdown_seals_the_capture
+    live::tests::websocket_authenticates_subscribes_persists_and_preserves_event_order
+
+test result: FAILED. 19 passed; 5 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.04s
+
+error: test failed, to rerun pass `-p quant_api --lib`
+
+EXIT_CODE=101

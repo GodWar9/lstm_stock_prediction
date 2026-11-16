@@ -1,0 +1,43 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "test:bridge"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T135734822236Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": " M Docs/04-INFERENCE.md\n M Docs/07-PERFORMANCE-TESTING.md\n M Docs/10-MIGRATION-PLAN.md\n M Docs/11-IMPLEMENTATION-PLAN.md\n M Docs/14-CAPABILITIES.md\n M Docs/20-PRODUCTION-CHECKLIST.md\n M Docs/26-VERCEL-WEBSITE.md\n M README.md\n?? Docs/BLOCKED.md\n?? Docs/CLAIMS.md\n?? Docs/HANDOVER-2026-11-16.md\n?? Docs/KNOWN-ISSUES.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+
+> quant-research-inspector@0.1.0 test:bridge
+> node --test scripts/bridge.test.mjs scripts/markets.test.mjs
+
+✔ injects only the server credential and preserves binary bytes, query and pagination headers (29.4269ms)
+✔ rejects unknown routes and mutation requests without contacting backend (12.9966ms)
+✔ missing, insecure, or ambiguous backend settings fail closed (12.1593ms)
+✔ preserves backend error status and hides backend authentication details (7.4609ms)
+✔ forwards SSE immediately and aborts upstream after browser disconnect (58.8784ms)
+✔ times out a stalled backend and limits oversized responses (51.4654ms)
+✔ global market status and fresh forecast queries pass through the server bridge (3.4351ms)
+✔ free forex uses no credential, preserves gaps and calculates observed metrics (24.1518ms)
+✔ reference validation rejects invalid pairs without network access (0.2686ms)
+✔ reference history rejects wrong instruments, malformed dates, duplicates and nonpositive rates (1.2256ms)
+✔ reference empty, stale and failed providers have honest states (0.8308ms)
+✔ packaged global catalog works offline with a dated source (253.1441ms)
+✔ global catalogue searches, paginates and caches without a key (0.8546ms)
+✔ missing key or display permission never requests paid data (0.542ms)
+✔ snapshot sends credentials only in headers, coalesces requests and validates OHLC (0.4703ms)
+✔ provider errors are redacted and unsupported paths never call upstream (0.3262ms)
+✔ paid snapshot budget bounds distinct requests (0.5482ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 379.7256
+
+EXIT_CODE=0

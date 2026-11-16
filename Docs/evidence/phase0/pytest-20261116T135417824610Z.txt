@@ -1,0 +1,74 @@
+{
+  "command": [
+    ".\\python\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "python/tests",
+    "-q"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T135417824610Z",
+  "commit": "73dd48f87bc0adc7dc185918bfc62dd80da13731",
+  "status": "?? Docs/BLOCKED.md\n?? Docs/CLAIMS.md\n?? Docs/HANDOVER-2026-11-16.md\n?? Docs/KNOWN-ISSUES.md\n?? Docs/evidence/\n?? scripts/hardening_evidence.py\n"
+}
+
+........................................................                 [100%]
+============================== warnings summary ===============================
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\ml\export_onnx.py:39: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+    torch.onnx.export(
+
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\onnx\_internal\torchscript_exporter\utils.py:218: DeprecationWarning: The feature will be removed. Please remove usage of this function
+    setup_onnx_logging(verbose) as log_ctx,
+
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\nn\modules\rnn.py:328: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+    if self.input_size != input.size(-1):
+
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\nn\modules\rnn.py:361: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+    if hx.size() != expected_hidden_size:
+
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\onnx\_internal\torchscript_exporter\symbolic_opset9.py:4496: UserWarning: Exporting a model to ONNX with a batch_size other than 1, with a variable length with LSTM can cause an error when running the ONNX model with a different batch size. Make sure to save the model with a batch size of 1, or define the initial states (h0/c0) as inputs of the model. 
+    return _generic_rnn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+56 passed, 39 warnings in 47.16s
+
+EXIT_CODE=0
