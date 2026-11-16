@@ -1,0 +1,26 @@
+{
+  "command": [
+    "npm.cmd",
+    "test"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T140142838689Z",
+  "commit": "32f04d1f00ffca2f960bca70a8ea5c98a63a8db4",
+  "status": " M Docs/openapi.json\n M rust/api/src/forecast.rs\n M rust/api/src/live.rs\n M rust/api/src/server.rs\n M rust/api/tests/contracts.rs\n M web/scripts/container-app.test.mjs\n M web/src/api/generated.ts\n M web/src/components/Forecast.tsx\n M web/src/components/Live.tsx\n M web/src/components/ResearchPanel.tsx\n M web/src/lib/live.ts\n M web/tests/forecast.spec.ts\n?? Docs/evidence/phase2/\n"
+}
+
+
+> quant-research-inspector@0.1.0 test
+> vitest run src
+
+
+ RUN  v4.1.11 C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web
+
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  19:31:44
+   Duration  485ms (transform 122ms, setup 0ms, import 375ms, tests 32ms, environment 0ms)
+
+
+EXIT_CODE=0

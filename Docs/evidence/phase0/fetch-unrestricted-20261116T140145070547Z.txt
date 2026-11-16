@@ -1,0 +1,14 @@
+{
+  "command": [
+    "git",
+    "fetch",
+    "origin"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T140145070547Z",
+  "commit": "32f04d1f00ffca2f960bca70a8ea5c98a63a8db4",
+  "status": " M Docs/openapi.json\n M rust/api/src/forecast.rs\n M rust/api/src/live.rs\n M rust/api/src/server.rs\n M rust/api/tests/contracts.rs\n M web/scripts/container-app.test.mjs\n M web/src/api/generated.ts\n M web/src/components/Forecast.tsx\n M web/src/components/Live.tsx\n M web/src/components/ResearchPanel.tsx\n M web/src/lib/live.ts\n M web/tests/forecast.spec.ts\n?? Docs/evidence/phase2/\n"
+}
+
+
+EXIT_CODE=0

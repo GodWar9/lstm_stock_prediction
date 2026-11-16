@@ -30,6 +30,7 @@ test('single-container website preserves real inference, private backend and res
     assert.equal(response.status, 200, await response.clone().text());
     const forecast = await response.json();
     assert.equal(forecast.source, 'synthetic');
+    assert.equal(forecast.data_provenance, 'synthetic');
     assert.ok(forecast.implied_close > 0);
     assert.equal(forecast.dataset_sha256.length, 64);
     const runs = await (await fetch(app.url + '/api/runs')).json();
@@ -50,6 +51,7 @@ test('single-container website preserves real inference, private backend and res
       const result = page.getByRole('region', { name: 'Forecast result' });
       await result.waitFor();
       assert.match(await result.innerText(), /Synthetic or fixture data/);
+      assert.match(await result.getByRole('alert').innerText(), /Synthetic demonstration/);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
       await page.reload();
       await page.getByRole('heading', { name: 'Make a forecast', exact: true }).waitFor();

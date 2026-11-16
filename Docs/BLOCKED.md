@@ -11,3 +11,7 @@ Read this file and CLAIMS.md before each work chunk. Preserve failed attempts an
 - Phase 5: prepare the frozen study configuration for user review before running the study. Final holdout requires explicit sign-off and one evaluation only. No real-data acquisition failure may be replaced by synthetic performance results.
 - Real Alpaca paper session: human-operated using the phase 7 runbook. Credentials remain in the server environment. Real-provider verification stays unverified until retained evidence is reviewed.
 - Resume and interview claims must follow measured results, including negative findings.
+
+## Remote access resolution
+
+The unrestricted fetch succeeded; see `evidence/phase0/fetch-unrestricted-20261116T140145070547Z.txt`. Upstream remains at the original baseline. GitHub workflow execution is still a separate gate.

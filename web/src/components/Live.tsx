@@ -58,7 +58,7 @@ export function Live() {
         <p>Latest requested forecasts from completed minute bars. A new bar or interrupted connection clears these results.</p>
         <div className="table-scroll"><table aria-label="Live forecasts"><thead><tr><th>Symbol</th><th>Model</th><th>Last close</th><th>Predicted return</th><th>Implied close</th><th>Latency</th><th>Status</th></tr></thead><tbody>
           {Object.entries(snapshot.live_forecasts).map(([sym, f]) => (
-            <tr key={sym}><th scope="row">{sym}</th><td>{f.model}</td><td>{number(f.last_close, 2)}</td><td>{(f.predicted_return * 100).toFixed(2)}%</td><td>{number(f.implied_close, 2)}</td><td>{f.feed_latency}</td><td>{disconnected || snapshot.status !== 'connected' || serverNow - f.as_of_ms > 120_000 ? 'Stale' : f.status}</td></tr>
+            <tr key={sym}><th scope="row">{sym}</th><td>{f.model}<p>Data provenance: {f.data_provenance}</p>{f.data_provenance === 'synthetic' && <p className="warning" role="alert">Synthetic demonstration — not evidence of market performance.</p>}</td><td>{number(f.last_close, 2)}</td><td>{(f.predicted_return * 100).toFixed(2)}%</td><td>{number(f.implied_close, 2)}</td><td>{f.feed_latency}</td><td>{disconnected || snapshot.status !== 'connected' || serverNow - f.as_of_ms > 120_000 ? 'Stale' : f.status}</td></tr>
           ))}
         </tbody></table></div>
       </section>

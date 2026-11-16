@@ -30,3 +30,13 @@ Read alongside [BLOCKED.md](BLOCKED.md) at every chunk boundary. VERIFIED requir
 | Append-only decisions and decay monitoring | NOT-IMPLEMENTED | Phase 8 pending |
 
 Numbers in historical documents are not re-certified by this ledger. No study, benchmark or alpha claim is made here.
+
+## Current local acceptance evidence
+
+- Core Rust workspace: [unrestricted baseline](evidence/phase0/rust-test-unrestricted-20261116T135433128565Z.txt).
+- Python training tests: [baseline](evidence/phase0/pytest-20261116T135417824610Z.txt).
+- Browser baseline: [desktop and mobile](evidence/phase0/e2e-unrestricted-20261116T135743458639Z.txt).
+
+These verify local test scenarios, not real-provider access or model advantage.
+
+| Forecast provenance and synthetic banner | VERIFIED | [API](evidence/phase2/api-tests-20261116T140100674278Z.txt), [browser](evidence/phase2/browser-20261116T140144706729Z.txt), [packaged inference](evidence/phase2/container-provenance-20261116T140239408226Z.txt) |

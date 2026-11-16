@@ -746,6 +746,7 @@ async fn live_events(
         MarketStatus,
         crate::forecast::DatasetChoice,
         crate::forecast::Forecast,
+        crate::forecast::DataProvenance,
         crate::live::Snapshot,
         crate::live::Price,
         crate::live::LiveBar,

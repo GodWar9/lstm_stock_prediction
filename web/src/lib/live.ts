@@ -28,6 +28,7 @@ export function parseLiveSnapshot(value: unknown): LiveSnapshot {
   for (const [symbol, forecast] of Object.entries(value.live_forecasts ?? {})) {
     if (!value.symbols.includes(symbol) || !record(forecast) || forecast.symbol !== symbol
       || typeof forecast.model !== 'string' || typeof forecast.dataset !== 'string'
+      || !['synthetic', 'recorded_real', 'live'].includes(String(forecast.data_provenance))
       || !['as_of_ms', 'available_at_ms', 'generated_at_ms'].every(k => timestamp(forecast[k]))
       || !['last_close', 'predicted_return', 'predicted_log_return', 'implied_close'].every(k => typeof forecast[k] === 'number' && Number.isFinite(forecast[k]))
       || typeof forecast.feed_latency !== 'string' || typeof forecast.status !== 'string') throw new Error('Invalid live forecast');

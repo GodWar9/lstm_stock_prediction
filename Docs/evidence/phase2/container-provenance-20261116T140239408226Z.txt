@@ -1,0 +1,29 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "test:container-app"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261116T140239408226Z",
+  "commit": "32f04d1f00ffca2f960bca70a8ea5c98a63a8db4",
+  "status": " M Docs/openapi.json\n M rust/api/src/forecast.rs\n M rust/api/src/live.rs\n M rust/api/src/server.rs\n M rust/api/tests/contracts.rs\n M web/scripts/container-app.test.mjs\n M web/src/api/generated.ts\n M web/src/components/Forecast.tsx\n M web/src/components/Live.tsx\n M web/src/components/ResearchPanel.tsx\n M web/src/lib/live.ts\n M web/tests/forecast.spec.ts\n?? Docs/evidence/phase0/fetch-unrestricted-20261116T140145070547Z.txt\n?? Docs/evidence/phase2/\n"
+}
+
+
+> quant-research-inspector@0.1.0 test:container-app
+> node --test scripts/container-app.test.mjs
+
+{"status":"passed","actualInference":true,"viewports":2,"backendRequiresToken":true}
+✔ single-container website preserves real inference, private backend and research navigation (12206.4696ms)
+✔ container startup failure is actionable (6.1779ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12709.0492
+
+EXIT_CODE=0

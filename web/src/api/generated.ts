@@ -215,6 +215,8 @@ export interface components {
             code: string;
             message: string;
         };
+        /** @enum {string} */
+        DataProvenance: "synthetic" | "recorded_real" | "live";
         DatasetChoice: {
             bars: number;
             dataset: string;
@@ -230,6 +232,7 @@ export interface components {
             available_at_ms: number;
             /** Format: int64 */
             data_age_ms: number;
+            data_provenance: components["schemas"]["DataProvenance"];
             dataset: string;
             dataset_sha256: string;
             feed_latency: string;
@@ -284,6 +287,7 @@ export interface components {
             bars_in_window: number;
             /** Format: int64 */
             data_age_ms: number;
+            data_provenance: components["schemas"]["DataProvenance"];
             dataset: string;
             feed_latency: string;
             /** Format: int64 */

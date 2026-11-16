@@ -8,6 +8,21 @@ use quant_api::{
 use quant_backtest::BacktestReport;
 use tower::ServiceExt;
 
+#[test]
+fn forecast_contract_requires_explicit_provenance() {
+    let schema: serde_json::Value = serde_json::from_str(&quant_api::openapi()).unwrap();
+    for name in ["Forecast", "LiveForecast"] {
+        let required = schema["components"]["schemas"][name]["required"]
+            .as_array()
+            .unwrap();
+        assert!(required.iter().any(|field| field == "data_provenance"));
+    }
+    assert_eq!(
+        schema["components"]["schemas"]["DataProvenance"]["enum"],
+        serde_json::json!(["synthetic", "recorded_real", "live"])
+    );
+}
+
 #[tokio::test]
 async fn real_report_roundtrip_arrow_schema_and_errors() {
     let temp = tempfile::tempdir().unwrap();

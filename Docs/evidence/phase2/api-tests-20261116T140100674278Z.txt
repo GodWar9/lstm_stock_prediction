@@ -1,0 +1,100 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "-p",
+    "quant_api",
+    "--locked"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T140100674278Z",
+  "commit": "32f04d1f00ffca2f960bca70a8ea5c98a63a8db4",
+  "status": " M Docs/openapi.json\n M rust/api/src/forecast.rs\n M rust/api/src/live.rs\n M rust/api/src/server.rs\n M rust/api/tests/contracts.rs\n M web/scripts/container-app.test.mjs\n M web/src/api/generated.ts\n M web/src/components/Forecast.tsx\n M web/src/components/Live.tsx\n M web/src/components/ResearchPanel.tsx\n M web/src/lib/live.ts\n M web/tests/forecast.spec.ts\n?? Docs/evidence/phase2/\n"
+}
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_data-0so8ctw8gojut\s-ho20pdg78m-07199hl-working`
+
+warning: `quant_data` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_features-1zhnd65nw07r2\s-ho20pemvy3-1gidiiu-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_execution-0h8zd4hpe6awt\s-ho20pen371-0h1lwvr-working`
+
+warning: `quant_features` (lib) generated 1 warning
+warning: `quant_execution` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-29nkq5fobpe1r\s-ho20pfol3f-1ez3j73-working`
+
+warning: `quant_inference` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-3g7mgs3qpci53\s-ho20pgiqd1-0bam7gq-working`
+
+warning: `quant_signals` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-2wcodempevz1v\s-ho20pgyzdn-1wxrc6f-working`
+
+warning: `quant_portfolio` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-07qhmqqf9rx11\s-ho20phfdcz-1mqqe5l-working`
+
+warning: `quant_risk` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-2h2h5k4delpeh\s-ho20phupy4-1b57a1b-working`
+
+warning: `quant_backtest` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-18ai2x50xze18\s-ho20piizwh-0zo0zqz-working`
+
+warning: `quant_simulation` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0cywf4lym7343\s-ho7t094ir1-0nkyxyg-working`
+
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+warning: `quant_api` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\openapi-0qaipikajhzs3\s-ho7t0hfgdb-0d93emz-working`
+
+warning: `quant_api` (example "openapi") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.19s
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_api-a846a7e13e013e00.exe)
+
+running 25 tests
+test forecast::tests::live_forecast_rejects_when_live_stream_disabled ... ok
+test forecast::tests::rejects_paths_and_handles_empty_workspace ... ok
+test forecast::tests::live_inputs_require_connected_fresh_real_bars_and_continuity ... ok
+test forecast::tests::synthetic_training_provenance_cannot_be_hidden_by_real_inputs ... ok
+test live::tests::configuration_and_error_classification_are_explicit ... ok
+test live::tests::parses_valid_and_rejects_invalid_minute_bars ... ok
+test live::tests::rejects_invalid_trades ... ok
+test live::tests::minute_buffers_keep_first_publication_reset_gaps_and_disconnects ... ok
+test market::tests::cached_data_cannot_bypass_freshness_check ... ok
+test market::tests::coalesces_requests_and_throttles_other_symbols_and_failures ... ok
+test server::tests::rejects_paths_and_preserves_extremes ... ok
+test server::tests::remote_configuration_requires_strong_token_and_bounded_workers ... ok
+test server::tests::cancelled_requests_keep_worker_permits_until_work_finishes ... ok
+test server::tests::remote_auth_covers_artifacts_streams_and_spa_but_allows_liveness ... ok
+test server::tests::rejects_remote_hosts_and_restricts_browser_connections ... ok
+test server::tests::empty_list_missing_run_and_read_only ... ok
+test live::tests::invalid_trade_is_not_recorded_or_displayed ... ok
+test live::journal::tests::capacity_and_backward_clock_fail_closed ... ok
+test live::tests::websocket_authenticates_subscribes_persists_and_preserves_event_order ... ok
+test live::tests::provider_rejection_is_terminal_and_redacts_upstream_text ... ok
+test live::tests::incomplete_subscription_fails_instead_of_claiming_live ... ok
+test live::journal::tests::rotation_chain_durability_lock_and_clean_shutdown ... ok
+test provenance::tests::fingerprints_bytes_untracked_sources_and_deletions ... ok
+test live::tests::reconnect_resubscribes_and_shutdown_seals_the_capture ... ok
+test server::tests::readiness_and_sse_clients_follow_state_and_shutdown ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.03s
+
+     Running tests\contracts.rs (rust\target\debug\deps\contracts-8dcdc868fd4eee85.exe)
+
+running 4 tests
+test forecast_contract_requires_explicit_provenance ... ok
+test test_benchmark_positions_signal_outcomes_and_risk_endpoints ... ok
+test complete_pages_filters_and_size_limits ... ok
+test real_report_roundtrip_arrow_schema_and_errors ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+   Doc-tests quant_api
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+EXIT_CODE=0

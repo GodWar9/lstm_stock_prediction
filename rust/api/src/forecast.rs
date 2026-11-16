@@ -38,6 +38,7 @@ pub struct DatasetChoice {
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct Forecast {
+    pub data_provenance: DataProvenance,
     pub market: Option<serde_json::Value>,
     pub input_mode: String,
     pub fetched_at_ms: Option<i64>,
@@ -59,6 +60,38 @@ pub struct Forecast {
     pub dataset_sha256: String,
     pub model_package_sha256: String,
     pub warnings: Vec<String>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum DataProvenance {
+    Synthetic,
+    RecordedReal,
+    Live,
+}
+
+fn data_provenance(dataset: &str, model: Option<&str>, live: bool) -> Result<DataProvenance> {
+    let synthetic = |source: &str| {
+        let source = source.to_ascii_lowercase();
+        ["synthetic", "fixture", "mock"]
+            .iter()
+            .any(|tag| source.contains(tag))
+    };
+    // Model training provenance must never disappear when choosing another dataset.
+    if synthetic(dataset) || model.is_some_and(synthetic) {
+        return Ok(DataProvenance::Synthetic);
+    }
+    ensure!(
+        !dataset.is_empty()
+            && dataset != "unknown"
+            && model.is_some_and(|source| !source.is_empty() && source != "unknown"),
+        "Model and dataset source provenance is required; retrain legacy artifacts"
+    );
+    Ok(if live {
+        DataProvenance::Live
+    } else {
+        DataProvenance::RecordedReal
+    })
 }
 
 fn directory(root: &Path, id: &str) -> Result<PathBuf> {
@@ -345,7 +378,8 @@ pub(crate) fn run_with_market_and_live(
         warnings
             .push("Point-in-time invariant: live bars available only after complete close.".into());
     }
-    if manifest.source.contains("synthetic") || manifest.source.contains("fixture") {
+    let provenance = data_provenance(&manifest.source, meta["source"].as_str(), q.live)?;
+    if provenance == DataProvenance::Synthetic {
         warnings.push("Synthetic or fixture data: use only to verify the workflow.".into());
     }
     let age = now - last.timestamp.as_nanos() / 1_000_000;
@@ -367,6 +401,7 @@ pub(crate) fn run_with_market_and_live(
     }
     let now = chrono::Utc::now().timestamp_millis();
     let result = Forecast {
+        data_provenance: provenance,
         market: identity,
         input_mode: if q.live {
             "live"
@@ -420,6 +455,7 @@ pub(crate) fn run_with_market_and_live(
             state.live_forecasts.insert(
                 q.symbol.clone(),
                 crate::live::LiveForecast {
+                    data_provenance: result.data_provenance,
                     model: q.model.clone(),
                     dataset: q.dataset.clone(),
                     symbol: q.symbol.clone(),
@@ -508,6 +544,34 @@ fn live_inputs(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn synthetic_training_provenance_cannot_be_hidden_by_real_inputs() {
+        for source in ["synthetic", "fixture", "mock", "Synthetic_demo"] {
+            for live in [false, true] {
+                let provenance = data_provenance("csv", Some(source), live).unwrap();
+                assert_eq!(serde_json::to_value(provenance).unwrap(), "synthetic");
+                assert_eq!(
+                    data_provenance(source, Some("csv"), live).unwrap(),
+                    provenance
+                );
+            }
+        }
+        assert!(data_provenance("csv", None, false).is_err());
+        assert!(data_provenance("unknown", Some("csv"), false).is_err());
+        assert_eq!(
+            data_provenance("csv", Some("csv"), false).unwrap(),
+            DataProvenance::RecordedReal
+        );
+        assert_eq!(
+            data_provenance(
+                "alpaca:iex:first_publication",
+                Some("alpaca:iex:first_publication"),
+                true
+            )
+            .unwrap(),
+            DataProvenance::Live
+        );
+    }
     #[test]
     fn rejects_paths_and_handles_empty_workspace() {
         let root = tempfile::tempdir().unwrap();

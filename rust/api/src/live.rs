@@ -37,6 +37,7 @@ pub struct LiveBar {
 
 #[derive(Clone, Debug, Serialize, ToSchema)]
 pub struct LiveForecast {
+    pub data_provenance: crate::forecast::DataProvenance,
     pub model: String,
     pub dataset: String,
     pub symbol: String,

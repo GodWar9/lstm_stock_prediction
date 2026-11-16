@@ -23,7 +23,7 @@ test('displays exact forecast evidence, then clears it when inputs change', asyn
   // exercises the production inference service without mocked predictions.
   await page.route('**/api/datasets', route => route.fulfill({ json: [{ dataset: 'historical', symbol: 'AAPL', interval: '1d', source: 'synthetic', bars: 1000 }] }));
   await page.route('**/api/forecast?*', route => route.fulfill({ json: {
-    model: 'inspector_demo', dataset: 'historical', symbol: 'AAPL', interval: '1d', source: 'synthetic',
+    model: 'inspector_demo', dataset: 'historical', symbol: 'AAPL', interval: '1d', source: 'synthetic', data_provenance: 'synthetic',
     as_of_ms: 1704384000000, available_at_ms: 1704384000500, generated_at_ms: Date.now(),
     horizon_bars: 1, last_close: 100, predicted_log_return: Math.log(1.01), predicted_return: 0.01,
     implied_close: 101, dataset_sha256: 'a'.repeat(64), model_package_sha256: 'b'.repeat(64),
@@ -34,6 +34,7 @@ test('displays exact forecast evidence, then clears it when inputs change', asyn
   await page.getByLabel('Forecast dataset').selectOption('historical/AAPL');
   await page.getByRole('button', { name: 'Generate forecast' }).click();
   const result = page.getByRole('region', { name: 'Forecast result' });
+  await expect(result.getByRole('alert')).toContainText('Synthetic demonstration');
   await expect(result).toContainText('1.00%');
   await expect(result).toContainText('101.00');
   await expect(result).toContainText('Historical data');

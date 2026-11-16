@@ -62,6 +62,8 @@ export function Forecast() {
       {forecast.error && <div role="alert"><h3>Forecast unavailable</h3><p>{forecast.error.message}</p><p>Use a complete, integrity-sealed model and a compatible dataset. Legacy packages must be retrained.</p></div>}
     </section>
     {result && <section className="panel" aria-label="Forecast result"><h3>{result.symbol} forecast · {result.horizon_bars} {result.interval} bar{result.horizon_bars === 1 ? '' : 's'} ahead</h3>
+      <p>Data provenance: {result.data_provenance ?? 'unverified'}</p>
+      {result.data_provenance === 'synthetic' && <div className="warning" role="alert">Synthetic demonstration — not evidence of market performance.</div>}
       <p>{result.input_mode === 'live' ? 'Live streaming price feed' : result.input_mode === 'fresh' ? 'Fresh market snapshot' : 'Recorded dataset'} · Currency: {String(object(result.market).currency ?? 'not specified')} · Feed delay: {result.feed_latency ?? 'unknown'}</p>
       {result.fetched_at_ms != null && <p>Fetched at {new Date(result.fetched_at_ms).toISOString()}. Data age at prediction: {Math.round(result.data_age_ms / 1000)} seconds.</p>}
       <p>Data as of <strong>{new Date(result.as_of_ms).toISOString()}</strong>. Available at {new Date(result.available_at_ms).toISOString()}.</p>

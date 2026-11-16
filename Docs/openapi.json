@@ -456,6 +456,14 @@
           }
         }
       },
+      "DataProvenance": {
+        "type": "string",
+        "enum": [
+          "synthetic",
+          "recorded_real",
+          "live"
+        ]
+      },
       "DatasetChoice": {
         "type": "object",
         "required": [
@@ -488,6 +496,7 @@
       "Forecast": {
         "type": "object",
         "required": [
+          "data_provenance",
           "input_mode",
           "data_age_ms",
           "feed_latency",
@@ -520,6 +529,9 @@
           "data_age_ms": {
             "type": "integer",
             "format": "int64"
+          },
+          "data_provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
           },
           "dataset": {
             "type": "string"
@@ -653,6 +665,7 @@
       "LiveForecast": {
         "type": "object",
         "required": [
+          "data_provenance",
           "model",
           "dataset",
           "symbol",
@@ -685,6 +698,9 @@
           "data_age_ms": {
             "type": "integer",
             "format": "int64"
+          },
+          "data_provenance": {
+            "$ref": "#/components/schemas/DataProvenance"
           },
           "dataset": {
             "type": "string"
