@@ -1,5 +1,6 @@
 //! Verify the exact bytes of a published model package before loading it.
 use crate::provider::InferenceError;
+use ring::signature::{Ed25519KeyPair, KeyPair, UnparsedPublicKey, ED25519};
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeMap, fs, io::Read, path::Path};
@@ -35,6 +36,90 @@ fn invalid(message: impl Into<String>) -> InferenceError {
 
 /// Returns the verified manifest's model ID. Unsealed legacy packages must be retrained.
 pub fn verify_package(directory: &Path) -> Result<String, InferenceError> {
+    let policy = match std::env::var("QUANTCTL_MODEL_TRUST_CONFIG") {
+        Ok(path) => serde_yaml::from_slice(&fs::read(path)?)
+            .map_err(|_| invalid("Invalid model trust configuration"))?,
+        Err(std::env::VarError::NotPresent) => TrustPolicy::default(),
+        Err(_) => return Err(invalid("Invalid trust configuration path")),
+    };
+    verify_package_with_policy(directory, &policy)
+}
+
+#[derive(Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct TrustPolicy {
+    #[serde(default)]
+    pub require_signature: bool,
+    pub public_key_hex: Option<String>,
+}
+
+fn decode_hex(value: &str) -> Result<Vec<u8>, InferenceError> {
+    if !value.len().is_multiple_of(2) || !value.bytes().all(|b| b.is_ascii_hexdigit()) {
+        return Err(invalid("Invalid hex key encoding"));
+    }
+    (0..value.len())
+        .step_by(2)
+        .map(|i| {
+            u8::from_str_radix(&value[i..i + 2], 16)
+                .map_err(|_| invalid("Invalid hex key encoding"))
+        })
+        .collect()
+}
+
+pub fn verify_package_with_policy(
+    directory: &Path,
+    policy: &TrustPolicy,
+) -> Result<String, InferenceError> {
+    let bytes = fs::read(directory.join("integrity.json")).map_err(|e| {
+        invalid(format!(
+            "Cannot read integrity.json; retrain this model: {e}"
+        ))
+    })?;
+    match fs::read(directory.join("integrity.ed25519")) {
+        Ok(signature) => {
+            let key = decode_hex(
+                policy
+                    .public_key_hex
+                    .as_deref()
+                    .ok_or_else(|| invalid("Signed model requires a trusted public key"))?,
+            )?;
+            UnparsedPublicKey::new(&ED25519, key)
+                .verify(&bytes, &signature)
+                .map_err(|_| invalid("Ed25519 model signature verification failed"))?;
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound && !policy.require_signature => {
+        }
+        Err(_) => return Err(invalid("Required model signature missing or unreadable")),
+    }
+    verify_package_hashes(directory)
+}
+
+/// Signing checks hashes independently of the deployment trust policy.
+pub fn sign_package(directory: &Path) -> Result<String, InferenceError> {
+    verify_package_hashes(directory)?;
+    let encoded = std::env::var("QUANTCTL_MODEL_SIGNING_KEY_PKCS8_HEX")
+        .map_err(|_| invalid("Signing key must be supplied through the process environment"))?;
+    let mut secret = decode_hex(&encoded)?;
+    let key_result = Ed25519KeyPair::from_pkcs8(&secret);
+    secret.fill(0);
+    let key = key_result.map_err(|_| invalid("Invalid Ed25519 PKCS8 v2 signing key"))?;
+    let signature = key.sign(&fs::read(directory.join("integrity.json"))?);
+    let mut file = fs::OpenOptions::new()
+        .create_new(true)
+        .write(true)
+        .open(directory.join("integrity.ed25519"))?;
+    use std::io::Write;
+    file.write_all(signature.as_ref())?;
+    file.sync_all()?;
+    Ok(key
+        .public_key()
+        .as_ref()
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect())
+}
+
+fn verify_package_hashes(directory: &Path) -> Result<String, InferenceError> {
     let bytes = fs::read(directory.join("integrity.json")).map_err(|e| {
         invalid(format!(
             "Cannot read integrity.json; retrain this model: {e}"
@@ -97,6 +182,54 @@ pub fn verify_package(directory: &Path) -> Result<String, InferenceError> {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn signature_policy_accepts_valid_and_rejects_unsigned_tampered_and_wrong_key() {
+        let temp = package();
+        let key = Ed25519KeyPair::from_seed_unchecked(&[7; 32]).unwrap();
+        let public: String = key
+            .public_key()
+            .as_ref()
+            .iter()
+            .map(|b| format!("{b:02x}"))
+            .collect();
+        let policy = TrustPolicy {
+            require_signature: true,
+            public_key_hex: Some(public),
+        };
+        assert!(verify_package_with_policy(temp.path(), &policy).is_err());
+        assert!(verify_package_with_policy(temp.path(), &TrustPolicy::default()).is_ok());
+        let manifest = fs::read(temp.path().join("integrity.json")).unwrap();
+        fs::write(
+            temp.path().join("integrity.ed25519"),
+            key.sign(&manifest).as_ref(),
+        )
+        .unwrap();
+        assert!(verify_package_with_policy(temp.path(), &policy).is_ok());
+        assert!(verify_package_with_policy(temp.path(), &TrustPolicy::default()).is_err());
+        let other = Ed25519KeyPair::from_seed_unchecked(&[8; 32]).unwrap();
+        let wrong = TrustPolicy {
+            require_signature: true,
+            public_key_hex: Some(
+                other
+                    .public_key()
+                    .as_ref()
+                    .iter()
+                    .map(|b| format!("{b:02x}"))
+                    .collect(),
+            ),
+        };
+        assert!(verify_package_with_policy(temp.path(), &wrong).is_err());
+        fs::write(
+            temp.path().join("integrity.json"),
+            [manifest.as_slice(), b" "].concat(),
+        )
+        .unwrap();
+        assert!(verify_package_with_policy(temp.path(), &policy).is_err());
+        fs::write(temp.path().join("integrity.json"), manifest).unwrap();
+        fs::write(temp.path().join("model.onnx"), b"modified").unwrap();
+        assert!(verify_package_with_policy(temp.path(), &policy).is_err());
+    }
 
     fn package() -> tempfile::TempDir {
         let temp = tempfile::tempdir().unwrap();

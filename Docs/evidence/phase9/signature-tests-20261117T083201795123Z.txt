@@ -1,0 +1,71 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "-p",
+    "quant_inference",
+    "--offline",
+    "integrity"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T083201795123Z",
+  "commit": "e1be82299c9a9fe6bf79cb3f0a95b48cb1ad5e32",
+  "status": " M Docs/BLOCKED.md\n M rust/cli/src/commands.rs\n M rust/cli/src/main.rs\n M rust/inference/Cargo.toml\n M rust/inference/src/integrity.rs\n?? Docs/MODEL-SIGNING.md\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase3/github-green-20261117T082144099685Z.txt\n?? configs/model_trust.example.yaml\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "b4e892a0b6d0161fb7c9578e06705e233efdddead6401e382f7d80b1cc0f5071"
+}
+
+   Compiling tokio v1.53.1
+   Compiling serde v1.0.229
+   Compiling futures-util v0.3.34
+   Compiling liquid-core v0.26.8
+   Compiling serde_json v1.0.151
+   Compiling tempfile v3.27.0
+   Compiling string-interner v0.15.0
+   Compiling chrono v0.4.45
+   Compiling serde_urlencoded v0.7.1
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling quant_instruments v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\instruments)
+   Compiling arrow-format v0.8.1
+   Compiling ndarray v0.15.6
+   Compiling tract-data v0.21.18
+   Compiling quant_calendar v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\calendar)
+   Compiling chrono-tz v0.10.4
+   Compiling liquid-lib v0.26.8
+   Compiling quant_config v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\config)
+   Compiling futures-executor v0.3.34
+   Compiling futures v0.3.34
+   Compiling parquet-format-safe v0.2.4
+   Compiling liquid v0.26.8
+   Compiling tract-linalg v0.21.18
+   Compiling hyper v1.11.1
+   Compiling tower v0.5.3
+   Compiling tokio-rustls v0.26.5
+   Compiling tower-http v0.6.11
+   Compiling hyper-util v0.1.21
+   Compiling hyper-rustls v0.27.10
+   Compiling reqwest v0.12.28
+   Compiling parquet2 v0.17.2
+   Compiling arrow2 v0.17.4
+   Compiling quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+   Compiling tract-core v0.21.18
+   Compiling quant_features v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\features)
+   Compiling tract-nnef v0.21.18
+   Compiling tract-hir v0.21.18
+   Compiling tract-onnx-opl v0.21.18
+   Compiling tract-onnx v0.21.18
+   Compiling quant_inference v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\inference)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 55.18s
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_inference-59473d6b6b549d0e.exe)
+
+running 4 tests
+test integrity::tests::rejects_missing_manifest_or_package_member ... ok
+test integrity::tests::verifies_package_and_rejects_same_size_mutation ... ok
+test integrity::tests::signature_policy_accepts_valid_and_rejects_unsigned_tampered_and_wrong_key ... ok
+test integrity::tests::rejects_invalid_manifests ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.11s
+
+
+EXIT_CODE=0

@@ -1,0 +1,4 @@
+# Copy to a protected deployment configuration; public key is not a secret.
+# Select it with QUANTCTL_MODEL_TRUST_CONFIG in the server/CLI environment.
+require_signature: false
+public_key_hex: null

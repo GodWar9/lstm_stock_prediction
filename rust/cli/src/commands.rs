@@ -24,6 +24,11 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+    /// Sign a sealed model using an environment-supplied Ed25519 private key
+    SignModel {
+        #[arg(long)]
+        artifact_dir: PathBuf,
+    },
     /// Evaluate rolling outcomes and empirical feature drift from a verified decision log
     Monitor {
         #[arg(long)]

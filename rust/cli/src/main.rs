@@ -16,6 +16,12 @@ async fn main() -> anyhow::Result<()> {
     info!(version = env!("CARGO_PKG_VERSION"), "quantctl initialized");
 
     match &cli.command {
+        Commands::SignModel { artifact_dir } => {
+            println!(
+                "{}",
+                serde_json::json!({"public_key_hex":quant_inference::integrity::sign_package(artifact_dir)?})
+            );
+        }
         Commands::Monitor {
             log,
             model_dir,
