@@ -100,6 +100,9 @@ def test_walk_forward_orchestrator_synthetic(monkeypatch):
             train_rows = features[segments["train"]["start_row"]:segments["train"]["end_row"]]
             scaler = json.loads((fold_dir / "scaler.json").read_text())
             np.testing.assert_allclose(scaler["mean"], train_rows.mean(axis=0), atol=1e-7)
+            metadata = json.loads((fold_dir / "metadata.json").read_text())
+            reference = train_rows[np.linspace(0, len(train_rows)-1, min(512, len(train_rows)), dtype=int)]
+            np.testing.assert_allclose(metadata["monitor_reference"], reference)
             outcomes = json.loads((fold_dir / "oos_predictions.json").read_text())
             assert len(outcomes["predictions"]) == len(outcomes["targets"]) == len(outcomes["timestamps"])
         assert len(val["folds"]) == 3

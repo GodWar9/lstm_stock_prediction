@@ -1,5 +1,6 @@
 pub mod artifacts;
 pub mod contract;
+pub mod decisions;
 pub mod forecast;
 mod live;
 mod market;

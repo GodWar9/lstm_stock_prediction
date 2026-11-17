@@ -16,6 +16,35 @@ async fn main() -> anyhow::Result<()> {
     info!(version = env!("CARGO_PKG_VERSION"), "quantctl initialized");
 
     match &cli.command {
+        Commands::Monitor {
+            log,
+            model_dir,
+            window,
+            warn_ks,
+            halt_ks,
+        } => {
+            let report =
+                quant_api::decisions::monitor(log, model_dir, *window, *warn_ks, *halt_ks)?;
+            println!("{}", report);
+            anyhow::ensure!(
+                report["status"] != "halt",
+                "Monitoring halt threshold exceeded"
+            );
+        }
+        Commands::RecordOutcome {
+            log,
+            decision_id,
+            realized_log_return,
+            observed_at_ms,
+        } => {
+            let hash = quant_api::decisions::append(
+                log,
+                serde_json::json!({"kind":"outcome",
+                "decision_id":decision_id,"realized_log_return":realized_log_return,"observed_at_ms":observed_at_ms,
+                "recorded_at_ms":chrono::Utc::now().timestamp_millis()}),
+            )?;
+            println!("{}", serde_json::json!({"record_hash":hash}));
+        }
         Commands::SourceSnapshot => println!(
             "{}",
             serde_json::to_string(&quant_api::provenance::snapshot(std::path::Path::new("."))?)?

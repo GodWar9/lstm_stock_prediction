@@ -496,6 +496,7 @@
       "Forecast": {
         "type": "object",
         "required": [
+          "decision_id",
           "data_provenance",
           "input_mode",
           "data_age_ms",
@@ -537,6 +538,9 @@
             "type": "string"
           },
           "dataset_sha256": {
+            "type": "string"
+          },
+          "decision_id": {
             "type": "string"
           },
           "feed_latency": {

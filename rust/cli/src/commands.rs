@@ -24,6 +24,30 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+    /// Evaluate rolling outcomes and empirical feature drift from a verified decision log
+    Monitor {
+        #[arg(long)]
+        log: PathBuf,
+        #[arg(long)]
+        model_dir: PathBuf,
+        #[arg(long, default_value_t = 100)]
+        window: usize,
+        #[arg(long, default_value_t = 0.2)]
+        warn_ks: f64,
+        #[arg(long, default_value_t = 0.4)]
+        halt_ks: f64,
+    },
+    /// Append an observed outcome without rewriting the original forecast
+    RecordOutcome {
+        #[arg(long)]
+        log: PathBuf,
+        #[arg(long)]
+        decision_id: String,
+        #[arg(long, allow_hyphen_values = true)]
+        realized_log_return: f64,
+        #[arg(long)]
+        observed_at_ms: i64,
+    },
     /// Print a content fingerprint of the current working source tree
     SourceSnapshot,
     /// Check staged model predictions against saved PyTorch reference windows

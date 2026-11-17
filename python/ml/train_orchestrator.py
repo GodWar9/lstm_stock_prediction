@@ -343,6 +343,9 @@ def train_and_export(args, cfg, model_id, stage):
         metadata = json.load(source)
     metadata.update(market=data_integrity.get("market"), source=data_integrity.get("source", "unknown"), training_symbol=data_integrity.get("symbol"), bar_interval=bar_interval, periods_per_year=periods_per_year, training_dataset_version=validation["data_version"], feature_set_version=feature_set_version,
                     target_definition={"horizon": target_horizon, "transformation": "log_return"})
+    # Deterministic empirical reference drawn only from training rows, before publication.
+    reference_indices = train_idx[np.linspace(0, len(train_idx)-1, min(512, len(train_idx)), dtype=int)]
+    metadata["monitor_reference"] = raw_features[reference_indices].tolist()
     executable = os.environ.get("QUANTCTL_EXECUTABLE")
     if not executable:
         raise RuntimeError("Set QUANTCTL_EXECUTABLE to record source provenance")

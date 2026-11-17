@@ -235,6 +235,7 @@ export interface components {
             data_provenance: components["schemas"]["DataProvenance"];
             dataset: string;
             dataset_sha256: string;
+            decision_id: string;
             feed_latency: string;
             /** Format: int64 */
             fetched_at_ms?: number | null;

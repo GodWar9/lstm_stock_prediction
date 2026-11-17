@@ -1,0 +1,45 @@
+{
+  "command": [
+    ".\\python\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "python/tests/test_walk_forward_orchestration.py",
+    "-q"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T082642149666Z",
+  "commit": "b57542283257cda3d68e8d07fb65413316e845f3",
+  "status": " M Docs/BLOCKED.md\n M python/ml/train_orchestrator.py\n M python/tests/test_walk_forward_orchestration.py\n M rust/api/src/forecast.rs\n M rust/api/src/lib.rs\n M rust/cli/src/commands.rs\n M rust/cli/src/main.rs\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase3/github-green-20261117T082144099685Z.txt\n?? Docs/evidence/phase8/\n?? rust/api/src/decisions.rs\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "22cd7a43113013966050eda5642ed14f9a976677c3f8d85428aa952ab6e6d79a"
+}
+
+..                                                                       [100%]
+============================== warnings summary ===============================
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\ml\export_onnx.py:39: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+    torch.onnx.export(
+
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\onnx\_internal\torchscript_exporter\utils.py:218: DeprecationWarning: The feature will be removed. Please remove usage of this function
+    setup_onnx_logging(verbose) as log_ctx,
+
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\nn\modules\rnn.py:328: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+    if self.input_size != input.size(-1):
+
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\nn\modules\rnn.py:361: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+    if hx.size() != expected_hidden_size:
+
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\onnx\_internal\torchscript_exporter\symbolic_opset9.py:4496: UserWarning: Exporting a model to ONNX with a batch_size other than 1, with a variable length with LSTM can cause an error when running the ONNX model with a different batch size. Make sure to save the model with a batch size of 1, or define the initial states (h0/c0) as inputs of the model. 
+    return _generic_rnn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2 passed, 9 warnings in 45.55s
+
+EXIT_CODE=0

@@ -1,0 +1,23 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "contract"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261117T082730554248Z",
+  "commit": "b57542283257cda3d68e8d07fb65413316e845f3",
+  "status": " M Docs/BLOCKED.md\n M python/ml/train_orchestrator.py\n M python/tests/test_walk_forward_orchestration.py\n M rust/api/src/forecast.rs\n M rust/api/src/lib.rs\n M rust/cli/src/commands.rs\n M rust/cli/src/main.rs\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase3/github-green-20261117T082144099685Z.txt\n?? Docs/evidence/phase8/\n?? rust/api/src/decisions.rs\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "22cd7a43113013966050eda5642ed14f9a976677c3f8d85428aa952ab6e6d79a"
+}
+
+
+> quant-research-inspector@0.1.0 contract
+> node scripts/contract.mjs
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0cywf4lym7343\s-ho8njhldr7-04dt7za-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\openapi-0qaipikajhzs3\s-ho8njnshd9-0kbehx8-working`
+
+
+EXIT_CODE=0

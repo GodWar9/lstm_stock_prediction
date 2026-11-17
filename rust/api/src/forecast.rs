@@ -38,6 +38,7 @@ pub struct DatasetChoice {
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct Forecast {
+    pub decision_id: String,
     pub data_provenance: DataProvenance,
     pub market: Option<serde_json::Value>,
     pub input_mode: String,
@@ -400,7 +401,8 @@ pub(crate) fn run_with_market_and_live(
         warnings.push("Global exchange holidays and missing session bars are not independently validated. Horizon is measured in observed bars.".into());
     }
     let now = chrono::Utc::now().timestamp_millis();
-    let result = Forecast {
+    let mut result = Forecast {
+        decision_id: String::new(),
         data_provenance: provenance,
         market: identity,
         input_mode: if q.live {
@@ -438,6 +440,18 @@ pub(crate) fn run_with_market_and_live(
         ),
         warnings,
     };
+    let mut event = serde_json::to_value(&result)?;
+    event["kind"] = serde_json::json!("forecast");
+    event["feature_schema_sha256"] = serde_json::json!(crate::decisions::digest(
+        &serde_json::to_value(provider.feature_schema())?
+    )?);
+    event["feature_sha256"] =
+        serde_json::json!(crate::decisions::digest(&serde_json::to_value(&input)?)?);
+    event["input_window_sha256"] = serde_json::json!(result.dataset_sha256);
+    event["features"] =
+        serde_json::to_value(&input[input.len() - provider.feature_schema().len()..])?;
+    result.decision_id =
+        crate::decisions::append(&root.join("reports/decisions/events.ndjson"), event)?;
     if q.live {
         let mut state = live.blocking_write();
         // An inference that raced a reconnect or another minute is not current.

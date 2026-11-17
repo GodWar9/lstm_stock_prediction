@@ -1,0 +1,45 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "-p",
+    "quant_api",
+    "decisions",
+    "--locked"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T082414771037Z",
+  "commit": "b57542283257cda3d68e8d07fb65413316e845f3",
+  "status": " M Docs/BLOCKED.md\n M python/ml/train_orchestrator.py\n M rust/api/src/forecast.rs\n M rust/api/src/lib.rs\n M rust/cli/src/commands.rs\n M rust/cli/src/main.rs\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase3/github-green-20261117T082144099685Z.txt\n?? rust/api/src/decisions.rs\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "740aba9b792d283dc2a077d70c9f33816a9820ed801195079238525336378373"
+}
+
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0qh4byf5277xq\s-ho8ng56tez-13agxm2-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0cywf4lym7343\s-ho8ng56tec-107l57l-working`
+
+warning: `quant_api` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\contracts-2fiunszgye9d6\s-ho8ngd3rj2-0r9daem-working`
+
+warning: `quant_api` (lib test) generated 1 warning
+warning: `quant_api` (test "contracts") generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 23.82s
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_api-a846a7e13e013e00.exe)
+
+running 2 tests
+test decisions::tests::injected_drift_warns_and_halts_and_metrics_are_defined ... ok
+test decisions::tests::chain_rejects_mutation_partial_tail_and_duplicate_outcome ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 27 filtered out; finished in 0.07s
+
+     Running tests\contracts.rs (rust\target\debug\deps\contracts-8dcdc868fd4eee85.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+
+EXIT_CODE=0

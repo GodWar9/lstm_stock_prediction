@@ -1,0 +1,28 @@
+{
+  "command": [
+    "cargo",
+    "build",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "--bin",
+    "quantctl",
+    "--locked"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T082800059094Z",
+  "commit": "b57542283257cda3d68e8d07fb65413316e845f3",
+  "status": " M Docs/BLOCKED.md\n M Docs/openapi.json\n M python/ml/train_orchestrator.py\n M python/tests/test_walk_forward_orchestration.py\n M rust/api/src/forecast.rs\n M rust/api/src/lib.rs\n M rust/cli/src/commands.rs\n M rust/cli/src/main.rs\n M web/src/api/generated.ts\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase3/github-green-20261117T082144099685Z.txt\n?? Docs/evidence/phase8/\n?? rust/api/src/decisions.rs\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "9fee9c3dd2f71d67a91866af17873b7566a4ae1bdcc8bda92d5a97f61adfc399"
+}
+
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-34kw8uw7nfpd3\s-ho8njwjl6k-1fmh0ia-working`
+
+warning: `quant_api` (lib) generated 1 warning
+   Compiling quantctl v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\cli)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-1ncjt8cojq69g\s-ho8nk5bszk-0yb2jn9-working`
+
+warning: `quantctl` (bin "quantctl") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 38.80s
+
+EXIT_CODE=0
