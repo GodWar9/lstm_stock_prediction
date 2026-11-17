@@ -779,6 +779,90 @@ mod tests {
         assert!(live.read().await.bar_buffers.is_empty());
     }
 
+    #[tokio::test]
+    async fn bounded_window_duplicates_late_minutes_and_cached_forecasts() {
+        let live = disabled();
+        let mut state = live.write().await;
+        let start = DateTime::parse_from_rfc3339("2026-09-28T13:30:00Z").unwrap();
+        for i in 0..301 {
+            let time = start + chrono::Duration::minutes(i);
+            let event =
+                json!({"S":"AAPL","t":time.to_rfc3339(),"o":100,"h":101,"l":99,"c":100,"v":10});
+            let (symbol, bar, display) =
+                parse_bar(&event, time.timestamp_millis() + 60_500).unwrap();
+            ingest_bar(&mut state, symbol, bar, display);
+        }
+        assert_eq!(state.bar_buffers["AAPL"].len(), 300);
+        let first = state.bar_buffers["AAPL"][0].timestamp;
+        assert_eq!(
+            first.as_nanos() / 1_000_000,
+            start.timestamp_millis() + 120_000
+        );
+        let last = state.bar_buffers["AAPL"].last().unwrap().clone();
+        let mut duplicate = last.clone();
+        duplicate.close = 999.0;
+        let display = state.latest_bars["AAPL"].clone();
+        ingest_bar(&mut state, "AAPL".into(), duplicate, display.clone());
+        assert_eq!(state.bar_buffers["AAPL"].last().unwrap().close, 100.0);
+        state.live_forecasts.insert(
+            "AAPL".into(),
+            LiveForecast {
+                data_provenance: crate::forecast::DataProvenance::Live,
+                model: "test".into(),
+                dataset: "test".into(),
+                symbol: "AAPL".into(),
+                as_of_ms: 1,
+                available_at_ms: 1,
+                generated_at_ms: 1,
+                data_age_ms: 0,
+                feed_latency: "test".into(),
+                last_close: 100.0,
+                predicted_log_return: 0.0,
+                predicted_return: 0.0,
+                implied_close: 100.0,
+                bars_in_window: 300,
+                status: "ready".into(),
+                warnings: vec![],
+            },
+        );
+        let cached = state.live_forecasts["AAPL"].clone();
+        // A previous minute arriving after the next minute closes cannot bridge a window.
+        state
+            .bar_buffers
+            .get_mut("AAPL")
+            .unwrap()
+            .last_mut()
+            .unwrap()
+            .availability_timestamp =
+            quant_data::Timestamp(last.timestamp.as_nanos() + 61_000_000_000);
+        let mut next = last;
+        next.timestamp = quant_data::Timestamp(next.timestamp.as_nanos() + 60_000_000_000);
+        next.availability_timestamp =
+            quant_data::Timestamp(next.timestamp.as_nanos() + 2_000_000_000);
+        ingest_bar(&mut state, "AAPL".into(), next, display);
+        assert_eq!(state.bar_buffers["AAPL"].len(), 1);
+        assert!(state.live_forecasts.is_empty());
+        state.live_forecasts.insert("AAPL".into(), cached);
+        drop(state);
+        set_status(&live, "reconnecting", "test disconnect").await;
+        assert!(live.read().await.live_forecasts.is_empty());
+        assert!(live.read().await.bar_buffers.is_empty());
+    }
+
+    #[tokio::test]
+    async fn websocket_revisions_remain_journal_only() {
+        let (state, journal, _) = exchange(vec![
+            json!([{"T":"subscription","trades":["AAPL"],"quotes":["AAPL"],"bars":["AAPL"],"updatedBars":["AAPL"]}]),
+            json!([
+                {"T":"b","S":"AAPL","t":"2026-09-28T14:00:00Z","o":100,"h":101,"l":99,"c":100,"v":10},
+                {"T":"u","S":"AAPL","t":"2026-09-28T14:00:00Z","o":100,"h":102,"l":99,"c":102,"v":20}
+            ])
+        ]).await;
+        assert_eq!(state.read().await.bar_buffers["AAPL"].len(), 1);
+        assert_eq!(state.read().await.bar_buffers["AAPL"][0].close, 100.0);
+        assert_eq!(journal.lines().count(), 2);
+    }
+
     async fn exchange(responses: Vec<Value>) -> (Live, String, Failure) {
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let endpoint = format!("ws://{}", listener.local_addr().unwrap());

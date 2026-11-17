@@ -1,0 +1,80 @@
+{
+  "command": [
+    "cargo",
+    "test",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "-p",
+    "quant_api",
+    "--locked"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T082022261647Z",
+  "commit": "76664d367f2bea2bd22d21162397bf3731ef6805",
+  "status": " M rust/api/src/forecast.rs\n M rust/api/src/live.rs\n?? Docs/LIVE-SESSION-RUNBOOK.md\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase5/\n?? Docs/evidence/phase6/\n?? configs/study_daily.yaml\n?? rust/inference/examples/\n?? scripts/benchmark_runtimes.py\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "e30dba52f66966f3fedf79c522cd49da908137f18076c96b3dac3c1b2e0306db"
+}
+
+    Blocking waiting for file lock on build directory
+   Compiling quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+   Compiling quant_features v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\features)
+   Compiling quant_execution v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\execution)
+   Compiling quant_inference v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\inference)
+   Compiling quant_signals v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\signals)
+   Compiling quant_portfolio v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\portfolio)
+   Compiling quant_risk v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\risk)
+   Compiling quant_backtest v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\backtest)
+   Compiling quant_simulation v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\simulation)
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 01s
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_api-a846a7e13e013e00.exe)
+
+running 27 tests
+test forecast::tests::synthetic_training_provenance_cannot_be_hidden_by_real_inputs ... ok
+test live::tests::parses_valid_and_rejects_invalid_minute_bars ... ok
+test live::tests::rejects_invalid_trades ... ok
+test live::tests::configuration_and_error_classification_are_explicit ... ok
+test forecast::tests::live_inputs_require_connected_fresh_real_bars_and_continuity ... ok
+test market::tests::cached_data_cannot_bypass_freshness_check ... ok
+test market::tests::coalesces_requests_and_throttles_other_symbols_and_failures ... ok
+test forecast::tests::live_forecast_rejects_when_live_stream_disabled ... ok
+test server::tests::rejects_paths_and_preserves_extremes ... ok
+test live::tests::minute_buffers_keep_first_publication_reset_gaps_and_disconnects ... ok
+test server::tests::remote_configuration_requires_strong_token_and_bounded_workers ... ok
+test forecast::tests::rejects_paths_and_handles_empty_workspace ... ok
+test live::tests::bounded_window_duplicates_late_minutes_and_cached_forecasts ... ok
+test server::tests::cancelled_requests_keep_worker_permits_until_work_finishes ... ok
+test server::tests::rejects_remote_hosts_and_restricts_browser_connections ... ok
+test server::tests::empty_list_missing_run_and_read_only ... ok
+test server::tests::remote_auth_covers_artifacts_streams_and_spa_but_allows_liveness ... ok
+test live::journal::tests::capacity_and_backward_clock_fail_closed ... ok
+test live::tests::invalid_trade_is_not_recorded_or_displayed ... ok
+test live::tests::incomplete_subscription_fails_instead_of_claiming_live ... ok
+test live::journal::tests::rotation_chain_durability_lock_and_clean_shutdown ... ok
+test live::tests::websocket_revisions_remain_journal_only ... ok
+test live::tests::websocket_authenticates_subscribes_persists_and_preserves_event_order ... ok
+test live::tests::provider_rejection_is_terminal_and_redacts_upstream_text ... ok
+test provenance::tests::fingerprints_bytes_untracked_sources_and_deletions ... ok
+test live::tests::reconnect_resubscribes_and_shutdown_seals_the_capture ... ok
+test server::tests::readiness_and_sse_clients_follow_state_and_shutdown ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.02s
+
+     Running tests\contracts.rs (rust\target\debug\deps\contracts-8dcdc868fd4eee85.exe)
+
+running 4 tests
+test forecast_contract_requires_explicit_provenance ... ok
+test test_benchmark_positions_signal_outcomes_and_risk_endpoints ... ok
+test real_report_roundtrip_arrow_schema_and_errors ... ok
+test complete_pages_filters_and_size_limits ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+   Doc-tests quant_api
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+EXIT_CODE=0

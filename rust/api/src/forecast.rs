@@ -645,6 +645,8 @@ mod tests {
         assert!(live_inputs(&state, "MSFT", vec![], now).is_err());
         state.feed = "test".into();
         assert!(live_inputs(&state, "AAPL", vec![], now).is_err());
+        state.feed = "delayed_sip".into();
+        assert!(live_inputs(&state, "AAPL", vec![], now).is_err());
         state.feed = "iex".into();
         state
             .bar_buffers
