@@ -1,0 +1,154 @@
+{
+  "command": [
+    "git",
+    "diff",
+    "--stat",
+    "origin/main...HEAD"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T085055346602Z",
+  "commit": "20e1944d8a3e29df6d27b5d8d75878b432f1d9ce",
+  "status": "",
+  "working_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
+
+ .github/workflows/ci.yml                           |  59 +-
+ Docs/04-INFERENCE.md                               |   2 +
+ Docs/07-PERFORMANCE-TESTING.md                     |   2 +
+ Docs/10-MIGRATION-PLAN.md                          |   2 +
+ Docs/11-IMPLEMENTATION-PLAN.md                     |   2 +-
+ Docs/14-CAPABILITIES.md                            |  22 +
+ Docs/20-PRODUCTION-CHECKLIST.md                    |   2 +-
+ Docs/26-VERCEL-WEBSITE.md                          |  10 +-
+ Docs/BENCHMARKS.md                                 |  11 +
+ Docs/BLOCKED.md                                    |  27 +
+ Docs/CLAIMS.md                                     |  50 ++
+ Docs/HANDOVER-2026-11-16.md                        | 143 ++++
+ Docs/HANDOVER.md                                   | 469 +++++++++++
+ Docs/HARDENING-REPORT.md                           |  63 ++
+ Docs/INTERVIEW.md                                  |  78 ++
+ Docs/KNOWN-ISSUES.md                               |  18 +
+ Docs/LIVE-SESSION-RUNBOOK.md                       |  49 ++
+ Docs/MODEL-SIGNING.md                              |  24 +
+ Docs/MONITORING.md                                 |  18 +
+ Docs/STUDY-REPORT.md                               |  31 +
+ Docs/VALIDITY-CANARIES.md                          |  24 +
+ .../phase0/bridge-20261116T135634734534Z.txt       | 171 ++++
+ .../bridge-unrestricted-20261116T135734822236Z.txt |  43 ++
+ .../phase0/build-20261116T135635973309Z.txt        |  20 +
+ .../build-unrestricted-20261116T135735935169Z.txt  |  28 +
+ .../phase0/clippy-20261116T135356932069Z.txt       |  51 ++
+ .../phase0/contract-20261116T135632813234Z.txt     |  37 +
+ ...ontract-unrestricted-20261116T135713382544Z.txt |  36 +
+ .../evidence/phase0/e2e-20261116T135636817669Z.txt |  20 +
+ .../e2e-unrestricted-20261116T135743458639Z.txt    | 112 +++
+ .../phase0/fetch-20261116T135218080602Z.txt        |  15 +
+ .../fetch-unrestricted-20261116T140145070547Z.txt  |  14 +
+ .../evidence/phase0/fmt-20261116T135218470334Z.txt |  18 +
+ .../phase0/npm-audit-20261116T135805641408Z.txt    | 319 ++++++++
+ .../phase0/npm-ci-20261116T135507748954Z.txt       |  17 +
+ .../npm-ci-unrestricted-20261116T135653701045Z.txt |  25 +
+ .../phase0/pytest-20261116T135417824610Z.txt       |  74 ++
+ .../phase0/rust-test-20261116T135221203731Z.txt    | 108 +++
+ ...st-test-unrestricted-20261116T135433128565Z.txt | 446 +++++++++++
+ .../phase0/web-test-20261116T135633867388Z.txt     |  19 +
+ ...eb-test-unrestricted-20261116T135732783608Z.txt |  27 +
+ .../documentation-diff-20261116T135854786349Z.txt  |  16 +
+ .../legacy-claims-audit-20261116T135904633892Z.txt |  29 +
+ .../phase2/api-tests-20261116T140100674278Z.txt    | 100 +++
+ .../phase2/browser-20261116T140144706729Z.txt      | 112 +++
+ ...container-provenance-20261116T140239408226Z.txt |  29 +
+ .../generate-contract-20261116T135949072126Z.txt   |  40 +
+ .../phase2/web-build-20261116T140135084435Z.txt    |  28 +
+ .../phase2/web-unit-20261116T140142838689Z.txt     |  26 +
+ .../phase3/branch-push-20261116T141304116517Z.txt  |  24 +
+ .../phase3/bridge-20261116T140537097104Z.txt       |  44 ++
+ .../phase3/browser-20261116T140538280211Z.txt      | 113 +++
+ .../phase3/contract-20261116T140518623016Z.txt     |  36 +
+ .../dependency-audit-20261116T140353005992Z.txt    |  36 +
+ ...pendency-remediation-20261116T140337720902Z.txt |  21 +
+ .../final-secret-scan-20261116T141302602678Z.txt   |  19 +
+ .../phase3/github-green-20261117T082144099685Z.txt |  23 +
+ .../locked-install-20261116T140511361745Z.txt      |  20 +
+ .../release-secret-scan-20261117T085034758640Z.txt |  19 +
+ ...elease-workflow-lint-20261117T085037488333Z.txt |  13 +
+ ...worktree-secret-scan-20261117T085036571093Z.txt |  21 +
+ .../phase3/secret-scan-20261116T140451457378Z.txt  |  17 +
+ ...et-scan-unrestricted-20261116T140509784779Z.txt |  18 +
+ .../phase3/unit-20261116T140534938162Z.txt         |  27 +
+ .../workflow-lint-20261116T140451145478Z.txt       |  15 +
+ ...ow-lint-unrestricted-20261116T140509224498Z.txt |  13 +
+ .../phase4/clippy-20261116T141121643235Z.txt       |  34 +
+ .../evidence/phase4/fmt-20261116T141129299856Z.txt |  19 +
+ .../phase4/mutations-20261116T140816381471Z.txt    | 242 ++++++
+ .../phase4/pit-canary-20261116T140739198725Z.txt   |  38 +
+ .../python-canaries-20261116T140719784552Z.txt     |  33 +
+ ...estored-python-suite-20261116T140921089695Z.txt |  75 ++
+ .../restored-rust-suite-20261116T140938425784Z.txt | 440 +++++++++++
+ .../approval-guard-20261117T084659818545Z.txt      |  23 +
+ .../phase5/final-python-20261117T084550720087Z.txt |  75 ++
+ .../protocol-freeze-20261117T081541420566Z.txt     | 157 ++++
+ .../study-dependencies-20261117T083627264688Z.txt  |  62 ++
+ ...dy-report-regression-20261117T084800805751Z.txt |  20 +
+ .../benchmark-check-20261117T081951414214Z.txt     |  69 ++
+ .../real-model-guard-20261117T082037699876Z.txt    |  25 +
+ .../phase7/live-tests-20261117T082022261647Z.txt   |  80 ++
+ .../phase8/cli-build-20261117T082800059094Z.txt    |  28 +
+ .../contract-generation-20261117T082730554248Z.txt |  23 +
+ .../decision-tests-20261117T082414771037Z.txt      |  45 ++
+ .../final-container-app-20261117T084757766090Z.txt |  30 +
+ .../final-web-bridge-20261117T084657275933Z.txt    |  44 ++
+ .../final-web-browser-20261117T084707207661Z.txt   | 113 +++
+ .../final-web-build-20261117T084658713120Z.txt     |  29 +
+ .../final-web-contract-20261117T084620837374Z.txt  |  19 +
+ .../final-web-unit-20261117T084653641117Z.txt      |  27 +
+ .../phase8/monitor-cli-20261117T083008060222Z.txt  |  39 +
+ .../training-reference-20261117T082642149666Z.txt  |  45 ++
+ .../phase9/clippy-20261117T083546693536Z.txt       |  31 +
+ .../phase9/final-format-20261117T084702226307Z.txt |  17 +
+ .../phase9/final-rust-20261117T084423717995Z.txt   | 447 +++++++++++
+ .../signature-locked-20261117T083536947065Z.txt    |  35 +
+ .../signature-tests-20261117T083201795123Z.txt     |  71 ++
+ Docs/openapi.json                                  |  20 +
+ README.md                                          |  19 +-
+ configs/model_trust.example.yaml                   |   4 +
+ configs/study_daily.yaml                           |  68 ++
+ python/ml/dataset.py                               |  14 +
+ python/ml/study_metrics.py                         |  90 +++
+ python/ml/train_orchestrator.py                    |   7 +-
+ python/pyproject.toml                              |   5 +
+ python/tests/test_study_guards.py                  |  46 ++
+ python/tests/test_study_metrics.py                 |  25 +
+ python/tests/test_validity_canaries.py             |  86 +++
+ python/tests/test_walk_forward_orchestration.py    |   3 +
+ python/uv.lock                                     | 858 +++++++++++++++++++++
+ rust/Cargo.lock                                    |   2 +
+ rust/api/src/decisions.rs                          | 332 ++++++++
+ rust/api/src/forecast.rs                           |  84 +-
+ rust/api/src/lib.rs                                |   1 +
+ rust/api/src/live.rs                               |  85 ++
+ rust/api/src/server.rs                             |   1 +
+ rust/api/tests/contracts.rs                        |  15 +
+ rust/cli/src/commands.rs                           |  29 +
+ rust/cli/src/main.rs                               |  35 +
+ rust/cli/tests/monitor_tests.rs                    |  70 ++
+ rust/data/tests/pit_property_tests.rs              |  10 +
+ rust/inference/Cargo.toml                          |   2 +
+ rust/inference/examples/runtime_benchmark.rs       |  58 ++
+ rust/inference/src/integrity.rs                    | 133 ++++
+ scripts/benchmark_runtimes.py                      |  98 +++
+ scripts/check_canary_mutations.py                  |  65 ++
+ scripts/github_ci_status.py                        |  11 +
+ scripts/hardening_evidence.py                      |  50 ++
+ scripts/run_daily_study.py                         | 276 +++++++
+ web/package-lock.json                              | 120 +--
+ web/scripts/container-app.test.mjs                 |   2 +
+ web/src/api/generated.ts                           |   5 +
+ web/src/components/Forecast.tsx                    |   2 +
+ web/src/components/Live.tsx                        |   2 +-
+ web/src/components/ResearchPanel.tsx               |   2 +-
+ web/src/lib/live.ts                                |   1 +
+ web/tests/forecast.spec.ts                         |   3 +-
+ 137 files changed, 8662 insertions(+), 77 deletions(-)
+
+EXIT_CODE=0
