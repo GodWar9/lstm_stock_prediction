@@ -1,0 +1,69 @@
+{
+  "command": [
+    "cargo",
+    "check",
+    "--manifest-path",
+    "rust/Cargo.toml",
+    "-p",
+    "quant_inference",
+    "--example",
+    "runtime_benchmark",
+    "--locked"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T081951414214Z",
+  "commit": "76664d367f2bea2bd22d21162397bf3731ef6805",
+  "status": " M rust/api/src/forecast.rs\n M rust/api/src/live.rs\n?? Docs/LIVE-SESSION-RUNBOOK.md\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase5/\n?? configs/study_daily.yaml\n?? rust/inference/examples/\n?? scripts/benchmark_runtimes.py\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "e30dba52f66966f3fedf79c522cd49da908137f18076c96b3dac3c1b2e0306db"
+}
+
+    Checking tokio v1.53.1
+    Checking serde v1.0.229
+    Checking futures-util v0.3.34
+    Checking typenum v1.20.1
+    Checking tracing v0.1.44
+   Compiling liquid-core v0.26.8
+    Checking string-interner v0.15.0
+    Checking generic-array v0.14.7
+    Checking chrono v0.4.45
+    Checking serde_yaml v0.9.34+deprecated
+    Checking serde_urlencoded v0.7.1
+    Checking quant_instruments v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\instruments)
+    Checking serde_json v1.0.151
+    Checking arrow-format v0.8.1
+    Checking ndarray v0.15.6
+    Checking tempfile v3.27.0
+    Checking block-buffer v0.10.4
+    Checking crypto-common v0.1.7
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+    Checking tract-data v0.21.18
+    Checking chrono-tz v0.10.4
+    Checking quant_calendar v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\calendar)
+    Checking quant_config v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\config)
+    Checking futures-executor v0.3.34
+   Compiling liquid-lib v0.26.8
+    Checking futures v0.3.34
+    Checking parquet-format-safe v0.2.4
+    Checking hyper v1.11.1
+    Checking tokio-rustls v0.26.5
+    Checking tower v0.5.3
+    Checking tower-http v0.6.11
+    Checking hyper-util v0.1.21
+    Checking hyper-rustls v0.27.10
+    Checking parquet2 v0.17.2
+   Compiling liquid v0.26.8
+    Checking reqwest v0.12.28
+   Compiling tract-linalg v0.21.18
+    Checking quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+    Checking arrow2 v0.17.4
+    Checking tract-core v0.21.18
+    Checking quant_features v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\features)
+    Checking tract-nnef v0.21.18
+    Checking tract-hir v0.21.18
+    Checking tract-onnx-opl v0.21.18
+    Checking tract-onnx v0.21.18
+    Checking quant_inference v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\inference)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 45.73s
+
+EXIT_CODE=0
