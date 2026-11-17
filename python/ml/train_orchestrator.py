@@ -261,7 +261,7 @@ def train_and_export(args, cfg, model_id, stage):
     criterion = DirectionalAsymmetricLoss(alpha=2.0)
 
     trainer = ModelTrainer(model, optimizer, criterion)
-    history = trainer.fit(train_loader, val_loader, epochs=epochs, patience=5)
+    history = trainer.fit(train_loader, val_loader, epochs=epochs, patience=train_cfg.get("patience", 5))
 
     # Out of sample evaluation
     # Training may select CUDA; evaluation/export inputs below are CPU tensors.

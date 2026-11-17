@@ -1,0 +1,20 @@
+{
+  "command": [
+    "python/.venv/Scripts/python.exe",
+    "-m",
+    "pytest",
+    "python/tests/test_study_guards.py",
+    "python/tests/test_study_metrics.py",
+    "-q"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T084800805751Z",
+  "commit": "56a408794259100025965d4a9e8a8976523162c4",
+  "status": " M Docs/BLOCKED.md\n M README.md\n M python/ml/train_orchestrator.py\n M python/pyproject.toml\n M python/uv.lock\n?? Docs/STUDY-REPORT.md\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase3/github-green-20261117T082144099685Z.txt\n?? Docs/evidence/phase5/approval-guard-20261117T084659818545Z.txt\n?? Docs/evidence/phase5/final-python-20261117T084550720087Z.txt\n?? Docs/evidence/phase5/study-dependencies-20261117T083627264688Z.txt\n?? Docs/evidence/phase8/final-container-app-20261117T084757766090Z.txt\n?? Docs/evidence/phase8/final-web-bridge-20261117T084657275933Z.txt\n?? Docs/evidence/phase8/final-web-browser-20261117T084707207661Z.txt\n?? Docs/evidence/phase8/final-web-build-20261117T084658713120Z.txt\n?? Docs/evidence/phase8/final-web-contract-20261117T084620837374Z.txt\n?? Docs/evidence/phase8/final-web-unit-20261117T084653641117Z.txt\n?? python/ml/study_metrics.py\n?? python/tests/test_study_guards.py\n?? python/tests/test_study_metrics.py\n?? scripts/github_ci_status.py\n?? scripts/run_daily_study.py\n",
+  "working_diff_sha256": "5b15ee1879678c7e82a121290d83420341da1da226175d18a94b91eff1586647"
+}
+
+......                                                                   [100%]
+6 passed in 9.45s
+
+EXIT_CODE=0

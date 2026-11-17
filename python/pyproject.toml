@@ -18,6 +18,11 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
 ]
+study = [
+    "matplotlib>=3.11.2",
+    "scikit-learn>=1.9.1",
+    "yfinance>=1.8.0",
+]
 
 [tool.uv]
 package = false
