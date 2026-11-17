@@ -1,0 +1,157 @@
+{
+  "command": [
+    ".\\python\\.venv\\Scripts\\python.exe",
+    "-c",
+    "import hashlib,pathlib,yaml; p=pathlib.Path('configs/study_daily.yaml'); c=yaml.safe_load(p.read_text()); assert len(c['data']['symbols'])==12 and len(c['seeds'])==5; print('REVIEW ONLY; NO DATA ACQUIRED OR MODELS FIT'); print('SHA256',hashlib.sha256(p.read_bytes()).hexdigest()); print(yaml.safe_dump(c,sort_keys=False))"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T081541420566Z",
+  "commit": "76664d367f2bea2bd22d21162397bf3731ef6805",
+  "status": "?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? configs/study_daily.yaml\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
+
+REVIEW ONLY; NO DATA ACQUIRED OR MODELS FIT
+SHA256 436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85
+study_id: daily_baselines_v1
+protocol_version: 1
+approval_required: true
+data:
+  provider: yfinance
+  symbols:
+  - AAPL
+  - MSFT
+  - AMZN
+  - GOOGL
+  - META
+  - NVDA
+  - JPM
+  - XOM
+  - JNJ
+  - PG
+  - KO
+  - WMT
+  universe_rule: Fixed convenience sample of established US large-cap stocks; no performance-based
+    inclusion or substitution.
+  survivorship_caveat: Selected with present-day knowledge; not a survivorship-free
+    or historically point-in-time universe.
+  start_date: '2015-01-01'
+  end_date_exclusive: '2026-11-01'
+  interval: 1d
+  adjustment_policy: Existing Yahoo helper auto_adjust=false; provider historical
+    revisions and corporate-action treatment are not independently certified. Report
+    price returns, not total returns.
+  missing_policy: Abort on missing symbol, nonfinite values, duplicate dates, or insufficient
+    fold coverage; never substitute symbols or synthetic data.
+  snapshot_policy: Immutable per-symbol ingestion versions and SHA256 hashes; reproduce
+    only from the frozen snapshots.
+features:
+  graph: baseline_v1
+  lookback: 60
+  target_horizon: 1
+  target: next_observed_close_log_return
+  scaling: fit_train_rows_only
+  baseline_input: identical_scaled_feature_sequences_flattened_for_ridge_and_gbm
+folds:
+  purge_bars: 5
+  embargo_bars: 60
+  development:
+  - train_end: '2019-01-01'
+    validation_end: '2020-01-01'
+    test_end: '2021-01-01'
+  - train_end: '2020-01-01'
+    validation_end: '2021-01-01'
+    test_end: '2022-01-01'
+  - train_end: '2021-01-01'
+    validation_end: '2022-01-01'
+    test_end: '2023-01-01'
+  - train_end: '2022-01-01'
+    validation_end: '2023-01-01'
+    test_end: '2024-01-01'
+  - train_end: '2023-01-01'
+    validation_end: '2024-01-01'
+    test_end: '2025-01-01'
+  final_holdout:
+    train_end: '2024-01-01'
+    validation_end: '2025-01-01'
+    test_end: '2026-11-01'
+    evaluation_limit: 1
+    separate_signoff_required: true
+models:
+  zero: {}
+  momentum:
+    trailing_bars: 20
+  ridge:
+    alpha: 1.0
+  gbm:
+    max_iter: 100
+    max_leaf_nodes: 15
+    learning_rate: 0.05
+    l2_regularization: 1.0
+    random_state: 42
+    early_stopping: false
+  lstm:
+    hidden_size: 64
+    num_layers: 2
+    dropout: 0.2
+    learning_rate: 0.001
+    weight_decay: 0.0001
+    batch_size: 64
+    epochs: 40
+    patience: 8
+seeds:
+- 17
+- 29
+- 43
+- 71
+- 101
+trials:
+  max_configurations: 5
+  max_attempts: 648
+  count_rule: Every model-symbol-fold-seed attempt, including failures; zero and momentum
+    count as evaluations. Failed attempts consume the cap. No parameter search or
+    retry to obtain a winning result.
+execution:
+  rule: Signal at completed close t, execute at next observed open, exit at that bar
+    close; no same-close fill. Long only when predicted return is positive, otherwise
+    cash. One independent equal-capital sleeve per symbol.
+  commission_bps_per_side: 5.0
+  half_spread_bps_per_side: 2.0
+  slippage_bps_per_side: 5.0
+  annualization: 252
+  risk_free_rate: 0.0
+  caveat: Fixed-cost simulated fills; no borrow, dividends, capacity, or market-impact
+    certification. Target close-to-close differs from next-open executable return
+    and both must be reported.
+metrics:
+  ic: Per-symbol time-series Pearson and Spearman on held-out target returns; undefined
+    for constant predictions, report null with reason.
+  t_stat: HAC standard error for the mean of per-date cross-sectional IC, lag 5; require
+    enough symbols and dates, otherwise null.
+  trading:
+  - hit_rate
+  - after_cost_sharpe
+  - turnover
+  - max_drawdown
+  aggregation: Equal weight across symbol sleeves on common observed dates; report
+    LSTM per-seed results and mean and sample standard deviation.
+  bootstrap:
+    method: moving_block
+    block_length: 20
+    resamples: 2000
+    seed: 20261116
+    confidence: 0.95
+  deflated_sharpe: Use all logged candidate attempts as conservative trial count;
+    retain skewness, kurtosis and variance inputs. Undefined inputs remain null.
+  probability_of_backtest_overfitting: Optional CSCV only if sufficient comparable
+    strategy paths; otherwise explicitly unavailable, never approximated silently.
+decision:
+  primary_comparison: LSTM versus ridge and GBM after-cost Sharpe on final holdout,
+    paired block-bootstrap difference intervals.
+  success_rule: Claim superiority only if both difference intervals exclude zero positively;
+    otherwise say evidence does not establish LSTM advantage.
+  prohibited: No changes to universe, dates, parameters, costs, seeds, selection,
+    or final holdout after review based on results.
+
+
+EXIT_CODE=0
