@@ -1,0 +1,24 @@
+{
+  "command": [
+    "git",
+    "push",
+    "-u",
+    "origin",
+    "hardening/interview-ready"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261116T141304116517Z",
+  "commit": "76664d367f2bea2bd22d21162397bf3731ef6805",
+  "status": "?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n",
+  "working_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
+
+remote: 
+remote: Create a pull request for 'hardening/interview-ready' on GitHub by visiting:        
+remote:      https://github.com/GodWar9/lstm_stock_prediction/pull/new/hardening/interview-ready        
+remote: 
+branch 'hardening/interview-ready' set up to track 'origin/hardening/interview-ready'.
+To https://github.com/GodWar9/lstm_stock_prediction
+ * [new branch]      hardening/interview-ready -> hardening/interview-ready
+
+EXIT_CODE=0

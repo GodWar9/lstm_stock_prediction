@@ -1,6 +1,7 @@
 # Quant Research Inspector
 
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](#license)
+[![CI](https://github.com/GodWar9/lstm_stock_prediction/actions/workflows/ci.yml/badge.svg?branch=hardening%2Finterview-ready)](https://github.com/GodWar9/lstm_stock_prediction/actions/workflows/ci.yml?query=branch%3Ahardening%2Finterview-ready)
 [Live demo](https://lstm-research.vercel.app)
 
 A Rust/PyTorch quantitative research platform for **leakage-safe, reproducible** model research. Build validated datasets, train versioned LSTM models, replay held-out predictions through a cost-aware backtester, stress-test results with bootstrap simulation, and inspect every run in a React UI.
@@ -141,9 +142,11 @@ Server binds to `127.0.0.1` by default. Remote mode requires a backend token. No
 - The default training and replay workflow is single-symbol.
 - Complete corporate-action and survivorship coverage is not established.
 - The optional Yahoo acquisition adapter uses a Python helper.
-- Hash integrity detects changes relative to a manifest; it is not a signature or proof of authenticity.
+- Default hash integrity detects changes relative to a manifest; optional [Ed25519 verification](Docs/MODEL-SIGNING.md) requires a trusted public-key policy to establish artifact authenticity.
 - Market displays do not automatically become model inputs. Synthetic demos do not establish predictive quality or alpha.
 - Real-provider and deployment acceptance remain separate from local tests; see the [claims ledger](Docs/CLAIMS.md).
+
+See the [current handover and phase report](Docs/HARDENING-REPORT.md), [frozen study status](Docs/STUDY-REPORT.md), and [interview pack](Docs/INTERVIEW.md) for the hardening branch's evidence and remaining human gates.
 
 ## Documentation
 

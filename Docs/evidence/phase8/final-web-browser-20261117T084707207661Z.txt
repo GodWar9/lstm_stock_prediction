@@ -1,0 +1,113 @@
+{
+  "command": [
+    "npm.cmd",
+    "run",
+    "test:e2e"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\web",
+  "started_utc": "20261117T084707207661Z",
+  "commit": "56a408794259100025965d4a9e8a8976523162c4",
+  "status": " M Docs/BLOCKED.md\n M README.md\n M python/ml/train_orchestrator.py\n M python/pyproject.toml\n M python/uv.lock\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase3/github-green-20261117T082144099685Z.txt\n?? Docs/evidence/phase5/approval-guard-20261117T084659818545Z.txt\n?? Docs/evidence/phase5/final-python-20261117T084550720087Z.txt\n?? Docs/evidence/phase5/study-dependencies-20261117T083627264688Z.txt\n?? Docs/evidence/phase8/final-web-bridge-20261117T084657275933Z.txt\n?? Docs/evidence/phase8/final-web-build-20261117T084658713120Z.txt\n?? Docs/evidence/phase8/final-web-contract-20261117T084620837374Z.txt\n?? Docs/evidence/phase8/final-web-unit-20261117T084653641117Z.txt\n?? python/ml/study_metrics.py\n?? python/tests/test_study_guards.py\n?? python/tests/test_study_metrics.py\n?? scripts/github_ci_status.py\n?? scripts/run_daily_study.py\n",
+  "working_diff_sha256": "5b15ee1879678c7e82a121290d83420341da1da226175d18a94b91eff1586647"
+}
+
+
+> quant-research-inspector@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:33208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] vite v7.3.8 building client environment for production...
+[WebServer] transforming...
+[WebServer] ✓ 335 modules transformed.
+[WebServer] rendering chunks...
+[WebServer] computing gzip size...
+[WebServer] dist/index.html                   0.41 kB │ gzip:   0.29 kB
+[WebServer] dist/assets/worker-CHLEl2Vx.js  181.51 kB
+[WebServer] dist/assets/index-aQcv11w0.css   29.84 kB │ gzip:   7.69 kB
+[WebServer] dist/assets/index-DLeW2TS6.js   646.12 kB │ gzip: 194.29 kB
+[WebServer] ✓ built in 3.74s
+[WebServer] Research inspector: http://127.0.0.1:8788
+
+Running 60 tests using 8 workers
+
+(node:30908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:29920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30504) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52068) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26912) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 [desktop] › tests\live.spec.ts:3:1 › completed minute bars reflect connection freshness (897ms)
+  ok  3 [mobile] › tests\forecast.spec.ts:3:1 › forecast page works without recorded runs and explains empty datasets (949ms)
+  ok  5 [mobile] › tests\live.spec.ts:3:1 › completed minute bars reflect connection freshness (1.0s)
+  ok  4 [desktop] › tests\terminal.spec.ts:3:1 › free forex renders daily reference analytics without fabricated candles (1.4s)
+  ok  9 [desktop] › tests\live.spec.ts:54:1 › unconfigured Rust feed explains setup without requiring saved runs (587ms)
+  ok  6 [mobile] › tests\terminal.spec.ts:3:1 › free forex renders daily reference analytics without fabricated candles (1.6s)
+  ok 10 [mobile] › tests\forecast.spec.ts:12:1 › rejects incompatible intervals before making a prediction request (663ms)
+  ok 11 [mobile] › tests\live.spec.ts:54:1 › unconfigured Rust feed explains setup without requiring saved runs (762ms)
+  ok  1 [desktop] › tests\forecast.spec.ts:3:1 › forecast page works without recorded runs and explains empty datasets (2.3s)
+  ok 13 [desktop] › tests\live.spec.ts:66:1 › incoming prices update and old exchange timestamps remain stale (770ms)
+  ok 15 [mobile] › tests\forecast.spec.ts:21:1 › displays exact forecast evidence, then clears it when inputs change (1.2s)
+  ok 16 [mobile] › tests\live.spec.ts:66:1 › incoming prices update and old exchange timestamps remain stale (1.1s)
+  ok 17 [desktop] › tests\forecast.spec.ts:12:1 › rejects incompatible intervals before making a prediction request (948ms)
+  ok 12 [desktop] › tests\terminal.spec.ts:26:1 › terminal acquires public snapshots, streams quotes and switches products (1.8s)
+  ok 18 [desktop] › tests\live.spec.ts:81:1 › upstream reconnect and local disconnect never display fresh prices (1.0s)
+  ok 19 [mobile] › tests\forecast.spec.ts:47:1 › actual Rust endpoint fails clearly for missing dataset instead of inventing a forecast (945ms)
+  ok 22 [desktop] › tests\terminal.spec.ts:56:1 › terminal shows feed failures without fabricated data (661ms)
+  ok 20 [mobile] › tests\live.spec.ts:81:1 › upstream reconnect and local disconnect never display fresh prices (1.1s)
+  ok 23 [desktop] › tests\live.spec.ts:96:1 › stalled browser stream expires freshness even without an error event (679ms)
+  ok 21 [desktop] › tests\forecast.spec.ts:21:1 › displays exact forecast evidence, then clears it when inputs change (857ms)
+  ok  7 [desktop] › tests\smoke.spec.ts:8:1 › all inspector routes work with external requests blocked (4.2s)
+  ok 24 [mobile] › tests\forecast.spec.ts:58:1 › fresh mode explains missing credentials and refuses demo models (768ms)
+  ok 25 [mobile] › tests\live.spec.ts:96:1 › stalled browser stream expires freshness even without an error event (778ms)
+  ok 26 [desktop] › tests\live.spec.ts:106:1 › missing trades, entitlement failures and test feed are explicit (739ms)
+  ok 14 [mobile] › tests\terminal.spec.ts:26:1 › terminal acquires public snapshots, streams quotes and switches products (3.3s)
+  ok 28 [desktop] › tests\smoke.spec.ts:29:3 › A run, with its evidence renders against Rust artifacts (659ms)
+  ok 27 [desktop] › tests\forecast.spec.ts:47:1 › actual Rust endpoint fails clearly for missing dataset instead of inventing a forecast (755ms)
+  ok 33 [desktop] › tests\forecast.spec.ts:58:1 › fresh mode explains missing credentials and refuses demo models (652ms)
+  ok 32 [desktop] › tests\smoke.spec.ts:29:3 › Backtest inspection renders against Rust artifacts (672ms)
+  ok 30 [mobile] › tests\live.spec.ts:106:1 › missing trades, entitlement failures and test feed are explicit (806ms)
+  ok 29 [mobile] › tests\forecast.spec.ts:72:1 › fresh mode carries selection, displays currency and clears stale output after provider failure (949ms)
+  ok 31 [mobile] › tests\terminal.spec.ts:56:1 › terminal shows feed failures without fabricated data (789ms)
+  ok  8 [mobile] › tests\smoke.spec.ts:8:1 › all inspector routes work with external requests blocked (5.8s)
+  ok 35 [desktop] › tests\smoke.spec.ts:29:3 › Data and validation renders against Rust artifacts (475ms)
+  ok 34 [desktop] › tests\forecast.spec.ts:72:1 › fresh mode carries selection, displays currency and clears stale output after provider failure (648ms)
+  ok 36 [mobile] › tests\smoke.spec.ts:29:3 › A run, with its evidence renders against Rust artifacts (560ms)
+  ok 37 [desktop] › tests\smoke.spec.ts:29:3 › Model artifacts renders against Rust artifacts (463ms)
+  ok 39 [desktop] › tests\smoke.spec.ts:29:3 › Signal inspection renders against Rust artifacts (421ms)
+  ok 38 [mobile] › tests\smoke.spec.ts:29:3 › Backtest inspection renders against Rust artifacts (604ms)
+  ok 40 [desktop] › tests\smoke.spec.ts:29:3 › Risk and simulation renders against Rust artifacts (386ms)
+  ok 41 [mobile] › tests\smoke.spec.ts:29:3 › Data and validation renders against Rust artifacts (513ms)
+  ok 42 [desktop] › tests\smoke.spec.ts:29:3 › Run activity renders against Rust artifacts (335ms)
+  ok 43 [mobile] › tests\smoke.spec.ts:29:3 › Model artifacts renders against Rust artifacts (496ms)
+  ok 44 [desktop] › tests\smoke.spec.ts:42:1 › displays exact backend metrics and accessible chart data (433ms)
+  ok 46 [desktop] › tests\smoke.spec.ts:50:1 › shows simulation after explicit unverified toggle (334ms)
+  ok 45 [mobile] › tests\smoke.spec.ts:29:3 › Signal inspection renders against Rust artifacts (549ms)
+  ok 48 [mobile] › tests\smoke.spec.ts:29:3 › Risk and simulation renders against Rust artifacts (426ms)
+  ok 49 [mobile] › tests\smoke.spec.ts:29:3 › Run activity renders against Rust artifacts (444ms)
+  ok 50 [mobile] › tests\smoke.spec.ts:42:1 › displays exact backend metrics and accessible chart data (569ms)
+  ok 47 [desktop] › tests\smoke.spec.ts:57:1 › empty and API error states are actionable (1.8s)
+  ok 51 [mobile] › tests\smoke.spec.ts:50:1 › shows simulation after explicit unverified toggle (518ms)
+  ok 52 [desktop] › tests\smoke.spec.ts:66:1 › captures chart timing and workspace appearance (737ms)
+  ok 54 [desktop] › tests\smoke.spec.ts:79:1 › new runs expose benchmark, positions, signal outcomes and risk (776ms)
+  ok 55 [desktop] › tests\smoke.spec.ts:99:1 › complete audit table navigates without skipping rows (541ms)
+  ok 53 [mobile] › tests\smoke.spec.ts:57:1 › empty and API error states are actionable (2.0s)
+  ok 56 [desktop] › tests\smoke.spec.ts:129:1 › changing run filters and selection keeps the current research screen (605ms)
+  ok 57 [mobile] › tests\smoke.spec.ts:66:1 › captures chart timing and workspace appearance (1.2s)
+  ok 58 [mobile] › tests\smoke.spec.ts:79:1 › new runs expose benchmark, positions, signal outcomes and risk (1.0s)
+  ok 59 [mobile] › tests\smoke.spec.ts:99:1 › complete audit table navigates without skipping rows (703ms)
+  ok 60 [mobile] › tests\smoke.spec.ts:129:1 › changing run filters and selection keeps the current research screen (771ms)
+
+  60 passed (49.0s)
+
+EXIT_CODE=0

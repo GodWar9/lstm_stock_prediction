@@ -1,0 +1,23 @@
+{
+  "command": [
+    ".\\python\\.venv\\Scripts\\python.exe",
+    "scripts/github_ci_status.py",
+    "43883425760"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T082144099685Z",
+  "commit": "76664d367f2bea2bd22d21162397bf3731ef6805",
+  "status": " M rust/api/src/forecast.rs\n M rust/api/src/live.rs\n?? Docs/LIVE-SESSION-RUNBOOK.md\n?? Docs/evidence/phase3/branch-push-20261116T141304116517Z.txt\n?? Docs/evidence/phase3/final-secret-scan-20261116T141302602678Z.txt\n?? Docs/evidence/phase5/\n?? Docs/evidence/phase6/\n?? Docs/evidence/phase7/\n?? configs/study_daily.yaml\n?? rust/inference/examples/\n?? scripts/benchmark_runtimes.py\n?? scripts/github_ci_status.py\n",
+  "working_diff_sha256": "e30dba52f66966f3fedf79c522cd49da908137f18076c96b3dac3c1b2e0306db"
+}
+
+{
+  "id": 43883425760,
+  "status": "completed",
+  "conclusion": "success",
+  "head_sha": "76664d367f2bea2bd22d21162397bf3731ef6805",
+  "html_url": "https://github.com/GodWar9/lstm_stock_prediction/actions/runs/43883425760",
+  "updated_at": "2026-11-16T14:21:08Z"
+}
+
+EXIT_CODE=0
