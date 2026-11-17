@@ -1,0 +1,23 @@
+{
+  "command": [
+    "python",
+    "-c",
+    "from pathlib import Path\nimport re\nfiles = ['README.md'] + ['Docs/'+x+'.md' for x in ['HARDENING-REPORT','INTERVIEW','STUDY-REPORT','BENCHMARKS','MONITORING','MODEL-SIGNING','CLAIMS']]\nfor name in files:\n    path=Path(name)\n    for link in re.findall(r'\\]\\(([^)]+)\\)',path.read_text(encoding='utf-8')):\n        if '://' in link or link.startswith('#'): continue\n        target=path.parent/link.split('#')[0]\n        assert target.exists(), (name,link)\n        if '#' in link:\n            anchor=link.split('#',1)[1]\n            headings=re.findall(r'^#+ (.+)$',target.read_text(encoding='utf-8'),re.M)\n            anchors=[re.sub(r'[^\\w -]','',h.lower()).replace(' ','-') for h in headings]\n            assert anchor in anchors,(name,link)\n    print('LINKS_OK',name)"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261117T085343438159Z",
+  "commit": "519b08e7ede33cb74e46872970efd2093e8db1fa",
+  "status": " M Docs/HARDENING-REPORT.md\n M python/pyproject.toml\n?? Docs/evidence/phase3/completed-branch-push-20261117T085114494610Z.txt\n?? Docs/evidence/phase5/python-directory-fixed-20261117T085311021988Z.txt\n?? Docs/evidence/phase5/python-directory-regression-20261117T085243551716Z.txt\n",
+  "working_diff_sha256": "4f3291c840fc190be44c8ebfc44a0e7b902135c14951163c6e1b656a4e84b687"
+}
+
+LINKS_OK README.md
+LINKS_OK Docs/HARDENING-REPORT.md
+LINKS_OK Docs/INTERVIEW.md
+LINKS_OK Docs/STUDY-REPORT.md
+LINKS_OK Docs/BENCHMARKS.md
+LINKS_OK Docs/MONITORING.md
+LINKS_OK Docs/MODEL-SIGNING.md
+LINKS_OK Docs/CLAIMS.md
+
+EXIT_CODE=0

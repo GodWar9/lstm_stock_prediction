@@ -1,0 +1,19 @@
+{
+  "command": [
+    ".venv/Scripts/python.exe",
+    "-m",
+    "pytest",
+    "tests",
+    "-q"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\python",
+  "started_utc": "20261117T085243551716Z",
+  "commit": "519b08e7ede33cb74e46872970efd2093e8db1fa",
+  "status": " M Docs/HARDENING-REPORT.md\n M python/pyproject.toml\n?? Docs/evidence/phase3/completed-branch-push-20261117T085114494610Z.txt\n",
+  "working_diff_sha256": "4f3291c840fc190be44c8ebfc44a0e7b902135c14951163c6e1b656a4e84b687"
+}
+
+
+Runner error: [WinError 2] The system cannot find the file specified
+
+EXIT_CODE=124

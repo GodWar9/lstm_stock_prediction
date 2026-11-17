@@ -16,3 +16,7 @@ Python, Rust formatting, Clippy, generated-contract, web unit, bridge, build and
 ## Dependency resolution
 
 Compatible lockfile updates resolved the baseline npm advisories. Retained before/after evidence: `evidence/phase0/npm-audit-20261116T135805641408Z.txt` and `evidence/phase3/dependency-audit-20261116T140353005992Z.txt`. This records the audit result at execution time, not a permanent security guarantee.
+# Hardening follow-up: Python test invocation
+
+Independent study-test collection from the `python/` directory exposed an implicit repository import-path dependency. `python/pyproject.toml` now declares the pytest path explicitly. [The suite from CI's working directory passed](evidence/phase5/python-directory-fixed-20261117T085311021988Z.txt). The preceding [runner failure](evidence/phase5/python-directory-regression-20261117T085243551716Z.txt) used a relative Windows executable path and never launched pytest; the corrected command uses an absolute executable. Owner: resolved in hardening branch.
+

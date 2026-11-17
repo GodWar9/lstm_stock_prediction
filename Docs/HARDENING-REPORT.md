@@ -45,6 +45,7 @@ No tests were deleted, skipped, ignored or weakened to obtain a pass.
 | `rust/inference/src/integrity.rs` test module | Cover optional/required unsigned policy, valid signatures, wrong keys and tampered packages. |
 | `python/tests/test_study_metrics.py` (new) | Hand-calculated simulated fills, deterministic resampling, undefined values and multiple-trial diagnostic direction. |
 | `python/tests/test_study_guards.py` (new) | Approval-byte binding, one-use holdout, target boundary isolation and generated report fidelity. |
+| `python/pyproject.toml` pytest configuration | Resolve repository imports from the Python working directory without depending on another test module changing the import path first. |
 
 The final local Rust/Python, format/Clippy, generated contract, web unit/bridge/build, browser and packaged-app logs are linked from [CLAIMS.md](CLAIMS.md). Test fixtures establish engineering behavior, not real-market returns.
 
