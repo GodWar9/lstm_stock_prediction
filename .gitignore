@@ -53,6 +53,7 @@ models/inspector_demo/
 !rust/Cargo.lock
 
 /models/research_*/
+/models/study_*/
 
 /models/deploy_*/
 .env

@@ -8,6 +8,7 @@ import platform
 import subprocess
 import sys
 import time
+import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -84,7 +85,10 @@ def main():
               'model': metadata['model_id'], 'model_sha256': hashlib.sha256((directory/'model.onnx').read_bytes()).hexdigest(),
               'input_sha256': hashlib.sha256(x.tobytes()).hexdigest(), 'runs': args.runs, 'warmup': 100,
               'scope': 'CPU batch one, pre-scaled fixed windows, Python runtimes one thread, tract release; includes language-call overhead, excludes loading and scaling',
-              'versions': {'torch': torch.__version__, 'onnxruntime': ort.__version__},
+              'versions': {'torch': torch.__version__, 'onnxruntime': ort.__version__,
+                           'tract-onnx': next(package['version'] for package in
+                               tomllib.loads((ROOT/'rust/Cargo.lock').read_text())['package']
+                               if package['name'] == 'tract-onnx')},
               'max_abs_parity_difference': errors, 'samples_us': timings,
               'summary': {key: dict(zip(['p50_us','p95_us','p99_us'], map(float,np.percentile(values,[50,95,99]))),
                                    throughput_per_second=1e6/float(np.mean(values))) for key,values in timings.items()}}
