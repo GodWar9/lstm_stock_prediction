@@ -114,7 +114,19 @@ def report(result, destination):
              '[Deflated Sharpe method](https://davidhbailey.com/dhbpapers/deflated-sharpe.pdf).', '',
              f"Results source: `{result['results_path']}`. The report is generated from that JSON, not manually transcribed."]
     if result.get('plot_path'):
-        rows += ['', f"![Simulated equity](../{result['plot_path']})"]
+        published = Path('evidence/phase5')/f"{result['config_sha256']}-{result['stage']}-equity.png"
+        image_path = published.as_posix() if (ROOT/'Docs'/published).exists() else '../'+result['plot_path']
+        rows += ['', f"![Simulated equity]({image_path})"]
+    published_results = Path('evidence/phase5')/f"{result['config_sha256']}-{result['stage']}-results.json"
+    if (ROOT/'Docs'/published_results).exists():
+        rows += ['', f"[Retained results JSON]({published_results.as_posix()})."]
+    rows += ['', '## Reproduce the saved report', '',
+             'Install the locked study dependencies with `uv sync --locked --group study` from `python/`. From the repository root:', '',
+             '```powershell',
+             f"python/.venv/Scripts/python.exe scripts/run_daily_study.py --approved-sha256 {result['config_sha256']} --stage report",
+             '```', '',
+             'This reads saved results without acquisition or fitting. The original authorized development command uses `--stage development`. A completed or partial stage refuses automatic retrial. Final holdout requires a separate human sign-off and `--stage holdout --holdout-signoff REVIEWED_SHA256`; do not remove its one-use marker.', '',
+             f"Trial ledger, predictions, snapshot hashes and plot: `reports/studies/{result['config_sha256']}/`. Retain these local artifacts together with the evidence log; the source data and trained packages are not automatically published to Git."]
     destination.write_text('\n'.join(rows)+'\n',encoding='utf-8')
 
 
