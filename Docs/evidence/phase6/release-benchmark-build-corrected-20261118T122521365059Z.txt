@@ -1,0 +1,111 @@
+{
+  "command": [
+    "cargo",
+    "build",
+    "--release",
+    "--locked",
+    "-p",
+    "quant_inference",
+    "--example",
+    "runtime_benchmark"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\rust",
+  "started_utc": "20261118T122521365059Z",
+  "commit": "03b411cac313c94cf928981c8fcf41f572b60d7e",
+  "status": " M Docs/BENCHMARKS.md\n M Docs/BLOCKED.md\n M Docs/CLAIMS.md\n M Docs/STUDY-REPORT.md\n?? Docs/evidence/phase10/final-divergence-20261117T085516049984Z.txt\n?? Docs/evidence/phase10/final-upstream-fetch-20261117T085514266678Z.txt\n?? Docs/evidence/phase3/final-code-ci-green-20261118T121218505217Z.txt\n?? Docs/evidence/phase5/development-study-20261118T121246056887Z.txt\n?? Docs/evidence/phase5/study-cli-build-20261118T121219383166Z.txt\n?? Docs/evidence/phase6/release-benchmark-build-20261118T122458880492Z.txt\n?? models/study_436e8abf43eb_AAPL_development_0_101/\n?? models/study_436e8abf43eb_AAPL_development_0_17/\n?? models/study_436e8abf43eb_AAPL_development_0_29/\n?? models/study_436e8abf43eb_AAPL_development_0_43/\n?? models/study_436e8abf43eb_AAPL_development_0_71/\n?? models/study_436e8abf43eb_AAPL_development_1_101/\n?? models/study_436e8abf43eb_AAPL_development_1_17/\n?? models/study_436e8abf43eb_AAPL_development_1_29/\n?? models/study_436e8abf43eb_AAPL_development_1_43/\n?? models/study_436e8abf43eb_AAPL_development_1_71/\n?? models/study_436e8abf43eb_AAPL_development_2_101/\n?? models/study_436e8abf43eb_AAPL_development_2_17/\n?? models/study_436e8abf43eb_AAPL_development_2_29/\n?? models/study_436e8abf43eb_AAPL_development_2_43/\n?? models/study_436e8abf43eb_AAPL_development_2_71/\n?? models/study_436e8abf43eb_AAPL_development_3_17/\n?? models/study_436e8abf43eb_AAPL_development_3_29/\n?? models/study_436e8abf43eb_AAPL_development_3_43/\n?? models/study_436e8abf43eb_AAPL_development_3_71/\n",
+  "working_diff_sha256": "71597572e0bea391c1a72b2aaee5c819a7168d8b95e145f9643718a368153799"
+}
+
+   Compiling stable_deref_trait v1.2.1
+   Compiling litemap v0.8.3
+   Compiling writeable v0.6.4
+   Compiling utf8_iter v1.0.4
+   Compiling tokio v1.53.1
+   Compiling regex-automata v0.4.18
+   Compiling ring v0.17.14
+   Compiling icu_properties_data v2.3.0
+   Compiling log v0.4.34
+   Compiling pest_generator v2.9.1
+   Compiling liquid-derive v0.26.8
+   Compiling icu_normalizer_data v2.3.0
+   Compiling serde v1.0.229
+   Compiling futures-util v0.3.34
+   Compiling typenum v1.20.1
+   Compiling try-lock v0.2.5
+   Compiling zerofrom v0.1.8
+   Compiling libc v0.2.189
+   Compiling want v0.3.2
+   Compiling tracing-core v0.1.36
+   Compiling sync_wrapper v1.0.2
+   Compiling siphasher v1.0.4
+   Compiling base64 v0.23.1
+   Compiling serde_json v1.0.151
+   Compiling ipnet v2.12.2
+   Compiling webpki-roots v1.0.9
+   Compiling yoke v0.8.3
+   Compiling pest_derive v2.9.1
+   Compiling string-interner v0.15.0
+   Compiling chrono v0.4.45
+   Compiling phf_shared v0.12.1
+   Compiling chrono-tz v0.10.4
+   Compiling serde_urlencoded v0.7.1
+   Compiling phf v0.12.1
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling base64 v0.22.1
+   Compiling arrow-format v0.8.1
+   Compiling bytemuck v1.25.2
+   Compiling quant_instruments v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\instruments)
+   Compiling tempfile v3.27.0
+   Compiling ndarray v0.15.6
+   Compiling tracing v0.1.44
+   Compiling zerovec v0.11.8
+   Compiling zerotrie v0.2.5
+   Compiling generic-array v0.14.7
+   Compiling liquid-core v0.26.8
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling tinystr v0.8.4
+   Compiling potential_utf v0.1.6
+   Compiling sha2 v0.10.9
+   Compiling icu_collections v2.3.0
+   Compiling rustls v0.23.45
+   Compiling quant_calendar v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\calendar)
+   Compiling icu_locale_core v2.3.0
+   Compiling quant_config v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\config)
+   Compiling icu_provider v2.3.1
+   Compiling icu_normalizer v2.3.0
+   Compiling icu_properties v2.3.0
+   Compiling liquid-lib v0.26.8
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling regex v1.13.1
+   Compiling url v2.5.8
+   Compiling scan_fmt v0.2.6
+   Compiling tract-data v0.21.18
+   Compiling liquid v0.26.8
+   Compiling rustls-webpki v0.103.15
+   Compiling tract-linalg v0.21.18
+   Compiling futures-executor v0.3.34
+   Compiling futures v0.3.34
+   Compiling parquet-format-safe v0.2.4
+   Compiling hyper v1.11.1
+   Compiling tower v0.5.3
+   Compiling tower-http v0.6.11
+   Compiling hyper-util v0.1.21
+   Compiling parquet2 v0.17.2
+   Compiling tokio-rustls v0.26.5
+   Compiling hyper-rustls v0.27.10
+   Compiling reqwest v0.12.28
+   Compiling tract-core v0.21.18
+   Compiling quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+   Compiling arrow2 v0.17.4
+   Compiling quant_features v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\features)
+   Compiling tract-nnef v0.21.18
+   Compiling tract-hir v0.21.18
+   Compiling tract-onnx-opl v0.21.18
+   Compiling tract-onnx v0.21.18
+   Compiling quant_inference v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\inference)
+    Finished `release` profile [optimized] target(s) in 4m 42s
+
+EXIT_CODE=0

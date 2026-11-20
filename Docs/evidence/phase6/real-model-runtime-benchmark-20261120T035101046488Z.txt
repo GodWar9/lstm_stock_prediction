@@ -1,0 +1,64 @@
+{
+  "command": [
+    "C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/python/.venv/Scripts/python.exe",
+    "scripts/benchmark_runtimes.py",
+    "--artifact",
+    "models/study_436e8abf43eb_AAPL_development_0_17",
+    "--runs",
+    "10000",
+    "--output",
+    "reports/benchmarks/runtime-comparison.json"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261120T035101046488Z",
+  "commit": "5cea24d6b9e6c34770a984f1ca02baaf2b482605",
+  "status": " M Docs/BENCHMARKS.md\n M Docs/BLOCKED.md\n M Docs/CLAIMS.md\n M Docs/STUDY-REPORT.md\n?? Docs/evidence/phase10/final-divergence-20261117T085516049984Z.txt\n?? Docs/evidence/phase10/final-upstream-fetch-20261117T085514266678Z.txt\n?? Docs/evidence/phase3/final-code-ci-green-20261118T121218505217Z.txt\n?? Docs/evidence/phase3/report-followup-ci-green-20261118T125244152326Z.txt\n?? Docs/evidence/phase5/development-study-20261118T121246056887Z.txt\n?? Docs/evidence/phase5/study-cli-build-20261118T121219383166Z.txt\n?? Docs/evidence/phase6/benchmark-hardware-20261118T124412383082Z.txt\n?? Docs/evidence/phase6/release-benchmark-build-20261118T122458880492Z.txt\n?? Docs/evidence/phase6/release-benchmark-build-corrected-20261118T122521365059Z.txt\n",
+  "working_diff_sha256": "d594d99e50143a4e99a715f8df81bec1453c9545a276cfc5c62f04cb197b3b53"
+}
+
+    Finished `release` profile [optimized] target(s) in 20.55s
+     Running `rust\target\release\examples\runtime_benchmark.exe C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\models\study_436e8abf43eb_AAPL_development_0_17 10000`
+
+{
+  "commit": "5cea24d6b9e6c34770a984f1ca02baaf2b482605",
+  "os": "Windows-11-10.0.26300-SP0",
+  "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "logical_cpus": 32,
+  "model": "study_436e8abf43eb_AAPL_development_0_17",
+  "model_sha256": "717843c8db2d35f733ea2d85969daa1d19f3bf22a073e3372c90675a72763544",
+  "input_sha256": "1c73af4c188836889e274d26e4d43ad45bfa56f065872212ee710cd9adc986dd",
+  "runs": 10000,
+  "warmup": 100,
+  "scope": "CPU batch one, pre-scaled fixed windows, Python runtimes one thread, tract release; includes language-call overhead, excludes loading and scaling",
+  "versions": {
+    "torch": "2.14.0+cpu",
+    "onnxruntime": "1.30.0",
+    "tract-onnx": "0.21.18"
+  },
+  "max_abs_parity_difference": {
+    "onnxruntime": 1.30385160446167e-07,
+    "tract-onnx": 2.682209014892578e-07
+  },
+  "summary": {
+    "pytorch": {
+      "p50_us": 820.8,
+      "p95_us": 1118.1099999999997,
+      "p99_us": 1487.6610000000012,
+      "throughput_per_second": 1159.9008586340092
+    },
+    "onnxruntime": {
+      "p50_us": 366.9,
+      "p95_us": 500.20999999999987,
+      "p99_us": 767.6120000000003,
+      "throughput_per_second": 2572.288046358804
+    },
+    "tract-onnx": {
+      "p50_us": 1420.55,
+      "p95_us": 1950.3299999999997,
+      "p99_us": 2596.2280000000005,
+      "throughput_per_second": 762.373065170539
+    }
+  }
+}
+
+EXIT_CODE=0
