@@ -1,31 +1,53 @@
-# Frozen daily study — awaiting human review
+# Real data baseline study
 
-Status: **BLOCKED**. No real data has been acquired for this study, no candidate has been fitted, and no final holdout has been evaluated. There are no performance tables or plots to report. In particular, neither LSTM superiority nor inferiority has been established.
+Stage: development. Configuration SHA256: `436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85`.
 
-Review [the frozen configuration](../configs/study_daily.yaml) before authorizing acquisition or fitting. The retained [freeze evidence](evidence/phase5/protocol-freeze-20261117T081541420566Z.txt) records its contents and hash. Configuration changes require a new review, even if the runner accepts their new hash. Never change the protocol in response to results.
+Development results only; final holdout remains unevaluated. No LSTM advantage claim is justified.
 
-## Reproduction after review
+This is a fixed present-day stock sample with survivorship bias, provider revisions and unverified corporate-action treatment. Simulated next-open fills are not executable quotes. No alpha claim follows from development folds.
 
-Install the locked research dependencies with `uv sync --locked --group study` from `python/`, and build the CLI with `cargo build --locked --manifest-path rust/Cargo.toml --bin quantctl`. Run from the repository root, replacing `REVIEWED_SHA256` with the hash whose contents the human reviewed:
+| Candidate | After cost Sharpe | Sharpe interval | Drawdown | Turnover | IC mean | Rank IC mean | IC HAC t | Rank IC HAC t | Hit rate | DSR |
+|---|---|---|---|---|---|---|---|---|---|---|
+| zero:42 | null | null | 0.0 | 0.0 | null | null | null | null | 0.0 | null |
+| momentum:42 | -4.290173630981664 | [-5.309517047130696, -3.2841290106984724] | -0.6336014101151339 | 1.1868434138705453 | -0.03291622123443882 | -0.037922451447795054 | -1.20580908480989 | -1.2288885860539531 | 0.4959989838689191 | 1.5188204360240704e-27 |
+| ridge:42 | -3.3196524650954564 | [-4.328351257477903, -2.237562598641252] | -0.5089355043413237 | 0.966162395646722 | 0.008826057562688372 | -0.0016550107833830565 | -1.7143079343382668 | -1.5883924900035973 | 0.49244252508573605 | 7.507259992692595e-18 |
+| gbm:42 | -2.4727181458073426 | [-3.576817337518834, -1.4621761342595487] | -0.3662939478463314 | 0.6858034131280366 | 0.002670628230950769 | -3.868165899207262e-05 | -1.2228759327710081 | -0.9887349144009687 | 0.4910453448494856 | 4.512408288787875e-12 |
+| lstm:17 | -3.044860529723479 | [-4.09806665565043, -1.9987678030948255] | -0.4214795014161925 | 0.8289505249130824 | 0.005315671713069487 | 0.009752996243350244 | -0.1372602889638362 | 0.6103583818759016 | 0.5010796392734663 | 1.897462842141709e-17 |
+| lstm:29 | -3.450222079098759 | [-4.748908050925035, -2.2710840983048413] | -0.5378185815661838 | 1.0718126029004051 | -0.0023073239051187894 | -0.0010475499187100063 | 0.6170996391498119 | 0.5105446137584075 | 0.5024768195097168 | 5.209597752657284e-17 |
+| lstm:43 | -3.046549959359427 | [-4.10646167164193, -2.0194125348365994] | -0.3746833630314983 | 0.7025166287672076 | 0.008519201171896104 | 0.0059841267177938645 | 0.5984721465671944 | 0.734625674554972 | 0.49422075447732755 | 3.2599298431371623e-15 |
+| lstm:71 | -3.2122542100402707 | [-4.2194093217329165, -2.2639732095514775] | -0.4651626410593279 | 0.8098079373396191 | -0.005268383741040866 | -0.003907964863965204 | -0.9849525025962953 | -1.602462212036078 | 0.48748888606630253 | 1.8253330120339294e-17 |
+| lstm:101 | -2.1930019591863266 | [-3.1649758818335862, -1.2666588782621018] | -0.35564197797160957 | 0.6259804878140178 | 0.004478648594016259 | 0.008691317151782469 | -1.0686483525910453 | -0.7028534702368973 | 0.49244252508573605 | 2.6264635660169647e-11 |
 
-```powershell
-python/.venv/Scripts/python.exe scripts/hardening_evidence.py --phase phase5 --name development-study --timeout 86400 -- python/.venv/Scripts/python.exe scripts/run_daily_study.py --approved-sha256 REVIEWED_SHA256 --stage development
+LSTM seed summaries and paired comparisons are retained verbatim in results JSON:
+
+```json
+{
+  "lstm_seed_summary": {
+    "after_cost_sharpe_mean": -2.9893777474816523,
+    "after_cost_sharpe_std": 0.4750296866158877
+  },
+  "paired_comparisons": {}
+}
 ```
 
-The script acquires data through the existing Rust ingestion and feature export path, seals snapshot identities, fits the fixed candidates on identical folds, and retains each attempt and its outcome under `reports/studies/<configuration hash>/`. Acquisition and integrity errors stop execution. Failed model attempts consume the cap; a partial stage is not silently retried. The approval hash is a local workflow guard, not proof of who approved it. Preserve the evidence and ledgers outside the working machine.
+Undefined statistics remain null. DSR uses all logged attempts as a conservative count; independence assumptions are not certified. PBO is unavailable: CSCV is not implemented in this walk-forward study.
 
-After development results have been reviewed, a **separate human sign-off** permits the final evaluation:
+[Deflated Sharpe method](https://davidhbailey.com/dhbpapers/deflated-sharpe.pdf).
+
+Results source: `reports\studies\436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85\development-results.json`. The report is generated from that JSON, not manually transcribed.
+
+![Simulated equity](evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-equity.png)
+
+[Retained results JSON](evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-results.json).
+
+## Reproduce the saved report
+
+Install the locked study dependencies with `uv sync --locked --group study` from `python/`. From the repository root:
 
 ```powershell
-python/.venv/Scripts/python.exe scripts/hardening_evidence.py --phase phase5 --name final-holdout --timeout 86400 -- python/.venv/Scripts/python.exe scripts/run_daily_study.py --approved-sha256 REVIEWED_SHA256 --stage holdout --holdout-signoff REVIEWED_SHA256
+python/.venv/Scripts/python.exe scripts/run_daily_study.py --approved-sha256 436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85 --stage report
 ```
 
-A one-use marker is retained even if the holdout invocation fails. Deleting or copying a workspace defeats local reuse guards; do not do so to repeat evaluation. The initial snapshot covers the full frozen date range for integrity and feature construction; development fitting and scoring exclude final evaluation dates. Snapshot access is not a holdout performance evaluation.
+This reads saved results without acquisition or fitting. The original authorized development command uses `--stage development`. A completed or partial stage refuses automatic retrial. Final holdout requires a separate human sign-off and `--stage holdout --holdout-signoff REVIEWED_SHA256`; do not remove its one-use marker.
 
-The generated report reads saved JSON values directly. `--stage report` regenerates it without fitting. The equity plot and per-trial predictions remain with the JSON; keep those artifacts together when sharing. Missing statistics remain null. Probability of backtest overfitting is explicitly unavailable because CSCV is not implemented. Deflated Sharpe is an assumption-dependent diagnostic, using all logged attempts conservatively.
-
-The universe uses present-day knowledge, historical provider revisions are not independently certified, and price returns exclude dividend accounting. Common-date aggregation reports dropped dates per symbol in JSON. Fixed simulated next-open costs do not establish executable fills or capacity. The final comparison must determine the interview and resume wording; development results alone cannot justify an alpha claim.
-
-## Offline validation
-
-[Python acceptance](evidence/phase5/final-python-20261117T084550720087Z.txt) includes hand-calculated execution checks, deterministic block resampling, undefined-statistic behavior, multiple-trial correction direction, review-hash rejection, one-use holdout rejection, target boundary isolation, and report-value fidelity. [An unapproved invocation](evidence/phase5/approval-guard-20261117T084659818545Z.txt) failed before acquisition, as required. These tests use synthetic controls only and do not satisfy real-study acceptance.
+Trial ledger, predictions, snapshot hashes and plot: `reports/studies/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85/`. Retain these local artifacts together with the evidence log; the source data and trained packages are not automatically published to Git.

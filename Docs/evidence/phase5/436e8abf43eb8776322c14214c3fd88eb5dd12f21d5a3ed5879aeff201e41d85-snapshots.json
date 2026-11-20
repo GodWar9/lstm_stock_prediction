@@ -1,0 +1,86 @@
+[
+  {
+    "symbol": "AAPL",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "1538c72518823de11368db81a28fa850041aa43f051629c4bf903fe6bf5c2b73",
+    "market_sha256": "3b937d47cc5592d59211b581bf357e8612a94c2b88d17c7942a0eb4fe4d2e72c",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "MSFT",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "3401efd110af246ed870b2e2342a52ebd97040f5c9c297277fc2e70e54b1eda0",
+    "market_sha256": "11f504ec51c9365eeaf2b0552101fb3f58e7b902de086c24542dff9c1b720a33",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "AMZN",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "10def45c3f9f3fe83581911f50d285af0afde97e3e3ad16fc4ff458347a9bfb7",
+    "market_sha256": "8a0d9cc525705475e624b0cebe7f4471973d06314eda675b4a86bb53bd6bbc4a",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "GOOGL",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "e3845c4326e3552a859e10bf66d9242673405396d79f237f78ca9be0f954cc93",
+    "market_sha256": "192ea7b67e594bd43fb9dbbfc8785e24bb46f9005190f5e9e8d133c7950c7a44",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "META",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "9fca0adb366e0926577e61997b7775223bf3d69a1066e867182a8fa2e71b1f49",
+    "market_sha256": "c0ddd9c010a402887ef5ee4ed152919578c98647447894afb6a08d2e37520ca1",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "NVDA",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "063980a628bdd0296ac976320f5ea4bc76f86d5fa7950273d00827e8ab0541ff",
+    "market_sha256": "8944fac35357f5bff29cfdb7c3de532af72a3bd191fb5c74ad5ac4c8d51addf3",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "JPM",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "13f21340bcfdfdd3bd5f1e7d23453feb65b05b4d2646310417913b6172c968a3",
+    "market_sha256": "f34e35e1b3b419b546cfa892e7ff1a50e302d6b5b3c2b897080d080c182ecea9",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "XOM",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "4acd3e81cf4e25fe8b1f9a03f5a3ec36d40eea1495cf9950ad7dbbb33be90346",
+    "market_sha256": "70959902c7382ade911f489f35a603ede5a887415970bc3d18cf4c7afd5e979f",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "JNJ",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "afe9dd4d781bb1322f1450d7a6a27a3d55263aad12a28751515e3d263167a055",
+    "market_sha256": "8496ccaa991ab5319e7291ba1beb6d41c14598d713a71faa377b2d4bebcb282e",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "PG",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "b503a5ad5b03d9a72ff3c76b28454f2db473a9cba93f62479cb45e7ac467fa9f",
+    "market_sha256": "412196480a4dbbeb24fd6aed4b20b4e8dde7baf2919ef1ff416d81d3e0568bb1",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "KO",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "661d8b2630ac2f0985e843d30e3003050b6fff5f40392dd520118a0469092c79",
+    "market_sha256": "7949802908c7552c5aef4ec1d54a6995ddd4e354e5c1c595dad8e407a9a97809",
+    "source": "yfinance"
+  },
+  {
+    "symbol": "WMT",
+    "config_sha256": "436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85",
+    "training_sha256": "537775df1187c3f611e12c0aa1957fba646fb72af93bf0253899a87d15bdd19c",
+    "market_sha256": "cf2f46af2e9a327bee49e0fb0faf0faf261c239e51f801f18c82539505937331",
+    "source": "yfinance"
+  }
+]

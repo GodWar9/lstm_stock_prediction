@@ -1,0 +1,1080 @@
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "zero", "seed": 42, "attempt": 1, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 1, "result": "trial-1.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "momentum", "seed": 42, "attempt": 2, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 2, "result": "trial-2.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "ridge", "seed": 42, "attempt": 3, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 3, "result": "trial-3.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "gbm", "seed": 42, "attempt": 4, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 4, "result": "trial-4.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "lstm", "seed": 17, "attempt": 5, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 5, "result": "trial-5.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "lstm", "seed": 29, "attempt": 6, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 6, "result": "trial-6.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "lstm", "seed": 43, "attempt": 7, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 7, "result": "trial-7.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "lstm", "seed": 71, "attempt": 8, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 8, "result": "trial-8.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 0, "model": "lstm", "seed": 101, "attempt": 9, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 9, "result": "trial-9.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "zero", "seed": 42, "attempt": 10, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 10, "result": "trial-10.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "momentum", "seed": 42, "attempt": 11, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 11, "result": "trial-11.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "ridge", "seed": 42, "attempt": 12, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 12, "result": "trial-12.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "gbm", "seed": 42, "attempt": 13, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 13, "result": "trial-13.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "lstm", "seed": 17, "attempt": 14, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 14, "result": "trial-14.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "lstm", "seed": 29, "attempt": 15, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 15, "result": "trial-15.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "lstm", "seed": 43, "attempt": 16, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 16, "result": "trial-16.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "lstm", "seed": 71, "attempt": 17, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 17, "result": "trial-17.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 1, "model": "lstm", "seed": 101, "attempt": 18, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 18, "result": "trial-18.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "zero", "seed": 42, "attempt": 19, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 19, "result": "trial-19.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "momentum", "seed": 42, "attempt": 20, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 20, "result": "trial-20.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "ridge", "seed": 42, "attempt": 21, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 21, "result": "trial-21.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "gbm", "seed": 42, "attempt": 22, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 22, "result": "trial-22.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "lstm", "seed": 17, "attempt": 23, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 23, "result": "trial-23.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "lstm", "seed": 29, "attempt": 24, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 24, "result": "trial-24.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "lstm", "seed": 43, "attempt": 25, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 25, "result": "trial-25.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "lstm", "seed": 71, "attempt": 26, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 26, "result": "trial-26.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 2, "model": "lstm", "seed": 101, "attempt": 27, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 27, "result": "trial-27.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "zero", "seed": 42, "attempt": 28, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 28, "result": "trial-28.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "momentum", "seed": 42, "attempt": 29, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 29, "result": "trial-29.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "ridge", "seed": 42, "attempt": 30, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 30, "result": "trial-30.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "gbm", "seed": 42, "attempt": 31, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 31, "result": "trial-31.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "lstm", "seed": 17, "attempt": 32, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 32, "result": "trial-32.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "lstm", "seed": 29, "attempt": 33, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 33, "result": "trial-33.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "lstm", "seed": 43, "attempt": 34, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 34, "result": "trial-34.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "lstm", "seed": 71, "attempt": 35, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 35, "result": "trial-35.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 3, "model": "lstm", "seed": 101, "attempt": 36, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 36, "result": "trial-36.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "zero", "seed": 42, "attempt": 37, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 37, "result": "trial-37.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "momentum", "seed": 42, "attempt": 38, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 38, "result": "trial-38.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "ridge", "seed": 42, "attempt": 39, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 39, "result": "trial-39.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "gbm", "seed": 42, "attempt": 40, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 40, "result": "trial-40.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "lstm", "seed": 17, "attempt": 41, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 41, "result": "trial-41.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "lstm", "seed": 29, "attempt": 42, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 42, "result": "trial-42.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "lstm", "seed": 43, "attempt": 43, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 43, "result": "trial-43.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "lstm", "seed": 71, "attempt": 44, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 44, "result": "trial-44.json"}
+{"stage": "development", "symbol": "AAPL", "fold": 4, "model": "lstm", "seed": 101, "attempt": 45, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 45, "result": "trial-45.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "zero", "seed": 42, "attempt": 46, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 46, "result": "trial-46.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "momentum", "seed": 42, "attempt": 47, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 47, "result": "trial-47.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "ridge", "seed": 42, "attempt": 48, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 48, "result": "trial-48.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "gbm", "seed": 42, "attempt": 49, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 49, "result": "trial-49.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "lstm", "seed": 17, "attempt": 50, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 50, "result": "trial-50.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "lstm", "seed": 29, "attempt": 51, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 51, "result": "trial-51.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "lstm", "seed": 43, "attempt": 52, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 52, "result": "trial-52.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "lstm", "seed": 71, "attempt": 53, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 53, "result": "trial-53.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 0, "model": "lstm", "seed": 101, "attempt": 54, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 54, "result": "trial-54.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "zero", "seed": 42, "attempt": 55, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 55, "result": "trial-55.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "momentum", "seed": 42, "attempt": 56, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 56, "result": "trial-56.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "ridge", "seed": 42, "attempt": 57, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 57, "result": "trial-57.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "gbm", "seed": 42, "attempt": 58, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 58, "result": "trial-58.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "lstm", "seed": 17, "attempt": 59, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 59, "result": "trial-59.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "lstm", "seed": 29, "attempt": 60, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 60, "result": "trial-60.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "lstm", "seed": 43, "attempt": 61, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 61, "result": "trial-61.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "lstm", "seed": 71, "attempt": 62, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 62, "result": "trial-62.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 1, "model": "lstm", "seed": 101, "attempt": 63, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 63, "result": "trial-63.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "zero", "seed": 42, "attempt": 64, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 64, "result": "trial-64.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "momentum", "seed": 42, "attempt": 65, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 65, "result": "trial-65.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "ridge", "seed": 42, "attempt": 66, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 66, "result": "trial-66.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "gbm", "seed": 42, "attempt": 67, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 67, "result": "trial-67.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "lstm", "seed": 17, "attempt": 68, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 68, "result": "trial-68.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "lstm", "seed": 29, "attempt": 69, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 69, "result": "trial-69.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "lstm", "seed": 43, "attempt": 70, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 70, "result": "trial-70.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "lstm", "seed": 71, "attempt": 71, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 71, "result": "trial-71.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 2, "model": "lstm", "seed": 101, "attempt": 72, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 72, "result": "trial-72.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "zero", "seed": 42, "attempt": 73, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 73, "result": "trial-73.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "momentum", "seed": 42, "attempt": 74, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 74, "result": "trial-74.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "ridge", "seed": 42, "attempt": 75, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 75, "result": "trial-75.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "gbm", "seed": 42, "attempt": 76, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 76, "result": "trial-76.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "lstm", "seed": 17, "attempt": 77, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 77, "result": "trial-77.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "lstm", "seed": 29, "attempt": 78, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 78, "result": "trial-78.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "lstm", "seed": 43, "attempt": 79, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 79, "result": "trial-79.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "lstm", "seed": 71, "attempt": 80, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 80, "result": "trial-80.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 3, "model": "lstm", "seed": 101, "attempt": 81, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 81, "result": "trial-81.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "zero", "seed": 42, "attempt": 82, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 82, "result": "trial-82.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "momentum", "seed": 42, "attempt": 83, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 83, "result": "trial-83.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "ridge", "seed": 42, "attempt": 84, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 84, "result": "trial-84.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "gbm", "seed": 42, "attempt": 85, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 85, "result": "trial-85.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "lstm", "seed": 17, "attempt": 86, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 86, "result": "trial-86.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "lstm", "seed": 29, "attempt": 87, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 87, "result": "trial-87.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "lstm", "seed": 43, "attempt": 88, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 88, "result": "trial-88.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "lstm", "seed": 71, "attempt": 89, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 89, "result": "trial-89.json"}
+{"stage": "development", "symbol": "MSFT", "fold": 4, "model": "lstm", "seed": 101, "attempt": 90, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 90, "result": "trial-90.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "zero", "seed": 42, "attempt": 91, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 91, "result": "trial-91.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "momentum", "seed": 42, "attempt": 92, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 92, "result": "trial-92.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "ridge", "seed": 42, "attempt": 93, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 93, "result": "trial-93.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "gbm", "seed": 42, "attempt": 94, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 94, "result": "trial-94.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "lstm", "seed": 17, "attempt": 95, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 95, "result": "trial-95.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "lstm", "seed": 29, "attempt": 96, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 96, "result": "trial-96.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "lstm", "seed": 43, "attempt": 97, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 97, "result": "trial-97.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "lstm", "seed": 71, "attempt": 98, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 98, "result": "trial-98.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 0, "model": "lstm", "seed": 101, "attempt": 99, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 99, "result": "trial-99.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "zero", "seed": 42, "attempt": 100, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 100, "result": "trial-100.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "momentum", "seed": 42, "attempt": 101, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 101, "result": "trial-101.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "ridge", "seed": 42, "attempt": 102, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 102, "result": "trial-102.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "gbm", "seed": 42, "attempt": 103, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 103, "result": "trial-103.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "lstm", "seed": 17, "attempt": 104, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 104, "result": "trial-104.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "lstm", "seed": 29, "attempt": 105, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 105, "result": "trial-105.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "lstm", "seed": 43, "attempt": 106, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 106, "result": "trial-106.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "lstm", "seed": 71, "attempt": 107, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 107, "result": "trial-107.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 1, "model": "lstm", "seed": 101, "attempt": 108, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 108, "result": "trial-108.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "zero", "seed": 42, "attempt": 109, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 109, "result": "trial-109.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "momentum", "seed": 42, "attempt": 110, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 110, "result": "trial-110.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "ridge", "seed": 42, "attempt": 111, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 111, "result": "trial-111.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "gbm", "seed": 42, "attempt": 112, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 112, "result": "trial-112.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "lstm", "seed": 17, "attempt": 113, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 113, "result": "trial-113.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "lstm", "seed": 29, "attempt": 114, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 114, "result": "trial-114.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "lstm", "seed": 43, "attempt": 115, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 115, "result": "trial-115.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "lstm", "seed": 71, "attempt": 116, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 116, "result": "trial-116.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 2, "model": "lstm", "seed": 101, "attempt": 117, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 117, "result": "trial-117.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "zero", "seed": 42, "attempt": 118, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 118, "result": "trial-118.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "momentum", "seed": 42, "attempt": 119, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 119, "result": "trial-119.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "ridge", "seed": 42, "attempt": 120, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 120, "result": "trial-120.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "gbm", "seed": 42, "attempt": 121, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 121, "result": "trial-121.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "lstm", "seed": 17, "attempt": 122, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 122, "result": "trial-122.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "lstm", "seed": 29, "attempt": 123, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 123, "result": "trial-123.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "lstm", "seed": 43, "attempt": 124, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 124, "result": "trial-124.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "lstm", "seed": 71, "attempt": 125, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 125, "result": "trial-125.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 3, "model": "lstm", "seed": 101, "attempt": 126, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 126, "result": "trial-126.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "zero", "seed": 42, "attempt": 127, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 127, "result": "trial-127.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "momentum", "seed": 42, "attempt": 128, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 128, "result": "trial-128.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "ridge", "seed": 42, "attempt": 129, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 129, "result": "trial-129.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "gbm", "seed": 42, "attempt": 130, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 130, "result": "trial-130.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "lstm", "seed": 17, "attempt": 131, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 131, "result": "trial-131.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "lstm", "seed": 29, "attempt": 132, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 132, "result": "trial-132.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "lstm", "seed": 43, "attempt": 133, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 133, "result": "trial-133.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "lstm", "seed": 71, "attempt": 134, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 134, "result": "trial-134.json"}
+{"stage": "development", "symbol": "AMZN", "fold": 4, "model": "lstm", "seed": 101, "attempt": 135, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 135, "result": "trial-135.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "zero", "seed": 42, "attempt": 136, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 136, "result": "trial-136.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "momentum", "seed": 42, "attempt": 137, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 137, "result": "trial-137.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "ridge", "seed": 42, "attempt": 138, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 138, "result": "trial-138.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "gbm", "seed": 42, "attempt": 139, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 139, "result": "trial-139.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "lstm", "seed": 17, "attempt": 140, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 140, "result": "trial-140.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "lstm", "seed": 29, "attempt": 141, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 141, "result": "trial-141.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "lstm", "seed": 43, "attempt": 142, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 142, "result": "trial-142.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "lstm", "seed": 71, "attempt": 143, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 143, "result": "trial-143.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 0, "model": "lstm", "seed": 101, "attempt": 144, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 144, "result": "trial-144.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "zero", "seed": 42, "attempt": 145, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 145, "result": "trial-145.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "momentum", "seed": 42, "attempt": 146, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 146, "result": "trial-146.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "ridge", "seed": 42, "attempt": 147, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 147, "result": "trial-147.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "gbm", "seed": 42, "attempt": 148, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 148, "result": "trial-148.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "lstm", "seed": 17, "attempt": 149, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 149, "result": "trial-149.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "lstm", "seed": 29, "attempt": 150, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 150, "result": "trial-150.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "lstm", "seed": 43, "attempt": 151, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 151, "result": "trial-151.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "lstm", "seed": 71, "attempt": 152, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 152, "result": "trial-152.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 1, "model": "lstm", "seed": 101, "attempt": 153, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 153, "result": "trial-153.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "zero", "seed": 42, "attempt": 154, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 154, "result": "trial-154.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "momentum", "seed": 42, "attempt": 155, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 155, "result": "trial-155.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "ridge", "seed": 42, "attempt": 156, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 156, "result": "trial-156.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "gbm", "seed": 42, "attempt": 157, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 157, "result": "trial-157.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "lstm", "seed": 17, "attempt": 158, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 158, "result": "trial-158.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "lstm", "seed": 29, "attempt": 159, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 159, "result": "trial-159.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "lstm", "seed": 43, "attempt": 160, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 160, "result": "trial-160.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "lstm", "seed": 71, "attempt": 161, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 161, "result": "trial-161.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 2, "model": "lstm", "seed": 101, "attempt": 162, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 162, "result": "trial-162.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "zero", "seed": 42, "attempt": 163, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 163, "result": "trial-163.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "momentum", "seed": 42, "attempt": 164, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 164, "result": "trial-164.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "ridge", "seed": 42, "attempt": 165, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 165, "result": "trial-165.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "gbm", "seed": 42, "attempt": 166, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 166, "result": "trial-166.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "lstm", "seed": 17, "attempt": 167, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 167, "result": "trial-167.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "lstm", "seed": 29, "attempt": 168, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 168, "result": "trial-168.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "lstm", "seed": 43, "attempt": 169, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 169, "result": "trial-169.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "lstm", "seed": 71, "attempt": 170, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 170, "result": "trial-170.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 3, "model": "lstm", "seed": 101, "attempt": 171, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 171, "result": "trial-171.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "zero", "seed": 42, "attempt": 172, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 172, "result": "trial-172.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "momentum", "seed": 42, "attempt": 173, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 173, "result": "trial-173.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "ridge", "seed": 42, "attempt": 174, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 174, "result": "trial-174.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "gbm", "seed": 42, "attempt": 175, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 175, "result": "trial-175.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "lstm", "seed": 17, "attempt": 176, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 176, "result": "trial-176.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "lstm", "seed": 29, "attempt": 177, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 177, "result": "trial-177.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "lstm", "seed": 43, "attempt": 178, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 178, "result": "trial-178.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "lstm", "seed": 71, "attempt": 179, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 179, "result": "trial-179.json"}
+{"stage": "development", "symbol": "GOOGL", "fold": 4, "model": "lstm", "seed": 101, "attempt": 180, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 180, "result": "trial-180.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "zero", "seed": 42, "attempt": 181, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 181, "result": "trial-181.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "momentum", "seed": 42, "attempt": 182, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 182, "result": "trial-182.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "ridge", "seed": 42, "attempt": 183, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 183, "result": "trial-183.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "gbm", "seed": 42, "attempt": 184, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 184, "result": "trial-184.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "lstm", "seed": 17, "attempt": 185, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 185, "result": "trial-185.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "lstm", "seed": 29, "attempt": 186, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 186, "result": "trial-186.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "lstm", "seed": 43, "attempt": 187, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 187, "result": "trial-187.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "lstm", "seed": 71, "attempt": 188, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 188, "result": "trial-188.json"}
+{"stage": "development", "symbol": "META", "fold": 0, "model": "lstm", "seed": 101, "attempt": 189, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 189, "result": "trial-189.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "zero", "seed": 42, "attempt": 190, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 190, "result": "trial-190.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "momentum", "seed": 42, "attempt": 191, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 191, "result": "trial-191.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "ridge", "seed": 42, "attempt": 192, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 192, "result": "trial-192.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "gbm", "seed": 42, "attempt": 193, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 193, "result": "trial-193.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "lstm", "seed": 17, "attempt": 194, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 194, "result": "trial-194.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "lstm", "seed": 29, "attempt": 195, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 195, "result": "trial-195.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "lstm", "seed": 43, "attempt": 196, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 196, "result": "trial-196.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "lstm", "seed": 71, "attempt": 197, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 197, "result": "trial-197.json"}
+{"stage": "development", "symbol": "META", "fold": 1, "model": "lstm", "seed": 101, "attempt": 198, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 198, "result": "trial-198.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "zero", "seed": 42, "attempt": 199, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 199, "result": "trial-199.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "momentum", "seed": 42, "attempt": 200, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 200, "result": "trial-200.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "ridge", "seed": 42, "attempt": 201, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 201, "result": "trial-201.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "gbm", "seed": 42, "attempt": 202, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 202, "result": "trial-202.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "lstm", "seed": 17, "attempt": 203, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 203, "result": "trial-203.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "lstm", "seed": 29, "attempt": 204, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 204, "result": "trial-204.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "lstm", "seed": 43, "attempt": 205, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 205, "result": "trial-205.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "lstm", "seed": 71, "attempt": 206, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 206, "result": "trial-206.json"}
+{"stage": "development", "symbol": "META", "fold": 2, "model": "lstm", "seed": 101, "attempt": 207, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 207, "result": "trial-207.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "zero", "seed": 42, "attempt": 208, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 208, "result": "trial-208.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "momentum", "seed": 42, "attempt": 209, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 209, "result": "trial-209.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "ridge", "seed": 42, "attempt": 210, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 210, "result": "trial-210.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "gbm", "seed": 42, "attempt": 211, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 211, "result": "trial-211.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "lstm", "seed": 17, "attempt": 212, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 212, "result": "trial-212.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "lstm", "seed": 29, "attempt": 213, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 213, "result": "trial-213.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "lstm", "seed": 43, "attempt": 214, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 214, "result": "trial-214.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "lstm", "seed": 71, "attempt": 215, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 215, "result": "trial-215.json"}
+{"stage": "development", "symbol": "META", "fold": 3, "model": "lstm", "seed": 101, "attempt": 216, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 216, "result": "trial-216.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "zero", "seed": 42, "attempt": 217, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 217, "result": "trial-217.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "momentum", "seed": 42, "attempt": 218, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 218, "result": "trial-218.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "ridge", "seed": 42, "attempt": 219, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 219, "result": "trial-219.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "gbm", "seed": 42, "attempt": 220, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 220, "result": "trial-220.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "lstm", "seed": 17, "attempt": 221, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 221, "result": "trial-221.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "lstm", "seed": 29, "attempt": 222, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 222, "result": "trial-222.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "lstm", "seed": 43, "attempt": 223, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 223, "result": "trial-223.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "lstm", "seed": 71, "attempt": 224, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 224, "result": "trial-224.json"}
+{"stage": "development", "symbol": "META", "fold": 4, "model": "lstm", "seed": 101, "attempt": 225, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 225, "result": "trial-225.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "zero", "seed": 42, "attempt": 226, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 226, "result": "trial-226.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "momentum", "seed": 42, "attempt": 227, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 227, "result": "trial-227.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "ridge", "seed": 42, "attempt": 228, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 228, "result": "trial-228.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "gbm", "seed": 42, "attempt": 229, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 229, "result": "trial-229.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "lstm", "seed": 17, "attempt": 230, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 230, "result": "trial-230.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "lstm", "seed": 29, "attempt": 231, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 231, "result": "trial-231.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "lstm", "seed": 43, "attempt": 232, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 232, "result": "trial-232.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "lstm", "seed": 71, "attempt": 233, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 233, "result": "trial-233.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 0, "model": "lstm", "seed": 101, "attempt": 234, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 234, "result": "trial-234.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "zero", "seed": 42, "attempt": 235, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 235, "result": "trial-235.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "momentum", "seed": 42, "attempt": 236, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 236, "result": "trial-236.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "ridge", "seed": 42, "attempt": 237, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 237, "result": "trial-237.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "gbm", "seed": 42, "attempt": 238, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 238, "result": "trial-238.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "lstm", "seed": 17, "attempt": 239, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 239, "result": "trial-239.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "lstm", "seed": 29, "attempt": 240, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 240, "result": "trial-240.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "lstm", "seed": 43, "attempt": 241, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 241, "result": "trial-241.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "lstm", "seed": 71, "attempt": 242, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 242, "result": "trial-242.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 1, "model": "lstm", "seed": 101, "attempt": 243, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 243, "result": "trial-243.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "zero", "seed": 42, "attempt": 244, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 244, "result": "trial-244.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "momentum", "seed": 42, "attempt": 245, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 245, "result": "trial-245.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "ridge", "seed": 42, "attempt": 246, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 246, "result": "trial-246.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "gbm", "seed": 42, "attempt": 247, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 247, "result": "trial-247.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "lstm", "seed": 17, "attempt": 248, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 248, "result": "trial-248.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "lstm", "seed": 29, "attempt": 249, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 249, "result": "trial-249.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "lstm", "seed": 43, "attempt": 250, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 250, "result": "trial-250.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "lstm", "seed": 71, "attempt": 251, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 251, "result": "trial-251.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 2, "model": "lstm", "seed": 101, "attempt": 252, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 252, "result": "trial-252.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "zero", "seed": 42, "attempt": 253, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 253, "result": "trial-253.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "momentum", "seed": 42, "attempt": 254, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 254, "result": "trial-254.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "ridge", "seed": 42, "attempt": 255, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 255, "result": "trial-255.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "gbm", "seed": 42, "attempt": 256, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 256, "result": "trial-256.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "lstm", "seed": 17, "attempt": 257, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 257, "result": "trial-257.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "lstm", "seed": 29, "attempt": 258, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 258, "result": "trial-258.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "lstm", "seed": 43, "attempt": 259, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 259, "result": "trial-259.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "lstm", "seed": 71, "attempt": 260, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 260, "result": "trial-260.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 3, "model": "lstm", "seed": 101, "attempt": 261, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 261, "result": "trial-261.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "zero", "seed": 42, "attempt": 262, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 262, "result": "trial-262.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "momentum", "seed": 42, "attempt": 263, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 263, "result": "trial-263.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "ridge", "seed": 42, "attempt": 264, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 264, "result": "trial-264.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "gbm", "seed": 42, "attempt": 265, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 265, "result": "trial-265.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "lstm", "seed": 17, "attempt": 266, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 266, "result": "trial-266.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "lstm", "seed": 29, "attempt": 267, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 267, "result": "trial-267.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "lstm", "seed": 43, "attempt": 268, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 268, "result": "trial-268.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "lstm", "seed": 71, "attempt": 269, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 269, "result": "trial-269.json"}
+{"stage": "development", "symbol": "NVDA", "fold": 4, "model": "lstm", "seed": 101, "attempt": 270, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 270, "result": "trial-270.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "zero", "seed": 42, "attempt": 271, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 271, "result": "trial-271.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "momentum", "seed": 42, "attempt": 272, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 272, "result": "trial-272.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "ridge", "seed": 42, "attempt": 273, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 273, "result": "trial-273.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "gbm", "seed": 42, "attempt": 274, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 274, "result": "trial-274.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "lstm", "seed": 17, "attempt": 275, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 275, "result": "trial-275.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "lstm", "seed": 29, "attempt": 276, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 276, "result": "trial-276.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "lstm", "seed": 43, "attempt": 277, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 277, "result": "trial-277.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "lstm", "seed": 71, "attempt": 278, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 278, "result": "trial-278.json"}
+{"stage": "development", "symbol": "JPM", "fold": 0, "model": "lstm", "seed": 101, "attempt": 279, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 279, "result": "trial-279.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "zero", "seed": 42, "attempt": 280, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 280, "result": "trial-280.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "momentum", "seed": 42, "attempt": 281, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 281, "result": "trial-281.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "ridge", "seed": 42, "attempt": 282, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 282, "result": "trial-282.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "gbm", "seed": 42, "attempt": 283, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 283, "result": "trial-283.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "lstm", "seed": 17, "attempt": 284, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 284, "result": "trial-284.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "lstm", "seed": 29, "attempt": 285, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 285, "result": "trial-285.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "lstm", "seed": 43, "attempt": 286, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 286, "result": "trial-286.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "lstm", "seed": 71, "attempt": 287, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 287, "result": "trial-287.json"}
+{"stage": "development", "symbol": "JPM", "fold": 1, "model": "lstm", "seed": 101, "attempt": 288, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 288, "result": "trial-288.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "zero", "seed": 42, "attempt": 289, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 289, "result": "trial-289.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "momentum", "seed": 42, "attempt": 290, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 290, "result": "trial-290.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "ridge", "seed": 42, "attempt": 291, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 291, "result": "trial-291.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "gbm", "seed": 42, "attempt": 292, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 292, "result": "trial-292.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "lstm", "seed": 17, "attempt": 293, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 293, "result": "trial-293.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "lstm", "seed": 29, "attempt": 294, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 294, "result": "trial-294.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "lstm", "seed": 43, "attempt": 295, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 295, "result": "trial-295.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "lstm", "seed": 71, "attempt": 296, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 296, "result": "trial-296.json"}
+{"stage": "development", "symbol": "JPM", "fold": 2, "model": "lstm", "seed": 101, "attempt": 297, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 297, "result": "trial-297.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "zero", "seed": 42, "attempt": 298, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 298, "result": "trial-298.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "momentum", "seed": 42, "attempt": 299, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 299, "result": "trial-299.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "ridge", "seed": 42, "attempt": 300, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 300, "result": "trial-300.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "gbm", "seed": 42, "attempt": 301, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 301, "result": "trial-301.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "lstm", "seed": 17, "attempt": 302, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 302, "result": "trial-302.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "lstm", "seed": 29, "attempt": 303, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 303, "result": "trial-303.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "lstm", "seed": 43, "attempt": 304, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 304, "result": "trial-304.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "lstm", "seed": 71, "attempt": 305, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 305, "result": "trial-305.json"}
+{"stage": "development", "symbol": "JPM", "fold": 3, "model": "lstm", "seed": 101, "attempt": 306, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 306, "result": "trial-306.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "zero", "seed": 42, "attempt": 307, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 307, "result": "trial-307.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "momentum", "seed": 42, "attempt": 308, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 308, "result": "trial-308.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "ridge", "seed": 42, "attempt": 309, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 309, "result": "trial-309.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "gbm", "seed": 42, "attempt": 310, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 310, "result": "trial-310.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "lstm", "seed": 17, "attempt": 311, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 311, "result": "trial-311.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "lstm", "seed": 29, "attempt": 312, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 312, "result": "trial-312.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "lstm", "seed": 43, "attempt": 313, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 313, "result": "trial-313.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "lstm", "seed": 71, "attempt": 314, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 314, "result": "trial-314.json"}
+{"stage": "development", "symbol": "JPM", "fold": 4, "model": "lstm", "seed": 101, "attempt": 315, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 315, "result": "trial-315.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "zero", "seed": 42, "attempt": 316, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 316, "result": "trial-316.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "momentum", "seed": 42, "attempt": 317, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 317, "result": "trial-317.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "ridge", "seed": 42, "attempt": 318, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 318, "result": "trial-318.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "gbm", "seed": 42, "attempt": 319, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 319, "result": "trial-319.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "lstm", "seed": 17, "attempt": 320, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 320, "result": "trial-320.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "lstm", "seed": 29, "attempt": 321, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 321, "result": "trial-321.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "lstm", "seed": 43, "attempt": 322, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 322, "result": "trial-322.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "lstm", "seed": 71, "attempt": 323, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 323, "result": "trial-323.json"}
+{"stage": "development", "symbol": "XOM", "fold": 0, "model": "lstm", "seed": 101, "attempt": 324, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 324, "result": "trial-324.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "zero", "seed": 42, "attempt": 325, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 325, "result": "trial-325.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "momentum", "seed": 42, "attempt": 326, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 326, "result": "trial-326.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "ridge", "seed": 42, "attempt": 327, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 327, "result": "trial-327.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "gbm", "seed": 42, "attempt": 328, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 328, "result": "trial-328.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "lstm", "seed": 17, "attempt": 329, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 329, "result": "trial-329.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "lstm", "seed": 29, "attempt": 330, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 330, "result": "trial-330.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "lstm", "seed": 43, "attempt": 331, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 331, "result": "trial-331.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "lstm", "seed": 71, "attempt": 332, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 332, "result": "trial-332.json"}
+{"stage": "development", "symbol": "XOM", "fold": 1, "model": "lstm", "seed": 101, "attempt": 333, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 333, "result": "trial-333.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "zero", "seed": 42, "attempt": 334, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 334, "result": "trial-334.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "momentum", "seed": 42, "attempt": 335, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 335, "result": "trial-335.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "ridge", "seed": 42, "attempt": 336, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 336, "result": "trial-336.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "gbm", "seed": 42, "attempt": 337, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 337, "result": "trial-337.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "lstm", "seed": 17, "attempt": 338, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 338, "result": "trial-338.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "lstm", "seed": 29, "attempt": 339, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 339, "result": "trial-339.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "lstm", "seed": 43, "attempt": 340, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 340, "result": "trial-340.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "lstm", "seed": 71, "attempt": 341, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 341, "result": "trial-341.json"}
+{"stage": "development", "symbol": "XOM", "fold": 2, "model": "lstm", "seed": 101, "attempt": 342, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 342, "result": "trial-342.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "zero", "seed": 42, "attempt": 343, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 343, "result": "trial-343.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "momentum", "seed": 42, "attempt": 344, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 344, "result": "trial-344.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "ridge", "seed": 42, "attempt": 345, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 345, "result": "trial-345.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "gbm", "seed": 42, "attempt": 346, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 346, "result": "trial-346.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "lstm", "seed": 17, "attempt": 347, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 347, "result": "trial-347.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "lstm", "seed": 29, "attempt": 348, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 348, "result": "trial-348.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "lstm", "seed": 43, "attempt": 349, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 349, "result": "trial-349.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "lstm", "seed": 71, "attempt": 350, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 350, "result": "trial-350.json"}
+{"stage": "development", "symbol": "XOM", "fold": 3, "model": "lstm", "seed": 101, "attempt": 351, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 351, "result": "trial-351.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "zero", "seed": 42, "attempt": 352, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 352, "result": "trial-352.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "momentum", "seed": 42, "attempt": 353, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 353, "result": "trial-353.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "ridge", "seed": 42, "attempt": 354, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 354, "result": "trial-354.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "gbm", "seed": 42, "attempt": 355, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 355, "result": "trial-355.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "lstm", "seed": 17, "attempt": 356, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 356, "result": "trial-356.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "lstm", "seed": 29, "attempt": 357, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 357, "result": "trial-357.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "lstm", "seed": 43, "attempt": 358, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 358, "result": "trial-358.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "lstm", "seed": 71, "attempt": 359, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 359, "result": "trial-359.json"}
+{"stage": "development", "symbol": "XOM", "fold": 4, "model": "lstm", "seed": 101, "attempt": 360, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 360, "result": "trial-360.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "zero", "seed": 42, "attempt": 361, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 361, "result": "trial-361.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "momentum", "seed": 42, "attempt": 362, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 362, "result": "trial-362.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "ridge", "seed": 42, "attempt": 363, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 363, "result": "trial-363.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "gbm", "seed": 42, "attempt": 364, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 364, "result": "trial-364.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "lstm", "seed": 17, "attempt": 365, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 365, "result": "trial-365.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "lstm", "seed": 29, "attempt": 366, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 366, "result": "trial-366.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "lstm", "seed": 43, "attempt": 367, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 367, "result": "trial-367.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "lstm", "seed": 71, "attempt": 368, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 368, "result": "trial-368.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 0, "model": "lstm", "seed": 101, "attempt": 369, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 369, "result": "trial-369.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "zero", "seed": 42, "attempt": 370, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 370, "result": "trial-370.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "momentum", "seed": 42, "attempt": 371, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 371, "result": "trial-371.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "ridge", "seed": 42, "attempt": 372, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 372, "result": "trial-372.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "gbm", "seed": 42, "attempt": 373, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 373, "result": "trial-373.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "lstm", "seed": 17, "attempt": 374, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 374, "result": "trial-374.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "lstm", "seed": 29, "attempt": 375, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 375, "result": "trial-375.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "lstm", "seed": 43, "attempt": 376, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 376, "result": "trial-376.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "lstm", "seed": 71, "attempt": 377, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 377, "result": "trial-377.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 1, "model": "lstm", "seed": 101, "attempt": 378, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 378, "result": "trial-378.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "zero", "seed": 42, "attempt": 379, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 379, "result": "trial-379.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "momentum", "seed": 42, "attempt": 380, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 380, "result": "trial-380.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "ridge", "seed": 42, "attempt": 381, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 381, "result": "trial-381.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "gbm", "seed": 42, "attempt": 382, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 382, "result": "trial-382.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "lstm", "seed": 17, "attempt": 383, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 383, "result": "trial-383.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "lstm", "seed": 29, "attempt": 384, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 384, "result": "trial-384.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "lstm", "seed": 43, "attempt": 385, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 385, "result": "trial-385.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "lstm", "seed": 71, "attempt": 386, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 386, "result": "trial-386.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 2, "model": "lstm", "seed": 101, "attempt": 387, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 387, "result": "trial-387.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "zero", "seed": 42, "attempt": 388, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 388, "result": "trial-388.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "momentum", "seed": 42, "attempt": 389, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 389, "result": "trial-389.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "ridge", "seed": 42, "attempt": 390, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 390, "result": "trial-390.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "gbm", "seed": 42, "attempt": 391, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 391, "result": "trial-391.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "lstm", "seed": 17, "attempt": 392, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 392, "result": "trial-392.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "lstm", "seed": 29, "attempt": 393, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 393, "result": "trial-393.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "lstm", "seed": 43, "attempt": 394, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 394, "result": "trial-394.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "lstm", "seed": 71, "attempt": 395, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 395, "result": "trial-395.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 3, "model": "lstm", "seed": 101, "attempt": 396, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 396, "result": "trial-396.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "zero", "seed": 42, "attempt": 397, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 397, "result": "trial-397.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "momentum", "seed": 42, "attempt": 398, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 398, "result": "trial-398.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "ridge", "seed": 42, "attempt": 399, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 399, "result": "trial-399.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "gbm", "seed": 42, "attempt": 400, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 400, "result": "trial-400.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "lstm", "seed": 17, "attempt": 401, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 401, "result": "trial-401.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "lstm", "seed": 29, "attempt": 402, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 402, "result": "trial-402.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "lstm", "seed": 43, "attempt": 403, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 403, "result": "trial-403.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "lstm", "seed": 71, "attempt": 404, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 404, "result": "trial-404.json"}
+{"stage": "development", "symbol": "JNJ", "fold": 4, "model": "lstm", "seed": 101, "attempt": 405, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 405, "result": "trial-405.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "zero", "seed": 42, "attempt": 406, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 406, "result": "trial-406.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "momentum", "seed": 42, "attempt": 407, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 407, "result": "trial-407.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "ridge", "seed": 42, "attempt": 408, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 408, "result": "trial-408.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "gbm", "seed": 42, "attempt": 409, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 409, "result": "trial-409.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "lstm", "seed": 17, "attempt": 410, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 410, "result": "trial-410.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "lstm", "seed": 29, "attempt": 411, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 411, "result": "trial-411.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "lstm", "seed": 43, "attempt": 412, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 412, "result": "trial-412.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "lstm", "seed": 71, "attempt": 413, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 413, "result": "trial-413.json"}
+{"stage": "development", "symbol": "PG", "fold": 0, "model": "lstm", "seed": 101, "attempt": 414, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 414, "result": "trial-414.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "zero", "seed": 42, "attempt": 415, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 415, "result": "trial-415.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "momentum", "seed": 42, "attempt": 416, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 416, "result": "trial-416.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "ridge", "seed": 42, "attempt": 417, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 417, "result": "trial-417.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "gbm", "seed": 42, "attempt": 418, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 418, "result": "trial-418.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "lstm", "seed": 17, "attempt": 419, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 419, "result": "trial-419.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "lstm", "seed": 29, "attempt": 420, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 420, "result": "trial-420.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "lstm", "seed": 43, "attempt": 421, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 421, "result": "trial-421.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "lstm", "seed": 71, "attempt": 422, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 422, "result": "trial-422.json"}
+{"stage": "development", "symbol": "PG", "fold": 1, "model": "lstm", "seed": 101, "attempt": 423, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 423, "result": "trial-423.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "zero", "seed": 42, "attempt": 424, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 424, "result": "trial-424.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "momentum", "seed": 42, "attempt": 425, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 425, "result": "trial-425.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "ridge", "seed": 42, "attempt": 426, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 426, "result": "trial-426.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "gbm", "seed": 42, "attempt": 427, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 427, "result": "trial-427.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "lstm", "seed": 17, "attempt": 428, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 428, "result": "trial-428.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "lstm", "seed": 29, "attempt": 429, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 429, "result": "trial-429.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "lstm", "seed": 43, "attempt": 430, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 430, "result": "trial-430.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "lstm", "seed": 71, "attempt": 431, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 431, "result": "trial-431.json"}
+{"stage": "development", "symbol": "PG", "fold": 2, "model": "lstm", "seed": 101, "attempt": 432, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 432, "result": "trial-432.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "zero", "seed": 42, "attempt": 433, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 433, "result": "trial-433.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "momentum", "seed": 42, "attempt": 434, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 434, "result": "trial-434.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "ridge", "seed": 42, "attempt": 435, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 435, "result": "trial-435.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "gbm", "seed": 42, "attempt": 436, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 436, "result": "trial-436.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "lstm", "seed": 17, "attempt": 437, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 437, "result": "trial-437.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "lstm", "seed": 29, "attempt": 438, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 438, "result": "trial-438.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "lstm", "seed": 43, "attempt": 439, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 439, "result": "trial-439.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "lstm", "seed": 71, "attempt": 440, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 440, "result": "trial-440.json"}
+{"stage": "development", "symbol": "PG", "fold": 3, "model": "lstm", "seed": 101, "attempt": 441, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 441, "result": "trial-441.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "zero", "seed": 42, "attempt": 442, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 442, "result": "trial-442.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "momentum", "seed": 42, "attempt": 443, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 443, "result": "trial-443.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "ridge", "seed": 42, "attempt": 444, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 444, "result": "trial-444.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "gbm", "seed": 42, "attempt": 445, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 445, "result": "trial-445.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "lstm", "seed": 17, "attempt": 446, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 446, "result": "trial-446.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "lstm", "seed": 29, "attempt": 447, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 447, "result": "trial-447.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "lstm", "seed": 43, "attempt": 448, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 448, "result": "trial-448.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "lstm", "seed": 71, "attempt": 449, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 449, "result": "trial-449.json"}
+{"stage": "development", "symbol": "PG", "fold": 4, "model": "lstm", "seed": 101, "attempt": 450, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 450, "result": "trial-450.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "zero", "seed": 42, "attempt": 451, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 451, "result": "trial-451.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "momentum", "seed": 42, "attempt": 452, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 452, "result": "trial-452.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "ridge", "seed": 42, "attempt": 453, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 453, "result": "trial-453.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "gbm", "seed": 42, "attempt": 454, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 454, "result": "trial-454.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "lstm", "seed": 17, "attempt": 455, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 455, "result": "trial-455.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "lstm", "seed": 29, "attempt": 456, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 456, "result": "trial-456.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "lstm", "seed": 43, "attempt": 457, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 457, "result": "trial-457.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "lstm", "seed": 71, "attempt": 458, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 458, "result": "trial-458.json"}
+{"stage": "development", "symbol": "KO", "fold": 0, "model": "lstm", "seed": 101, "attempt": 459, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 459, "result": "trial-459.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "zero", "seed": 42, "attempt": 460, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 460, "result": "trial-460.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "momentum", "seed": 42, "attempt": 461, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 461, "result": "trial-461.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "ridge", "seed": 42, "attempt": 462, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 462, "result": "trial-462.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "gbm", "seed": 42, "attempt": 463, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 463, "result": "trial-463.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "lstm", "seed": 17, "attempt": 464, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 464, "result": "trial-464.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "lstm", "seed": 29, "attempt": 465, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 465, "result": "trial-465.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "lstm", "seed": 43, "attempt": 466, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 466, "result": "trial-466.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "lstm", "seed": 71, "attempt": 467, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 467, "result": "trial-467.json"}
+{"stage": "development", "symbol": "KO", "fold": 1, "model": "lstm", "seed": 101, "attempt": 468, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 468, "result": "trial-468.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "zero", "seed": 42, "attempt": 469, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 469, "result": "trial-469.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "momentum", "seed": 42, "attempt": 470, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 470, "result": "trial-470.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "ridge", "seed": 42, "attempt": 471, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 471, "result": "trial-471.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "gbm", "seed": 42, "attempt": 472, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 472, "result": "trial-472.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "lstm", "seed": 17, "attempt": 473, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 473, "result": "trial-473.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "lstm", "seed": 29, "attempt": 474, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 474, "result": "trial-474.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "lstm", "seed": 43, "attempt": 475, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 475, "result": "trial-475.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "lstm", "seed": 71, "attempt": 476, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 476, "result": "trial-476.json"}
+{"stage": "development", "symbol": "KO", "fold": 2, "model": "lstm", "seed": 101, "attempt": 477, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 477, "result": "trial-477.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "zero", "seed": 42, "attempt": 478, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 478, "result": "trial-478.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "momentum", "seed": 42, "attempt": 479, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 479, "result": "trial-479.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "ridge", "seed": 42, "attempt": 480, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 480, "result": "trial-480.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "gbm", "seed": 42, "attempt": 481, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 481, "result": "trial-481.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "lstm", "seed": 17, "attempt": 482, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 482, "result": "trial-482.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "lstm", "seed": 29, "attempt": 483, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 483, "result": "trial-483.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "lstm", "seed": 43, "attempt": 484, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 484, "result": "trial-484.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "lstm", "seed": 71, "attempt": 485, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 485, "result": "trial-485.json"}
+{"stage": "development", "symbol": "KO", "fold": 3, "model": "lstm", "seed": 101, "attempt": 486, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 486, "result": "trial-486.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "zero", "seed": 42, "attempt": 487, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 487, "result": "trial-487.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "momentum", "seed": 42, "attempt": 488, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 488, "result": "trial-488.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "ridge", "seed": 42, "attempt": 489, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 489, "result": "trial-489.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "gbm", "seed": 42, "attempt": 490, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 490, "result": "trial-490.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "lstm", "seed": 17, "attempt": 491, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 491, "result": "trial-491.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "lstm", "seed": 29, "attempt": 492, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 492, "result": "trial-492.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "lstm", "seed": 43, "attempt": 493, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 493, "result": "trial-493.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "lstm", "seed": 71, "attempt": 494, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 494, "result": "trial-494.json"}
+{"stage": "development", "symbol": "KO", "fold": 4, "model": "lstm", "seed": 101, "attempt": 495, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 495, "result": "trial-495.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "zero", "seed": 42, "attempt": 496, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 496, "result": "trial-496.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "momentum", "seed": 42, "attempt": 497, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 497, "result": "trial-497.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "ridge", "seed": 42, "attempt": 498, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 498, "result": "trial-498.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "gbm", "seed": 42, "attempt": 499, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 499, "result": "trial-499.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "lstm", "seed": 17, "attempt": 500, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 500, "result": "trial-500.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "lstm", "seed": 29, "attempt": 501, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 501, "result": "trial-501.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "lstm", "seed": 43, "attempt": 502, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 502, "result": "trial-502.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "lstm", "seed": 71, "attempt": 503, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 503, "result": "trial-503.json"}
+{"stage": "development", "symbol": "WMT", "fold": 0, "model": "lstm", "seed": 101, "attempt": 504, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 504, "result": "trial-504.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "zero", "seed": 42, "attempt": 505, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 505, "result": "trial-505.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "momentum", "seed": 42, "attempt": 506, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 506, "result": "trial-506.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "ridge", "seed": 42, "attempt": 507, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 507, "result": "trial-507.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "gbm", "seed": 42, "attempt": 508, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 508, "result": "trial-508.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "lstm", "seed": 17, "attempt": 509, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 509, "result": "trial-509.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "lstm", "seed": 29, "attempt": 510, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 510, "result": "trial-510.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "lstm", "seed": 43, "attempt": 511, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 511, "result": "trial-511.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "lstm", "seed": 71, "attempt": 512, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 512, "result": "trial-512.json"}
+{"stage": "development", "symbol": "WMT", "fold": 1, "model": "lstm", "seed": 101, "attempt": 513, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 513, "result": "trial-513.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "zero", "seed": 42, "attempt": 514, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 514, "result": "trial-514.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "momentum", "seed": 42, "attempt": 515, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 515, "result": "trial-515.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "ridge", "seed": 42, "attempt": 516, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 516, "result": "trial-516.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "gbm", "seed": 42, "attempt": 517, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 517, "result": "trial-517.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "lstm", "seed": 17, "attempt": 518, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 518, "result": "trial-518.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "lstm", "seed": 29, "attempt": 519, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 519, "result": "trial-519.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "lstm", "seed": 43, "attempt": 520, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 520, "result": "trial-520.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "lstm", "seed": 71, "attempt": 521, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 521, "result": "trial-521.json"}
+{"stage": "development", "symbol": "WMT", "fold": 2, "model": "lstm", "seed": 101, "attempt": 522, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 522, "result": "trial-522.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "zero", "seed": 42, "attempt": 523, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 523, "result": "trial-523.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "momentum", "seed": 42, "attempt": 524, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 524, "result": "trial-524.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "ridge", "seed": 42, "attempt": 525, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 525, "result": "trial-525.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "gbm", "seed": 42, "attempt": 526, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 526, "result": "trial-526.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "lstm", "seed": 17, "attempt": 527, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 527, "result": "trial-527.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "lstm", "seed": 29, "attempt": 528, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 528, "result": "trial-528.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "lstm", "seed": 43, "attempt": 529, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 529, "result": "trial-529.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "lstm", "seed": 71, "attempt": 530, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 530, "result": "trial-530.json"}
+{"stage": "development", "symbol": "WMT", "fold": 3, "model": "lstm", "seed": 101, "attempt": 531, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 531, "result": "trial-531.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "zero", "seed": 42, "attempt": 532, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 532, "result": "trial-532.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "momentum", "seed": 42, "attempt": 533, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 533, "result": "trial-533.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "ridge", "seed": 42, "attempt": 534, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 534, "result": "trial-534.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "gbm", "seed": 42, "attempt": 535, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 535, "result": "trial-535.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "lstm", "seed": 17, "attempt": 536, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 536, "result": "trial-536.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "lstm", "seed": 29, "attempt": 537, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 537, "result": "trial-537.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "lstm", "seed": 43, "attempt": 538, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 538, "result": "trial-538.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "lstm", "seed": 71, "attempt": 539, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 539, "result": "trial-539.json"}
+{"stage": "development", "symbol": "WMT", "fold": 4, "model": "lstm", "seed": 101, "attempt": 540, "event": "started"}
+{"event": "completed", "stage": "development", "attempt": 540, "result": "trial-540.json"}

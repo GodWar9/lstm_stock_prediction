@@ -1,0 +1,18 @@
+{
+  "command": [
+    "cargo",
+    "build",
+    "--locked",
+    "--bin",
+    "quantctl"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\rust",
+  "started_utc": "20261118T121219383166Z",
+  "commit": "03b411cac313c94cf928981c8fcf41f572b60d7e",
+  "status": "?? Docs/evidence/phase10/final-divergence-20261117T085516049984Z.txt\n?? Docs/evidence/phase10/final-upstream-fetch-20261117T085514266678Z.txt\n?? Docs/evidence/phase3/final-code-ci-green-20261118T121218505217Z.txt\n",
+  "working_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 26.10s
+
+EXIT_CODE=0

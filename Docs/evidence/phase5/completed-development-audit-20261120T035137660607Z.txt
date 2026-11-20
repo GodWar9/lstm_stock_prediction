@@ -1,0 +1,34 @@
+{
+  "command": [
+    "C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/python/.venv/Scripts/python.exe",
+    "-c",
+    "from pathlib import Path\nimport hashlib,json,shutil\nimport yaml\nfrom scripts.run_daily_study import report\nroot=Path.cwd(); digest='436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85'\ncfg=yaml.safe_load(Path('configs/study_daily.yaml').read_text())\nassert hashlib.sha256(Path('configs/study_daily.yaml').read_bytes()).hexdigest()==digest\nfolder=Path('reports/studies')/digest\nrows=[json.loads(line) for line in (folder/'trials.ndjson').read_text().splitlines()]\nstarted=[r for r in rows if r['event']=='started']; completed=[r for r in rows if r['event']=='completed']\nexpected={(s,f,m,seed) for s in cfg['data']['symbols'] for f in range(len(cfg['folds']['development'])) for m in cfg['models'] for seed in (cfg['seeds'] if m=='lstm' else [42])}\nassert len(started)==len(completed)==len(expected)==540\nassert len(rows)==1080 and {r['attempt'] for r in started}==set(range(1,541))\nassert {(r['symbol'],r['fold'],r['model'],r['seed']) for r in started}==expected\nfor r in started:\n    trial=json.loads((folder/f\"trial-{r['attempt']}.json\").read_text())\n    assert all(trial[k]==r[k] for k in ('stage','symbol','fold','model','seed','attempt'))\n    assert len(set(map(len,[trial[k] for k in ('timestamps','prediction','target','returns','turnover')])))==1\nassert not (folder/'holdout.started.json').exists() and not (folder/'holdout-results.json').exists()\nsnapshots=[]\nfor symbol in cfg['data']['symbols']:\n    snap=json.loads((folder/f'{symbol}.snapshot.json').read_text()); snapshots.append(snap)\n    version=f'study_{digest[:12]}_{symbol}'\n    for kind,base,suffix in [('market','market','json'),('training','training','arrow')]:\n        assert hashlib.sha256((Path('datasets')/base/version/f'{symbol}.{suffix}').read_bytes()).hexdigest()==snap[f'{kind}_sha256']\nresults=json.loads((folder/'development-results.json').read_text())\nassert results['trial_count']==540 and results['stage']=='development'\nassert results['paired_comparisons']=={}\nevidence=Path('Docs/evidence/phase5')\nfor src,dest in [('development-results.json',f'{digest}-development-results.json'),('development-equity.png',f'{digest}-development-equity.png'),('trials.ndjson',f'{digest}-development-trials.ndjson')]:\n    target=evidence/dest\n    if target.exists(): assert target.read_bytes()==(folder/src).read_bytes()\n    else: shutil.copyfile(folder/src,target)\n    print(dest,hashlib.sha256(target.read_bytes()).hexdigest())\n(evidence/f'{digest}-snapshots.json').write_text(json.dumps(snapshots,indent=2)+'\\n')\nreport(results,Path('Docs/STUDY-REPORT.md'))\nprint('AUDIT PASSED: 540 unique scheduled trials, 540 completions, no failures; snapshot hashes match; final holdout unevaluated.')\nprint(json.dumps({k:v['metrics']['after_cost_sharpe'] for k,v in results['candidates'].items()},indent=2))\nprint(json.dumps(results['lstm_seed_summary'],indent=2))"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261120T035137660607Z",
+  "commit": "5cea24d6b9e6c34770a984f1ca02baaf2b482605",
+  "status": " M Docs/BENCHMARKS.md\n M Docs/BLOCKED.md\n M Docs/CLAIMS.md\n M Docs/STUDY-REPORT.md\n?? Docs/evidence/phase10/final-divergence-20261117T085516049984Z.txt\n?? Docs/evidence/phase10/final-upstream-fetch-20261117T085514266678Z.txt\n?? Docs/evidence/phase3/final-code-ci-green-20261118T121218505217Z.txt\n?? Docs/evidence/phase3/report-followup-ci-green-20261118T125244152326Z.txt\n?? Docs/evidence/phase5/development-study-20261118T121246056887Z.txt\n?? Docs/evidence/phase5/study-cli-build-20261118T121219383166Z.txt\n?? Docs/evidence/phase6/benchmark-hardware-20261118T124412383082Z.txt\n?? Docs/evidence/phase6/real-model-runtime-benchmark-20261120T035101046488Z.txt\n?? Docs/evidence/phase6/release-benchmark-build-20261118T122458880492Z.txt\n?? Docs/evidence/phase6/release-benchmark-build-corrected-20261118T122521365059Z.txt\n",
+  "working_diff_sha256": "d594d99e50143a4e99a715f8df81bec1453c9545a276cfc5c62f04cb197b3b53"
+}
+
+436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-results.json c9248349a21cc8523707e3057b71c83c8ea4c84b20c0982e75e628d1ba43ed52
+436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-equity.png 67a61ef489f281e60ad7bfb836a36ceede6a62994fec663fc37b860ca976c5f6
+436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-trials.ndjson 30ac4fcc89127a2d56d33748555463ad8ed2d2d9964a39e2c868e2d7160e6bb2
+AUDIT PASSED: 540 unique scheduled trials, 540 completions, no failures; snapshot hashes match; final holdout unevaluated.
+{
+  "zero:42": null,
+  "momentum:42": -4.290173630981664,
+  "ridge:42": -3.3196524650954564,
+  "gbm:42": -2.4727181458073426,
+  "lstm:17": -3.044860529723479,
+  "lstm:29": -3.450222079098759,
+  "lstm:43": -3.046549959359427,
+  "lstm:71": -3.2122542100402707,
+  "lstm:101": -2.1930019591863266
+}
+{
+  "after_cost_sharpe_mean": -2.9893777474816523,
+  "after_cost_sharpe_std": 0.4750296866158877
+}
+
+EXIT_CODE=0
