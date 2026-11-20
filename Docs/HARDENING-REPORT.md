@@ -1,12 +1,12 @@
 # Project handover and hardening acceptance
 
-Prepared on 17 November 2026. Branch: `hardening/interview-ready`. Comparison baseline: `main` at `e8dc7d0`. This document supersedes the state assessment in [the earlier handover](HANDOVER-2026-11-16.md), which remains historical evidence. Nothing has been merged into main by this task.
+Updated on 20 November 2026. Branch: `hardening/interview-ready`. Comparison baseline: `main` at `e8dc7d0`. This document supersedes the state assessment in [the earlier handover](HANDOVER-2026-11-16.md), which remains historical evidence. Nothing has been merged into main by this task.
 
 ## Current project and drift from main
 
 The baseline already contains Rust ingestion/features/inference, Python model training, the React inspector, live Alpaca forecast inputs and newer market observation features. The hardening branch concentrates on research validity and evidence: explicit provenance, mutation-checked leakage controls, stronger CI, a frozen study protocol and runner, benchmark tooling, live-path tests, decision logging, drift monitoring, optional signatures and reconciled documentation. It adds no live order execution or new market dashboard scope.
 
-Compared with the original Python forecasting prototype, the architectural drift is a deliberate expansion into a research platform. The unresolved product gap is empirical: a validated real-data model and honest comparison with simpler baselines have not yet been delivered. The packaged demonstration remains synthetic. More runtime infrastructure does not establish predictive advantage.
+Compared with the original Python forecasting prototype, the architectural drift is a deliberate expansion into a research platform. The approved real-data development comparison is now complete, and the preselected sealed model has been benchmarked. All active development strategies had negative after-cost Sharpe; the mean LSTM result was better than ridge but worse than GBM. These are descriptive development findings, not final-holdout superiority tests. The user explicitly kept the final holdout blocked. The packaged demonstration remains synthetic; study artifacts stay local and are not silently deployed.
 
 ## Phase acceptance
 
@@ -15,14 +15,14 @@ Compared with the original Python forecasting prototype, the architectural drift
 | 0 — preflight | DONE | [Baseline evidence](evidence/phase0/), [known issues](KNOWN-ISSUES.md) | Sandbox network/loopback failures retained; unrestricted reruns passed. Remote fetch succeeded. |
 | 1 — claims and documentation | DONE | [Claims ledger](CLAIMS.md), [live ingestion](19-LIVE-INGESTION.md), Git history | Historical design examples explicitly remain historical; host/provider gates remain unchecked. |
 | 2 — provenance | DONE | [API, UI and packaged acceptance](evidence/phase2/) | Synthetic labels derive from model and dataset sources; this does not validate real model quality. |
-| 3 — CI | PARTIAL | [Published green run](evidence/phase3/github-green-20261117T082144099685Z.txt), [workflow](../.github/workflows/ci.yml) | First published revision passed; final hardening revision still requires its own GitHub run. |
+| 3 — CI | DONE | [Latest code green run](evidence/phase3/report-followup-ci-green-20261118T125244152326Z.txt), [workflow](../.github/workflows/ci.yml) | Code revision `5cea24d` passed; CI evidence is revision-specific. |
 | 4 — validity canaries | DONE | [Mutation and restored-suite evidence](evidence/phase4/), [limits](VALIDITY-CANARIES.md) | Controls use synthetic test data; no synthetic performance results are presented. |
-| 5 — real-data study | BLOCKED | [Frozen protocol and guard tests](evidence/phase5/), [study status](STUDY-REPORT.md) | Human protocol review pending; no acquisition/fitting or final evaluation. PBO/CSCV remains unavailable. |
-| 6 — inference comparison | BLOCKED | [Compilation and provenance refusal](evidence/phase6/), [benchmark command](BENCHMARKS.md) | Tooling exists; a sealed real-data model is needed before measurement. |
+| 5 — real-data study | PARTIAL | [Completed development audit](evidence/phase5/completed-development-audit-20261120T035137660607Z.txt), [results and plot](STUDY-REPORT.md) | Development completed with negative after-cost findings. Final holdout remains blocked by explicit user choice. PBO/CSCV remains unavailable. |
+| 6 — inference comparison | DONE | [Audited raw samples](evidence/phase6/benchmark-results-audit-20261120T035308115714Z.txt), [measured comparison](BENCHMARKS.md) | Parity passed on the preselected real-data model. Results describe one host and measurement session, not a deployment SLA. |
 | 7 — live path | DONE | [Local live tests](evidence/phase7/live-tests-20261117T082022261647Z.txt), [human runbook](LIVE-SESSION-RUNBOOK.md) | Uses both local WebSocket integration and direct deterministic handler tests. Actual Alpaca session remains unverified. |
 | 8 — logging and monitoring | DONE | [Decision/CLI/reference tests](evidence/phase8/), [monitoring guide](MONITORING.md) | Hash chain is tamper-evidence, not external authentication; halt signals a supervisor. |
 | 9 — artifact signing | DONE | [Signature tests and full regression](evidence/phase9/), [trust guide](MODEL-SIGNING.md) | Optional and default-off. Production key provisioning/rotation and filesystem controls are operator responsibilities. |
-| 10 — interview pack | PARTIAL | [Pitch, walkthrough, answers and resume bullets](INTERVIEW.md) | Engineering claims are supported; empirical numbers await the study and benchmark. |
+| 10 — interview pack | DONE | [Pitch, walkthrough, answers and resume bullets](INTERVIEW.md) | Wording reflects negative development findings and measured runtimes; no alpha or final-holdout claim. |
 
 DONE refers only to the stated local acceptance scope. Evidence files retain command, date, revision, working-diff identity, output and exit code. An expected guard failure is labeled as such and is not a successful study or benchmark.
 
@@ -51,14 +51,18 @@ The final local Rust/Python, format/Clippy, generated contract, web unit/bridge/
 
 ## Unverified and human-gated work
 
-- Review the exact bytes of `configs/study_daily.yaml` before acquisition/fitting. If approved, run development only and preserve every failed attempt. Do not revise the protocol to chase a favorable result.
-- Review development results, then separately authorize the final holdout invocation. Its one-use marker must not be removed to repeat evaluation.
-- Benchmark the same sealed real-data model across runtimes and generate the report from retained results.
+- Development review and execution are complete. Preserve the unchanged configuration, snapshots, trial ledger and results. Do not revise this protocol to chase a favorable result.
+- The user reviewed the development outcome and explicitly kept the final holdout blocked. A later explicit authorization is required before its single evaluation. Do not delete reuse guards or treat a general request to continue as that authorization.
+- Runtime comparison is complete. Preserve the sealed benchmark model and raw timing samples; any later measurement must use a new output file and identify its environment.
 - Operate the real Alpaca paper session using the runbook: credentials and entitlement, market-hours window, first-publication journal, compatible minute model, freshness/failure behavior and redacted evidence. No orders are placed by this work.
 - Complete host-specific shutdown/SSE, load, retention, restart and restore acceptance. Current provider availability, licensing, corporate-action completeness, survivorship coverage, executable fills and capacity are not established by local tests.
 - Provision signing keys and protect the trust policy/artifact directories if authenticity is required. Preserve decision-log checkpoints outside the workspace if stronger audit guarantees are required.
-- Match resume wording to the actual study, including negative findings. Until then, use the implementation-only bullets in the interview pack.
+- Use the updated resume bullets: a research platform and evaluated baselines, with negative development findings reported honestly. No profitable-strategy or LSTM-superiority claim is supported.
 
 ## Maintainer starting points
 
 Read [CLAIMS.md](CLAIMS.md) and [BLOCKED.md](BLOCKED.md) at every work-chunk boundary. Use [STUDY-REPORT.md](STUDY-REPORT.md) for authorized experiment commands, [BENCHMARKS.md](BENCHMARKS.md) for runtime measurement, [MONITORING.md](MONITORING.md) for decision outcomes and drift, and [MODEL-SIGNING.md](MODEL-SIGNING.md) for trust configuration. The original handover explains older architecture; this report controls current acceptance claims.
+
+## Retained artifacts
+
+The study report links the published aggregate results JSON, simulated equity plot and retained evidence. The development trial ledger and source snapshot hashes are under `Docs/evidence/phase5/`. Full per-trial predictions, raw snapshots and model packages remain in the local `reports/studies/`, `datasets/` and `models/study_*/` directories; preserve them for reproduction and do not assume a Git clone contains them. The benchmark report links every raw timing sample. Metrics cover eligible evaluation dates, not a continuous calendar trading record.

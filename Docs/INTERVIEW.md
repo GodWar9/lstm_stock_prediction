@@ -1,6 +1,6 @@
 # Interview pack
 
-This pack describes the implementation and retained local tests. It makes no alpha, latency, throughput, or production-readiness claim. Read [CLAIMS](CLAIMS.md), [the study status](STUDY-REPORT.md), and [benchmark status](BENCHMARKS.md) before presenting it. Empirical results must be generated and reviewed before adding performance numbers here.
+This pack describes the implementation, retained tests, completed development study and measured runtime comparison. It makes no alpha or production-readiness claim. Read [CLAIMS](CLAIMS.md), [the development findings](STUDY-REPORT.md), and [measured benchmarks](BENCHMARKS.md) before presenting it. Any numerical performance claim must come directly from those reports.
 
 ## Two-minute pitch
 
@@ -8,7 +8,7 @@ I built a stock forecasting research platform with a Rust data and inference run
 
 The pipeline versions market snapshots, computes causal features, exports training data through Arrow, and fits scaling only on training folds. Model publication uses staged artifacts, hashes, and numerical parity checks. The API labels synthetic provenance and the UI displays it. Alpaca minute ingestion can supply requested forecasts when the completed-bar window and model are compatible; that path has local tests, while real account acceptance remains human-gated.
 
-I added mutation-tested leakage canaries, optional model signatures, an append-only decision log, and empirical drift monitoring. A frozen daily study defines baseline comparisons, costs, seeds and a separate final holdout. That study has not run because its protocol needs human review. I therefore describe this as a research and validation platform, not a demonstrated profitable strategy. The next evidence I need is the real-data comparison, runtime measurements on its sealed model, and the operator-run paper session.
+I added mutation-tested leakage canaries, optional model signatures, an append-only decision log, and empirical drift monitoring. I then ran the approved, frozen development study against simpler baselines. The results were negative after costs: the mean LSTM Sharpe was better than ridge's but worse than GBM's. I report that result without tuning until the LSTM wins. I also measured the runtimes on the same sealed real-data model; ONNX Runtime was faster in that session, so I do not claim a tract latency advantage. The final holdout remains blocked at the user's request, and the paper session remains human-operated.
 
 ## Ten-minute walkthrough
 
@@ -53,7 +53,7 @@ The Node-hosted bridge and standalone Rust application have different public rou
 
 **How did you prevent lookahead and survivorship bias?** Availability checks, forward-label alignment, purged/embargoed splits and train-only scaling address specific leakage paths. Mutation tests demonstrate that the controls are exercised. Survivorship bias has not been eliminated: the frozen universe was selected with present-day knowledge. Provider revisions and corporate actions remain limitations, so do not claim a historically point-in-time universe.
 
-**Why Rust runtime and Python training?** Rust owns data validation, feature computation, inference, APIs and replay, while Python provides model training and export. Python is not exclusively used for training: Yahoo ingestion and study orchestration also use Python helpers. Artifact schemas and parity gates bridge the boundary. Runtime performance remains to be measured on a real-data model.
+**Why Rust runtime and Python training?** Rust owns data validation, feature computation, inference, APIs and replay, while Python provides model training and export. Python is not exclusively used for training: Yahoo ingestion and study orchestration also use Python helpers. Artifact schemas and parity gates bridge the boundary. The measured real-model comparison is in the benchmark report; it does not establish a universal language or runtime advantage.
 
 **What does the backtest assume about fills, slippage and impact?** The frozen study generates signals after completed closes, enters at the next observed open and exits at that bar's close using fixed per-side costs. It is long-or-cash with independent equal-capital symbol sleeves. These are simulated prices and costs; neither capacity, queue position, dividends, borrow nor market impact is certified. The model's close-to-close target differs from its executable open-to-close return, and both are retained.
 
@@ -61,7 +61,7 @@ The Node-hosted bridge and standalone Rust application have different public rou
 
 **How did you account for multiple testing?** Freeze the universe, dates, costs, models, seeds and caps before fitting. Append every model attempt, including failures, to a durable ledger. Keep final evaluation behind a separate one-use sign-off. Report block-bootstrap uncertainty and an assumption-dependent deflated Sharpe diagnostic using logged attempts. Correlated trials make the effective independent count uncertain. CSCV/PBO is not implemented and must remain unavailable rather than invented.
 
-**Why tract rather than ort?** The implemented Rust runtime loads ONNX through `tract-onnx`; the Python export checks also use ONNX Runtime. This matches the repository's current deployment and operator support. It does not prove tract is faster or numerically superior. The benchmark tooling compares all runtimes on the same sealed model, windows and CPU settings; measurements are blocked until a real-data package exists.
+**Why tract rather than ort?** The implemented Rust runtime loads ONNX through `tract-onnx`; the Python export checks also use ONNX Runtime. This matches the repository's current deployment and operator support. The measured comparison used the same sealed model and fixed windows and passed parity. ONNX Runtime was faster in this session; tract is an architectural choice, not a demonstrated latency advantage. See the benchmark report for the exact host, settings and limitations.
 
 **What is verified?** Local tests cover provenance, artifact rejection, canary mutations, deterministic live-window behavior, monitoring drift and signature rejection. GitHub evidence is revision-specific. Real predictive advantage, actual-provider operation, host shutdown/SSE behavior under deployment conditions, load, retention and restore remain unverified. Consult the claims ledger rather than extrapolating from a passing unit test.
 
@@ -69,10 +69,11 @@ The Node-hosted bridge and standalone Rust application have different public rou
 
 - Built a Rust and PyTorch forecasting research platform with versioned data, causal features, train-only preprocessing and parity-gated model publication.
 - Added mutation-tested leakage controls, explicit synthetic provenance, optional artifact signatures, and auditable forecast decisions with drift monitoring.
-- Implemented an approval-gated study comparing an LSTM with statistical and tree baselines; real-data evaluation remains pending.
+- Built a leakage-safe research platform and evaluated an LSTM against statistical and tree baselines on real-data development folds; reported negative after-cost results without claiming alpha.
+- Benchmarked PyTorch, ONNX Runtime and tract on a sealed real-data model, retaining raw timing samples, parity evidence and hardware metadata.
 
-After evaluation, revise the final bullet to “evaluated an LSTM against baselines” and attach only numbers reproduced in the study or benchmark reports. If superiority is not established, say so. Do not replace missing measurements with estimates or synthetic metrics.
+The final holdout remains unevaluated. Attach only numbers reproduced in the study or benchmark reports, and identify development results as development results. No claim of LSTM superiority is supported by this work.
 
 ## What I would do with more time
 
-Complete the reviewed study and separately authorized holdout, measure the sealed model, and collect the human paper-session evidence. Then address historically point-in-time universe construction, corporate actions and data licensing, calibrated monitoring thresholds, independently anchored audit logs, key rotation, and host-specific load/recovery acceptance. Broader models or markets should follow evidence of a research need.
+Preserve the blocked holdout until explicitly authorized and collect the human paper-session evidence. Then address historically point-in-time universe construction, corporate actions and data licensing, calibrated monitoring thresholds, independently anchored audit logs, key rotation, and host-specific load/recovery acceptance. Any new experiment needs a new prospective protocol; do not retune the completed study to reverse its findings.

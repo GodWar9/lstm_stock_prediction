@@ -1,0 +1,33 @@
+{
+  "command": [
+    "git",
+    "log",
+    "--oneline",
+    "origin/main..HEAD"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261120T035447318383Z",
+  "commit": "5cea24d6b9e6c34770a984f1ca02baaf2b482605",
+  "status": " M Docs/BENCHMARKS.md\n M Docs/BLOCKED.md\n M Docs/CLAIMS.md\n M Docs/HARDENING-REPORT.md\n M Docs/INTERVIEW.md\n M Docs/STUDY-REPORT.md\n?? Docs/evidence/phase10/final-divergence-20261117T085516049984Z.txt\n?? Docs/evidence/phase10/final-upstream-fetch-20261117T085514266678Z.txt\n?? Docs/evidence/phase10/handover-upstream-fetch-20261120T035445946561Z.txt\n?? Docs/evidence/phase3/final-code-ci-green-20261118T121218505217Z.txt\n?? Docs/evidence/phase3/report-followup-ci-green-20261118T125244152326Z.txt\n?? Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-equity.png\n?? Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-results.json\n?? Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-trials.ndjson\n?? Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-snapshots.json\n?? Docs/evidence/phase5/completed-development-audit-20261120T035137660607Z.txt\n?? Docs/evidence/phase5/development-study-20261118T121246056887Z.txt\n?? Docs/evidence/phase5/study-cli-build-20261118T121219383166Z.txt\n?? Docs/evidence/phase6/benchmark-hardware-20261118T124412383082Z.txt\n?? Docs/evidence/phase6/benchmark-results-audit-20261120T035308115714Z.txt\n?? Docs/evidence/phase6/real-model-runtime-benchmark-20261120T035101046488Z.txt\n?? Docs/evidence/phase6/release-benchmark-build-20261118T122458880492Z.txt\n?? Docs/evidence/phase6/release-benchmark-build-corrected-20261118T122521365059Z.txt\n?? Docs/evidence/phase6/runtime-comparison.json\n",
+  "working_diff_sha256": "6c7b771fcb08536122454d74bd196bafc8e0a2d26fe29263e7abe576ed1211ad"
+}
+
+5cea24d docs: keep generated study reports reproducible and portable
+47e65e6 chore: retain runtime version metadata and keep study packages local
+03b411c fix: make study tests independent of working directory and collection order
+519b08e docs: retain final branch comparison evidence
+20e1944 docs: publish evidence-backed hardening handover and interview pack
+eae8025 feat: add approval-gated frozen study runner and honest statistics
+56a4087 feat: enforce optional Ed25519 model trust policy
+e1be822 feat: log forecast decisions and monitor empirical feature drift
+b575422 test: extend live window acceptance and add human runbook
+d89b8c1 feat: add guarded three-runtime inference benchmark
+33b6ab1 docs: freeze daily study protocol for human review
+76664d3 test: add mutation-checked leakage canaries and validate fold gaps
+48269b4 ci: harden branch validation and remediate dependency advisories
+a1620a2 feat: require explicit forecast data provenance
+32f04d1 docs: reconcile runtime capabilities and acceptance claims
+63fbecc chore: retain hardening baseline evidence and blockers
+73dd48f docs: document Alpaca live forecast inputs
+
+EXIT_CODE=0

@@ -17,22 +17,23 @@ Read alongside [BLOCKED.md](BLOCKED.md) at every chunk boundary. VERIFIED requir
 | Public crypto observation and global catalogues | IMPLEMENTED-UNVERIFIED | [Bridge tests](evidence/phase3/bridge-20261116T140537097104Z.txt) pass; current actual-provider acceptance remains open |
 | Twelve Data fresh compatible-model forecasts | IMPLEMENTED-UNVERIFIED | Provider and compatible-model acceptance pending |
 | Daily forex reference analytics under provider fixtures | VERIFIED | [Bridge tests](evidence/phase3/bridge-20261116T140537097104Z.txt); not LSTM predictions or current provider acceptance |
-| CSV default and optional Yahoo helper | IMPLEMENTED-UNVERIFIED | Local CSV tests pass; actual Yahoo acquisition unverified and uses Python |
+| CSV default and optional Yahoo helper | VERIFIED | Local CSV tests and [reviewed real Yahoo snapshots](evidence/phase5/completed-development-audit-20261120T035137660607Z.txt); Yahoo acquisition uses Python; provider revisions and corporate actions remain limitations |
 | Offline synthetic demo and portable Windows app | IMPLEMENTED-UNVERIFIED | Current release acceptance pending |
 | Hosted Node bridge with private Rust backend | IMPLEMENTED-UNVERIFIED | Current host acceptance pending; deployment files are not deployment evidence |
-| CI validation gates | VERIFIED | [First published green run](evidence/phase3/github-green-20261117T082144099685Z.txt) at `76664d3`; later revisions require their own run |
+| CI validation gates | VERIFIED | [Latest code revision green run](evidence/phase3/report-followup-ci-green-20261118T125244152326Z.txt) at `5cea24d`; evidence is revision-specific |
 | Local Git history secret scan | VERIFIED | [gitleaks](evidence/phase3/secret-scan-unrestricted-20261116T140509784779Z.txt); scope is the logged revision |
 | Forecast provenance and synthetic banner | VERIFIED | [API](evidence/phase2/api-tests-20261116T140100674278Z.txt), [browser](evidence/phase2/browser-20261116T140144706729Z.txt), [packaged inference](evidence/phase2/container-provenance-20261116T140239408226Z.txt) |
 | Advanced research modules | IMPLEMENTED-UNVERIFIED | Library availability does not establish default CLI integration |
 | Multi-asset default replay | NOT-IMPLEMENTED | Default workflow remains single-symbol |
 | Live orders | NOT-IMPLEMENTED | Outside research scope |
 | Complete corporate-action and survivorship coverage | NOT-IMPLEMENTED | Not established by current data pipeline |
-| Real-data baseline study | IMPLEMENTED-UNVERIFIED | [Runner and human gates](STUDY-REPORT.md); no real study or final holdout executed; no LSTM advantage established |
+| Real-data development baseline study | VERIFIED | [Audited development results](STUDY-REPORT.md); all scheduled development trials completed; negative after-cost results do not establish alpha |
+| Final-holdout evaluation | IMPLEMENTED-UNVERIFIED | User explicitly kept final evaluation blocked on 20 November 2026; no final holdout has been evaluated |
 | Signed model authenticity under configured test policy | VERIFIED | [Signature tests](evidence/phase9/signature-locked-20261117T083536947065Z.txt); [policy and deployment limits](MODEL-SIGNING.md); default remains hash-only |
 | Append-only decisions and decay monitoring in local fixtures | VERIFIED | [Decision tests](evidence/phase8/decision-tests-20261117T082414771037Z.txt), [CLI drift acceptance](evidence/phase8/monitor-cli-20261117T083008060222Z.txt); [operational limits](MONITORING.md) |
-| Comparative runtime performance on a real-data model | IMPLEMENTED-UNVERIFIED | [Benchmark tooling](BENCHMARKS.md); no measured real-model runtime comparison |
+| Comparative runtime performance on a real-data model | VERIFIED | [Measured comparison and parity](BENCHMARKS.md); limited to the recorded model, host and measurement session |
 
-Numbers in historical documents are not re-certified by this ledger. No study, benchmark or alpha claim is made here.
+Numbers in historical documents are not re-certified by this ledger. Development and benchmark claims are limited to the linked retained evidence. No alpha or production-readiness claim is made.
 
 ## Current local acceptance evidence
 
