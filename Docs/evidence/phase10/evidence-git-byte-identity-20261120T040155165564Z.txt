@@ -1,0 +1,20 @@
+{
+  "command": [
+    "C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/python/.venv/Scripts/python.exe",
+    "-c",
+    "from pathlib import Path\nimport subprocess,hashlib\nnames=subprocess.check_output(['git','ls-files','Docs/evidence'],text=True).splitlines()\nfor name in names:\n    if Path(name).suffix not in ('.json','.ndjson'): continue\n    disk=Path(name).read_bytes(); staged=subprocess.check_output(['git','show',':'+name])\n    assert staged==disk,name\n    print('EXACT_BYTES',name,hashlib.sha256(disk).hexdigest())\nassert hashlib.sha256(Path('configs/study_daily.yaml').read_bytes()).hexdigest()=='436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85'\nprint('APPROVED_PROTOCOL_UNCHANGED')"
+  ],
+  "cwd": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction",
+  "started_utc": "20261120T040155165564Z",
+  "commit": "1d58f590fa8ed18fe0d2eed9bff4998d16f38eac",
+  "status": "M  .gitattributes\nM  Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-results.json\nM  Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-trials.ndjson\nM  Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-snapshots.json\nM  Docs/evidence/phase6/runtime-comparison.json\n",
+  "working_diff_sha256": "faeb8e6e8ff3f8e8acadab854ab2492faf2982516943d2ad3f38c45f4c0426fd"
+}
+
+EXACT_BYTES Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-results.json c9248349a21cc8523707e3057b71c83c8ea4c84b20c0982e75e628d1ba43ed52
+EXACT_BYTES Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-development-trials.ndjson 30ac4fcc89127a2d56d33748555463ad8ed2d2d9964a39e2c868e2d7160e6bb2
+EXACT_BYTES Docs/evidence/phase5/436e8abf43eb8776322c14214c3fd88eb5dd12f21d5a3ed5879aeff201e41d85-snapshots.json 0cf286f2491ea71f6535c905fd6e48c8c390f4f74086fde8542d362f9a3b93c6
+EXACT_BYTES Docs/evidence/phase6/runtime-comparison.json 1206d4240b25e732bddb144d6454afca375a2a5197518b22354fa9249426f03c
+APPROVED_PROTOCOL_UNCHANGED
+
+EXIT_CODE=0

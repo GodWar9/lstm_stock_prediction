@@ -3,3 +3,6 @@
 *.onnx binary
 *.pt binary
 *.png binary
+# Retained machine-readable evidence must preserve the bytes whose hashes were audited.
+Docs/evidence/**/*.json -text
+Docs/evidence/**/*.ndjson -text
