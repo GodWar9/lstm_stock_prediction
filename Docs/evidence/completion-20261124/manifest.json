@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-24",
+  "base_commit": "affb131c7f369451ed1062473bd0bfa7422e72c1",
+  "sources": [
+    {
+      "path": "rust/backtest/src/engine.rs",
+      "sha256": "79204fe446e5bb08152df65efdb2d304f8a5a1d43228a5a512fce2fae5c6332c"
+    },
+    {
+      "path": "rust/backtest/src/lib.rs",
+      "sha256": "f6ed487088b71a69de61014cd07eceeb7d3ebbce044edb78b609a0e6c92a3f9b"
+    },
+    {
+      "path": "rust/backtest/src/multi_asset.rs",
+      "sha256": "8cd4fda2f21c72191a29fb95716f182b92ae57e67e9fd0a42380303b2dc14e6f"
+    },
+    {
+      "path": "rust/backtest/tests/multi_asset.rs",
+      "sha256": "576d1c6ae7ced8ca42afabb936de87a5e8e393e56f9ccf713912d6e2bb933637"
+    }
+  ],
+  "commands": [
+    "scripts/verify.ps1: Rust/frontend/Python/contract passed; browser launch failed in sandbox",
+    "npm run test:e2e: retry failed because original test server locked executable",
+    "PLAYWRIGHT_BROWSERS_PATH=C:\\Users\\Sahil\\AppData\\Local\\ms-playwright npm run test:e2e: unrestricted exit 0",
+    "npm run test:bridge: exit 0",
+    "python/.venv/Scripts/python.exe scripts/offline_doctor.py: exit 0"
+  ]
+}

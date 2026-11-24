@@ -235,7 +235,7 @@ purpose; do not delete previous research just to reuse an ID.
 | Priority | Remaining issue | Consequence / work required |
 |---|---|---|
 | High | Real-market quality is user supplied | CSV validation catches structural errors, not bad vendor data, survivorship bias, missing sessions or incorrect adjustments. Build a documented data-quality/point-in-time process. |
-| High | Single-symbol operational pipeline | No synchronized multi-asset portfolio replay. Build aligned calendars, per-asset signals, multi-asset cash/risk accounting and tests. |
+| High | Single-symbol operational pipeline | Synchronized multi-asset library replay now exists with shared cash and accounting fixtures. CLI/model orchestration and inspector integration remain future work. |
 | High | No machine-wide egress enforcement | Use physical disconnection or OS policy for a true air gap; application checks do not control every dependency/process. |
 | High | Backups and recovery are manual | Preserve data, models, reports and Git source together. Test restoration. Abrupt termination can leave staging locks or incomplete dataset files; inspect after confirming no process owns them. |
 | High | Integrity manifests are unsigned | Hashes detect accidental changes relative to a manifest; someone who can rewrite files and manifests can replace evidence. Add signed manifests and trusted key distribution if authenticity is required. |

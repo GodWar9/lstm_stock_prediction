@@ -1,0 +1,29 @@
+
+> quant-research-inspector@0.1.0 test:bridge
+> node --test scripts/bridge.test.mjs scripts/markets.test.mjs
+
+✔ injects only the server credential and preserves binary bytes, query and pagination headers (31.7061ms)
+✔ rejects unknown routes and mutation requests without contacting backend (14.1667ms)
+✔ missing, insecure, or ambiguous backend settings fail closed (15.5136ms)
+✔ preserves backend error status and hides backend authentication details (8.2093ms)
+✔ forwards SSE immediately and aborts upstream after browser disconnect (50.3513ms)
+✔ times out a stalled backend and limits oversized responses (52.9832ms)
+✔ global market status and fresh forecast queries pass through the server bridge (6.3349ms)
+✔ free forex uses no credential, preserves gaps and calculates observed metrics (24.3718ms)
+✔ reference validation rejects invalid pairs without network access (0.3494ms)
+✔ reference history rejects wrong instruments, malformed dates, duplicates and nonpositive rates (1.4087ms)
+✔ reference empty, stale and failed providers have honest states (0.9745ms)
+✔ packaged global catalog works offline with a dated source (275.376ms)
+✔ global catalogue searches, paginates and caches without a key (0.829ms)
+✔ missing key or display permission never requests paid data (0.5346ms)
+✔ snapshot sends credentials only in headers, coalesces requests and validates OHLC (0.4186ms)
+✔ provider errors are redacted and unsupported paths never call upstream (0.3024ms)
+✔ paid snapshot budget bounds distinct requests (0.5819ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 419.5352

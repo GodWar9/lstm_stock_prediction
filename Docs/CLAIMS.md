@@ -25,6 +25,7 @@ Read alongside [BLOCKED.md](BLOCKED.md) at every chunk boundary. VERIFIED requir
 | Forecast provenance and synthetic banner | VERIFIED | [API](evidence/phase2/api-tests-20261116T140100674278Z.txt), [browser](evidence/phase2/browser-20261116T140144706729Z.txt), [packaged inference](evidence/phase2/container-provenance-20261116T140239408226Z.txt) |
 | Advanced research modules | IMPLEMENTED-UNVERIFIED | Library availability does not establish default CLI integration |
 | Multi-asset default replay | NOT-IMPLEMENTED | Default workflow remains single-symbol |
+| Multi-asset library replay | VERIFIED | [24 November local acceptance](COMPLETION-2026-11-24.md); aligned calendars, shared cash, causal sizing and accounting fixtures; not default CLI integration |
 | Live orders | NOT-IMPLEMENTED | Outside research scope |
 | Complete corporate-action and survivorship coverage | NOT-IMPLEMENTED | Not established by current data pipeline |
 | Real-data development baseline study | VERIFIED | [Audited development results](STUDY-REPORT.md); all scheduled development trials completed; negative after-cost results do not establish alpha |

@@ -59,6 +59,24 @@ split reuse requires an explicit `--allow-reuse`; its use is recorded as a run
 warning. This ledger protects local evaluations, not independently copied
 workspaces or manual deletion of the ledger.
 
+## Multi-asset library replay
+
+`BacktestEngine::run_multi_asset` accepts explicitly aligned `AssetBars` and
+per-instrument signals, with one shared cash account, asset positions, cash
+history and an equal-initial-weight buy-and-hold benchmark. It rejects missing
+or duplicate assets, mismatched calendars and availability timestamps, and
+availability overlapping the next observation. Signals must precede the fill
+bar; order sizing uses the previous available closing prices. Sales precede
+purchases, with long-only purchases reduced to cover their fees from cash.
+Absent signals mean flat targets, including when a signal is stale.
+
+This is a library API, not an integrated multi-model CLI or inspector workflow.
+Callers own model/data provenance and evaluation-reuse authorization. Portfolio
+constraints are interpreted by the supplied constructor; sector, turnover and
+borrow/margin enforcement are not added by this replay method. Fills remain
+bar-close simulations, and partial fills can leave target exposures unmet.
+See `rust/backtest/tests/multi_asset.rs` for accounting and causal-price fixtures.
+
 ## Market data and point-in-time validation
 
 - Strict local CSV provider, permission-gated Yahoo acquisition adapter and deterministic synthetic provider. Unknown

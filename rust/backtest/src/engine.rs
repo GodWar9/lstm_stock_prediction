@@ -52,7 +52,7 @@ impl Default for BacktestConfig {
 
 /// Deterministic event-driven backtest simulation engine.
 pub struct BacktestEngine {
-    config: BacktestConfig,
+    pub(crate) config: BacktestConfig,
 }
 
 impl BacktestEngine {

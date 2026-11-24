@@ -1,0 +1,60 @@
+
+> quant-research-inspector@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:22148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] vite v7.3.8 building client environment for production...
+[WebServer] transforming...
+[WebServer] ✓ 335 modules transformed.
+[WebServer] rendering chunks...
+[WebServer] computing gzip size...
+[WebServer] dist/index.html                   0.41 kB │ gzip:   0.29 kB
+[WebServer] dist/assets/worker-CHLEl2Vx.js  181.51 kB
+[WebServer] dist/assets/index-aQcv11w0.css   29.84 kB │ gzip:   7.69 kB
+[WebServer] dist/assets/index-DLeW2TS6.js   646.12 kB │ gzip: 194.29 kB
+[WebServer] ✓ built in 4.37s
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-1606vmktfv6oi\s-hogbgdbpb3-02r2h5c-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-1g8t18pucx4ew\s-hogbgdvmyz-1iaz8m1-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-1i85683oevzuj\s-hogbgeakj8-1lvtanu-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-1yquvuu1jshy9\s-hogbgeym9s-1gdh3ez-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-35pqnqfidehuz\s-hogbgf4lct-0wmuepg-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-2mihobsvpsk8f\s-hogbgfmv5i-0vjetpr-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0madmse3dxd37\s-hogbmz2agg-0g919zp-working`
+[WebServer] 
+[WebServer] warning[WebServer] : hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-3gc8eu159gh3y\s-hogbn5r1la-0mh2nv7-working`
+[WebServer] 
+[WebServer] error[WebServer] : failed to remove file `C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\quantctl.exe`
+[WebServer] 
+[WebServer] Caused by:
+[WebServer]   Access is denied. (os error 5)
+[WebServer] node:internal/errors:985
+[WebServer]   const err = new Error(message);
+[WebServer]               ^
+[WebServer] 
+[WebServer] Error: Command failed: cargo build --quiet --locked --manifest-path ../rust/Cargo.toml --bin quantctl
+[WebServer]     at genericNodeError (node:internal/errors:985:15)
+[WebServer]     at wrappedFn (node:internal/errors:539:14)
+[WebServer]     at checkExecSyncError (node:child_process:925:11)
+[WebServer]     at execFileSync (node:child_process:961:15)
+[WebServer]     at file:///C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web/scripts/test-server.mjs:7:1
+[WebServer]     at ModuleJob.run (node:internal/modules/esm/module_job:413:25)
+[WebServer]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:660:26)
+[WebServer]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+[WebServer]   status: 101,
+[WebServer]   signal: null,
+[WebServer]   output: [ null, null, null ],
+[WebServer]   pid: 23724,
+[WebServer]   stdout: null,
+[WebServer]   stderr: null
+[WebServer] }
+[WebServer] 
+[WebServer] Node.js v24.12.0
+Error: Process from config.webServer was not able to start. Exit code: 1
+

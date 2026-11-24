@@ -1,0 +1,2355 @@
+
+> quant-research-inspector@0.1.0 test
+> vitest run src
+
+
+ RUN  v4.1.12 C:/Users/Sahil/OneDrive/Documents/Desktop/lstm/lstm_stock_prediction/web
+
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  12:46:48
+   Duration  1.12s (transform 165ms, setup 0ms, import 730ms, tests 45ms, environment 0ms)
+
+
+> quant-research-inspector@0.1.0 build
+> tsc -b && vite build
+
+vite v7.3.8 building client environment for production...
+transforming...
+✓ 335 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.41 kB │ gzip:   0.29 kB
+dist/assets/worker-CHLEl2Vx.js  181.51 kB
+dist/assets/index-aQcv11w0.css   29.84 kB │ gzip:   7.69 kB
+dist/assets/index-DLeW2TS6.js   646.12 kB │ gzip: 194.29 kB
+✓ built in 5.62s
+    Checking quant_inference v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\inference)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-3r9j65qdqtvbt\s-hogbfw07hj-1pgh0jy-working`
+
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+    Checking quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\pit_property_tests-2em20mda493ff\s-hogbfwd18k-028ylvt-working`
+
+warning: `quant_inference` (lib) generated 1 warning
+    Checking quant_signals v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\signals)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-3qvk2l99913o1\s-hogbfwok8b-0mqz5n0-working`
+
+warning: `quant_signals` (lib) generated 1 warning
+    Checking quant_portfolio v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\portfolio)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-1efqs1vghvgoy\s-hogbfwufbn-0btz4hi-working`
+
+warning: `quant_portfolio` (lib) generated 1 warning
+    Checking quant_risk v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\risk)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-2e46za4aydkwp\s-hogbfx14zb-0jqrgu9-working`
+
+warning: `quant_risk` (lib) generated 1 warning
+    Checking quant_backtest v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\backtest)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-0hv021v17u5y3\s-hogbfx6zky-1jb6nb6-working`
+
+warning: `quant_data` (test "pit_property_tests") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-1zjtnz1o5tasi\s-hogbfxmjc5-1uq1yu5-working`
+
+warning: `quant_portfolio` (lib test) generated 1 warning
+warning: `quant_backtest` (lib) generated 1 warning
+    Checking quant_simulation v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\simulation)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\stage5_integration_tests-01e5n94bfxov3\s-hogbfxtaer-1wws3oo-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-0nwyn7ll9kyfg\s-hogbfxu8kh-06w9w3v-working`
+
+warning: `quant_portfolio` (test "stage5_integration_tests") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\golden_backtest-1a2e81z8piwez\s-hogbfxyes3-1u43u4p-working`
+
+warning: `quant_simulation` (lib) generated 1 warning
+warning: `quant_backtest` (test "golden_backtest") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\simulation_benchmarks-3gr5rj48uhw6a\s-hogbfy42ga-0sfu891-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0vtf8v7scpkqe\s-hogbfy3ti9-0h04bbh-working`
+
+warning: `quant_simulation` (bench "simulation_benchmarks") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0un6t09c0cny5\s-hogbfz00e6-0loinj7-working`
+
+warning: `quant_api` (lib) generated 1 warning
+    Checking quantctl v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\cli)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-1kbm34nwjfk7h\s-hogbg7zm1x-0hdgzml-working`
+
+warning: `quant_api` (lib test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\monitor_tests-10ylvmjqg7eel\s-hogbg81vsx-1fi7p7f-working`
+
+warning: `quantctl` (test "monitor_tests") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\contracts-3bmh76ynq8k98\s-hogbg89f2i-12w50t7-working`
+
+warning: `quant_api` (test "contracts") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\openapi-1ih4ma9k22vcl\s-hogbg8hmwm-0yj083k-working`
+
+warning: `quantctl` (bin "quantctl") generated 1 warning
+warning: `quant_api` (example "openapi") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-1331fzyda1q3b\s-hogbg8mwas-0a4uc9a-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\lstm_inspector-00ysrvfv4ypv1\s-hogbg8ncsl-0ks1sxp-working`
+
+warning: `quantctl` (bin "lstm-inspector" test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\cli_tests-33agolgdl2tm4\s-hogbg8xmlu-1lt6m43-working`
+
+warning: `quantctl` (test "cli_tests") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\lstm_inspector-352hv6izfbwps\s-hogbg95jzs-0k42r4q-working`
+
+warning: `quantctl` (bin "quantctl" test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\accounting-3p2vt2uhpncbq\s-hogbg979wd-0mp2w9s-working`
+
+warning: `quant_backtest` (test "accounting") generated 1 warning
+warning: `quantctl` (bin "lstm-inspector") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-2gmuwqijdmr54\s-hogbg9ejwm-1sv809a-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-288hsxib64kau\s-hogbg9ir5m-0lznlyn-working`
+
+warning: `quant_simulation` (lib test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-2jtgovtcypjh0\s-hogbg9nuil-06k31zl-working`
+
+warning: `quant_risk` (lib test) generated 1 warning
+warning: `quant_backtest` (lib test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\runtime_benchmark-08y0gvq2y38wl\s-hogbg9spbl-0tb6yud-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-1aew6vpjy6gq5\s-hogbg9tbsz-1b9dwgc-working`
+
+warning: `quant_inference` (example "runtime_benchmark") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-2vuzv3wod8ygk\s-hogbg9wmcv-0hz99ne-working`
+
+warning: `quant_signals` (lib test) generated 1 warning
+warning: `quant_inference` (lib test) generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 34.68s
+   Compiling quant_inference v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\inference)
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-1606vmktfv6oi\s-hogbgdbpb3-02r2h5c-working`
+
+   Compiling quant_signals v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\signals)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-1g8t18pucx4ew\s-hogbgdvmyz-1iaz8m1-working`
+
+warning: `quant_signals` (lib) generated 1 warning
+   Compiling quant_portfolio v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\portfolio)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-1i85683oevzuj\s-hogbgeakj8-1lvtanu-working`
+
+warning: `quant_portfolio` (lib) generated 1 warning
+   Compiling quant_risk v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\risk)
+warning: `quant_inference` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-1yquvuu1jshy9\s-hogbgeym9s-1gdh3ez-working`
+
+   Compiling quant_backtest v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\backtest)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-35pqnqfidehuz\s-hogbgf4lct-0wmuepg-working`
+
+warning: `quant_risk` (lib) generated 1 warning
+   Compiling quant_simulation v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\simulation)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-2mihobsvpsk8f\s-hogbgfmv5i-0vjetpr-working`
+
+warning: `quant_backtest` (lib) generated 1 warning
+warning: `quant_simulation` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0madmse3dxd37\s-hogbgg3ghr-09qgdko-working`
+
+warning: `quant_api` (lib) generated 1 warning
+   Compiling quantctl v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\cli)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-3gc8eu159gh3y\s-hogbgvz0wa-1781ps9-working`
+
+warning: `quantctl` (bin "quantctl") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 04s
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-1606vmktfv6oi\s-hogbgdbpb3-02r2h5c-working`
+
+warning: `quant_inference` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-1g8t18pucx4ew\s-hogbgdvmyz-1iaz8m1-working`
+
+warning: `quant_signals` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-1i85683oevzuj\s-hogbgeakj8-1lvtanu-working`
+
+warning: `quant_portfolio` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-1yquvuu1jshy9\s-hogbgeym9s-1gdh3ez-working`
+
+warning: `quant_risk` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-35pqnqfidehuz\s-hogbgf4lct-0wmuepg-working`
+
+warning: `quant_backtest` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-2mihobsvpsk8f\s-hogbgfmv5i-0vjetpr-working`
+
+warning: `quant_simulation` (lib) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0madmse3dxd37\s-hogbgg3ghr-09qgdko-working`
+
+warning: `quant_api` (lib) generated 1 warning
+   Compiling quant_data v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\data)
+   Compiling quant_simulation v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\simulation)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-326wahz6cfo1r\s-hogbhe8ag6-0lp53vk-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\pit_property_tests-38ns7wtx5yyl3\s-hogbhe8bha-1ll4jbc-working`
+
+warning: `quant_data` (test "pit_property_tests") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-3gc8eu159gh3y\s-hogbgvz0wa-1781ps9-working`
+
+warning: `quantctl` (bin "quantctl") generated 1 warning
+   Compiling quantctl v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\cli)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\lstm_inspector-0nwv58qctz4u4\s-hogbhfjgzf-03absi0-working`
+
+warning: `quant_simulation` (lib test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\lstm_inspector-1fpm1sjw2l5qv\s-hogbhfv1lk-02xg171-working`
+
+warning: `quantctl` (bin "lstm-inspector" test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\monitor_tests-0uf267hecvzol\s-hogbhiz7cy-0uqclis-working`
+
+warning: `quantctl` (test "monitor_tests") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-25i7enrfnntml\s-hogbhlpxbm-08cn0qy-working`
+
+warning: `quantctl` (bin "quantctl" test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\cli_tests-1uqt0a085jjru\s-hogbhmhdcf-00a09yi-working`
+
+warning: `quantctl` (test "cli_tests") generated 1 warning
+   Compiling quant_api v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\api)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\contracts-3ph1jl76tfe1i\s-hogbhou4r5-1sz9ezx-working`
+
+warning: `quant_api` (test "contracts") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\openapi-1xmwb3xrgwflv\s-hogbhrids3-0vp0j3d-working`
+
+warning: `quantctl` (bin "lstm-inspector") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-1sw0t7vivogr0\s-hogbht8j2k-1rsl43e-working`
+
+warning: `quant_api` (example "openapi") generated 1 warning
+   Compiling quant_backtest v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\backtest)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\accounting-00rwod58c7fr6\s-hogbhw21xi-0xm71bt-working`
+
+warning: `quant_backtest` (test "accounting") generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\golden_backtest-1k4a4ek9o3q8v\s-hogbhx2f18-0f4izg5-working`
+
+warning: `quant_backtest` (test "golden_backtest") generated 1 warning
+warning: `quant_api` (lib test) generated 1 warning
+   Compiling quant_portfolio v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\portfolio)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-2zhjp8y4d73ah\s-hogbhzfb34-1cv9gq8-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\stage5_integration_tests-2rxiyzs5w9h9x\s-hogbi0ddwh-1wp76ny-working`
+
+warning: `quant_portfolio` (lib test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-17y97cv635xej\s-hogbi0mbk0-01agfnz-working`
+
+warning: `quant_portfolio` (test "stage5_integration_tests") generated 1 warning
+   Compiling quant_risk v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\risk)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-35oa6cpcg6gwy\s-hogbi1nbud-0h2rzk3-working`
+
+warning: `quant_backtest` (lib test) generated 1 warning
+   Compiling quant_inference v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\inference)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\runtime_benchmark-0qgz6x47u2wcm\s-hogbi29856-1c0tllj-working`
+
+warning: `quant_risk` (lib test) generated 1 warning
+   Compiling quant_signals v0.1.0 (C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\signals)
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-01svnxtijy0p5\s-hogbi2oz5e-179i7jg-working`
+
+warning: `quant_inference` (example "runtime_benchmark") generated 1 warning
+warning: `quant_signals` (lib test) generated 1 warning
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-165k8jxx9btvd\s-hogbi3htsk-13ziplz-working`
+
+warning: `quant_inference` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 47.47s
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_api-0320e14dfde4f405.exe)
+
+running 29 tests
+test decisions::tests::injected_drift_warns_and_halts_and_metrics_are_defined ... ok
+test live::tests::configuration_and_error_classification_are_explicit ... ok
+test forecast::tests::synthetic_training_provenance_cannot_be_hidden_by_real_inputs ... ok
+test forecast::tests::live_inputs_require_connected_fresh_real_bars_and_continuity ... ok
+test live::tests::parses_valid_and_rejects_invalid_minute_bars ... ok
+test live::tests::minute_buffers_keep_first_publication_reset_gaps_and_disconnects ... ok
+test live::tests::rejects_invalid_trades ... ok
+test market::tests::cached_data_cannot_bypass_freshness_check ... ok
+test forecast::tests::rejects_paths_and_handles_empty_workspace ... ok
+test market::tests::coalesces_requests_and_throttles_other_symbols_and_failures ... ok
+test server::tests::rejects_paths_and_preserves_extremes ... ok
+test server::tests::remote_configuration_requires_strong_token_and_bounded_workers ... ok
+test forecast::tests::live_forecast_rejects_when_live_stream_disabled ... ok
+test live::tests::bounded_window_duplicates_late_minutes_and_cached_forecasts ... ok
+test server::tests::cancelled_requests_keep_worker_permits_until_work_finishes ... ok
+test server::tests::remote_auth_covers_artifacts_streams_and_spa_but_allows_liveness ... ok
+test server::tests::empty_list_missing_run_and_read_only ... ok
+test server::tests::rejects_remote_hosts_and_restricts_browser_connections ... ok
+test live::journal::tests::capacity_and_backward_clock_fail_closed ... ok
+test live::journal::tests::rotation_chain_durability_lock_and_clean_shutdown ... ok
+test decisions::tests::chain_rejects_mutation_partial_tail_and_duplicate_outcome ... ok
+test live::tests::invalid_trade_is_not_recorded_or_displayed ... ok
+test live::tests::provider_rejection_is_terminal_and_redacts_upstream_text ... ok
+test live::tests::websocket_revisions_remain_journal_only ... ok
+test live::tests::websocket_authenticates_subscribes_persists_and_preserves_event_order ... ok
+test live::tests::incomplete_subscription_fails_instead_of_claiming_live ... ok
+test provenance::tests::fingerprints_bytes_untracked_sources_and_deletions ... ok
+test live::tests::reconnect_resubscribes_and_shutdown_seals_the_capture ... ok
+test server::tests::readiness_and_sse_clients_follow_state_and_shutdown ... ok
+
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.02s
+
+     Running tests\contracts.rs (rust\target\debug\deps\contracts-aba08034d4758cb1.exe)
+
+running 4 tests
+test forecast_contract_requires_explicit_provenance ... ok
+test test_benchmark_positions_signal_outcomes_and_risk_endpoints ... ok
+test real_report_roundtrip_arrow_schema_and_errors ... ok
+test complete_pages_filters_and_size_limits ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_backtest-da88dee1849501d3.exe)
+
+running 3 tests
+test stream::tests::test_manual_signal_stream ... ok
+test stream::tests::test_model_signal_stream_with_timed_features ... ok
+test engine::tests::test_deterministic_backtest_replay ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\accounting.rs (rust\target\debug\deps\accounting-69698403f3a5530c.exe)
+
+running 3 tests
+test open_positions_are_not_counted_as_winning_trades ... ok
+test realized_outcomes_include_both_entry_and_exit_fees ... ok
+test short_cover_and_reversal_realize_correct_side ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\golden_backtest.rs (rust\target\debug\deps\golden_backtest-2850ef9b32cfeabb.exe)
+
+running 1 test
+test test_10yr_golden_backtest_determinism ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests\multi_asset.rs (rust\target\debug\deps\multi_asset-19767682fcb326d0.exe)
+
+running 5 tests
+test rejects_misaligned_availability ... ok
+test rejects_missing_bars_duplicates_and_overlapping_availability ... ok
+test rejects_nonfinite_execution_results ... ok
+test sizes_with_previous_price_before_execution_price_is_known ... ok
+test shared_cash_causal_fills_per_asset_positions_and_input_order_invariance ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_calendar-41d307d3d60692b6.exe)
+
+running 6 tests
+test us_equity::tests::test_custom_holidays ... ok
+test us_equity::tests::test_is_market_open_utc ... ok
+test us_equity::tests::test_early_close ... ok
+test us_equity::tests::test_next_and_prev_trading_day ... ok
+test us_equity::tests::test_weekend_rejection ... ok
+test us_equity::tests::test_standard_us_holidays ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_config-f007084385bb1c10.exe)
+
+running 9 tests
+test loader::tests::test_env_overrides ... ok
+test loader::tests::test_default_config_file_loads ... ok
+test loader::tests::test_empty_symbols_rejected ... ok
+test loader::tests::rejects_invalid_numbers_dates_and_paths ... ok
+test loader::tests::test_invalid_date_ordering ... ok
+test loader::tests::test_invalid_exposure ... ok
+test loader::tests::test_invalid_lookback ... ok
+test loader::tests::test_invalid_participation_cap ... ok
+test loader::tests::test_load_valid_yaml ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_data-175fbee6ff2b5b36.exe)
+
+running 19 tests
+test adjust::tests::test_split_adjustment_pit ... ok
+test adapters::local_csv::tests::imports_timezone_and_exclusive_end ... ok
+test adapters::local_csv::tests::rejects_corrupt_rows_instead_of_dropping_or_coercing_them ... ok
+test capture::tests::rejects_future_and_malformed_market_events ... ok
+test global::tests::daily_uses_exchange_timezone_and_excludes_today ... ok
+test global::tests::excludes_unfinished_minutes_and_orders_completed_bars ... ok
+test global::tests::provider_error_never_echoes_message_and_history_never_silently_truncates ... ok
+test global::tests::rejects_identity_mismatch_duplicates_missing_volume_and_bad_prices ... ok
+test storage::tests::storage_rejects_paths_before_file_access ... ok
+test validate::tests::test_duplicate_timestamps_fails ... ok
+test validate::tests::test_non_monotonic_timestamp_fails ... ok
+test validate::tests::test_pit_leakage_rejected ... ok
+test validate::tests::test_split_overlap_rejected ... ok
+test validate::tests::test_valid_bars_pass ... ok
+test capture::tests::first_publication_preserves_receipt_time_and_ignores_later_revision ... ok
+test storage::tests::round_trips_versioned_dataset ... ok
+test capture::tests::verifier_detects_corruption_truncation_sequence_and_missing_segments ... ok
+test capture::tests::rejects_missing_duplicate_gap_unclean_and_late_bars ... ok
+test capture::tests::checksums_survive_decimal_price_json_roundtrip ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests\pit_property_tests.rs (rust\target\debug\deps\pit_property_tests-1f25b5fff8eaeefc.exe)
+
+running 5 tests
+test lookahead_feature_canary_rejects_future_close ... ok
+test prop_past_feature_availability_always_accepted ... ok
+test prop_future_feature_availability_always_rejected ... ok
+test prop_non_monotonic_timestamps_always_rejected ... ok
+test prop_duplicate_timestamps_always_rejected ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_execution-fc1c7ad3bb6480b6.exe)
+
+running 11 tests
+test fees::tests::test_maker_rebate ... ok
+test fees::tests::test_variable_fee_tiers ... ok
+test fees::tests::test_short_borrow_fee ... ok
+test impact::tests::test_almgren_chriss_limit_order_maker_rebate ... ok
+test model::tests::test_limit_order_unfilled_when_price_not_reached ... ok
+test model::tests::test_market_order_fill_with_slippage_and_spread ... ok
+test model::tests::test_participation_cap_enforcement ... ok
+test impact::tests::test_almgren_chriss_square_root_impact ... ok
+test scratch::tests::test_scratch_reuse_no_realloc ... ok
+test scratch::tests::test_weight_scratch ... ok
+test scratch::tests::test_scratch_grows_on_demand ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_features-21e07a5270f46ead.exe)
+
+running 53 tests
+test atr::tests::test_true_range_formula ... ok
+test cross_sectional::tests::test_inverse_normal_cdf_symmetry ... ok
+test atr::tests::test_atr_window_computation ... ok
+test bollinger::tests::test_bollinger_bands_variance ... ok
+test bollinger::tests::test_bollinger_bands_calculation ... ok
+test moving_avg::tests::test_sma_insufficient_data ... ok
+test cross_sectional::tests::test_normalize_cross_section_basic ... ok
+test cross_sectional::tests::test_winsorized_clips_extremes ... ok
+test cross_sectional::tests::test_normalizer_submit_and_flush ... ok
+test fracdiff::tests::test_fracdiff_apply_to_series ... ok
+test fracdiff::tests::test_fracdiff_feature_trait ... ok
+test fracdiff::tests::test_find_minimum_d ... ok
+test fracdiff::tests::test_fracdiff_slice ... ok
+test fracdiff::tests::test_fracdiff_weights_d_half ... ok
+test fracdiff::tests::test_fracdiff_weights_d_zero ... ok
+test fracdiff::tests::test_fracdiff_weights_d_one ... ok
+test graph::tests::test_feature_graph_warmup_and_compute ... ok
+test export::tests::test_arrow_chunk_construction ... ok
+test macd::tests::test_macd_full_histogram ... ok
+test macd::tests::test_macd_line_computation ... ok
+test moving_avg::tests::test_ema_basic ... ok
+test cross_sectional::tests::test_normalize_cross_section_too_few_instruments ... ok
+test mmap_reader::tests::test_mmap_reader_nonexistent_file ... ok
+test moving_avg::tests::test_ema_over_static ... ok
+test moving_avg::tests::test_sma_basic ... ok
+test rsi::tests::test_rsi_all_gains ... ok
+test cross_sectional::tests::test_rank_normalization ... ok
+test rsi::tests::test_rsi_flat ... ok
+test rsi::tests::test_rsi_insufficient_lookback ... ok
+test rsi::tests::test_rsi_oscillation_range ... ok
+test simd_ops::tests::test_batch_ema_matches_scalar ... ok
+test simd_ops::tests::test_batch_fma ... ok
+test simd_ops::tests::test_batch_rolling_mean ... ok
+test simd_ops::tests::test_batch_rolling_sum ... ok
+test export::tests::test_parquet_export_roundtrip ... ok
+test simd_ops::tests::test_batch_sub_mul ... ok
+test simd_ops::tests::test_batch_true_range ... ok
+test store::tests::test_feature_registration_versioning ... ok
+test store::tests::test_store_query_range ... ok
+test targets::tests::test_neutral_threshold ... ok
+test targets::tests::test_target_generation ... ok
+test mmap_reader::tests::test_mmap_reader_file_too_small ... ok
+test volatility::tests::test_log_return ... ok
+test volatility::tests::test_parkinson_and_garman_klass_volatility ... ok
+test volatility::tests::test_rolling_volatility ... ok
+test window::tests::test_cache_alignment ... ok
+test window::tests::test_fill_ohlc_for_simd ... ok
+test window::tests::test_iter_oldest_to_newest ... ok
+test window::tests::test_push_and_access ... ok
+test window::tests::test_ring_buffer_eviction ... ok
+test export::tests::test_versioned_dataset_writes_manifest ... ok
+test mmap_reader::tests::test_mmap_reader_roundtrip ... ok
+test export::tests::test_training_ipc_joins_only_rows_with_targets ... ok
+
+test result: ok. 53 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests\indicator_golden_tests.rs (rust\target\debug\deps\indicator_golden_tests-ecff2c1b1e623119.exe)
+
+running 4 tests
+test test_golden_bollinger_bands ... ok
+test test_golden_rsi_wilder ... ok
+test test_golden_sma ... ok
+test test_golden_log_return_property ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_inference-250323e9a3cf959a.exe)
+
+running 13 tests
+test scaler::tests::test_scaler_shape_mismatch ... ok
+test metadata::tests::test_invalid_metadata_rejected ... ok
+test provider::tests::test_onnx_lstm_provider_batch_predict ... ok
+test scaler::tests::test_scaler_transform_multi_timestep_sequence ... ok
+test scaler::tests::test_scaler_transform_single_timestep ... ok
+test scaler::tests::test_scaler_zero_std_handling ... ok
+test metadata::tests::test_valid_metadata_deserialization ... ok
+test provider::tests::test_onnx_lstm_provider_load_and_predict ... ok
+test integrity::tests::rejects_missing_manifest_or_package_member ... ok
+test integrity::tests::verifies_package_and_rejects_same_size_mutation ... ok
+test integrity::tests::signature_policy_accepts_valid_and_rejects_unsigned_tampered_and_wrong_key ... ok
+test integrity::tests::rejects_invalid_manifests ... ok
+test onnx_session::tests::test_onnx_session_load_and_predict ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.68s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_instruments-b946e8925a8a10d1.exe)
+
+running 4 tests
+test derivative::tests::test_future_instrument_implementation ... ok
+test derivative::tests::test_option_instrument_implementation ... ok
+test equity::tests::test_equity_creation_and_instrument_trait ... ok
+test equity::tests::test_equity_serde_roundtrip ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_portfolio-a65d6d8fa70ae628.exe)
+
+running 9 tests
+test portfolio::tests::test_portfolio_initial_state ... ok
+test constructor::tests::test_kelly_criterion_constructor ... ok
+test constructor::tests::test_volatility_targeted_constructor_long_only ... ok
+test constructor::tests::test_drawdown_derisking_multiplier_applied ... ok
+test qp_optimizer::tests::test_l1_ball_projection ... ok
+test portfolio::tests::test_portfolio_buy_and_sell_cycle ... ok
+test sector::tests::test_sector_from_str ... ok
+test qp_optimizer::tests::test_sector_neutral_optimization ... ok
+test sector::tests::test_sector_classification ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\stage5_integration_tests.rs (rust\target\debug\deps\stage5_integration_tests-f5dccaacfcf5221e.exe)
+
+running 1 test
+test test_stage5_pipeline_end_to_end ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_risk-9b88f230f6507ee0.exe)
+
+running 1 test
+test engine::tests::test_risk_engine_evaluation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_signals-d23152d69beeb02e.exe)
+
+running 8 tests
+test signal::tests::test_direction_signum ... ok
+test signal::tests::test_signal_calibration_flat_deadband ... ok
+test signal::tests::test_signal_calibration_long ... ok
+test signal::tests::test_signal_calibration_short ... ok
+test transforms::tests::test_composite_transform ... ok
+test transforms::tests::test_confidence_weighting ... ok
+test transforms::tests::test_cross_sectional_rank ... ok
+test transforms::tests::test_threshold_filter ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (rust\target\debug\deps\quant_simulation-323f43b49fb004f8.exe)
+
+running 6 tests
+test guardrails::tests::test_bull_and_bear_order_clamping ... ok
+test regime::tests::test_regime_crisis_detection ... ok
+test guardrails::tests::test_evaluate_portfolio_compliance ... ok
+test regime::tests::test_regime_bull_detection ... ok
+test guardrails::tests::test_crisis_guardrail_prevents_new_orders ... ok
+test resampler::tests::test_monte_carlo_resampler_distribution ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\desktop.rs (rust\target\debug\deps\lstm_inspector-ea7108efa3b1edc8.exe)
+
+running 4 tests
+test tests::rejects_path_traversal_even_with_a_matching_archive_hash ... ok
+test tests::never_overwrites_an_existing_workspace ... ok
+test tests::corrupted_archive_and_file_manifest_are_rejected ... ok
+test tests::embedded_bundle_extracts_all_verified_artifacts ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running unittests src\main.rs (rust\target\debug\deps\quantctl-6d0a5d149c775726.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\cli_tests.rs (rust\target\debug\deps\cli_tests-22e1f19aa9fa46a1.exe)
+
+running 10 tests
+test test_cli_invalid_config_path ... ok
+test test_cli_config_show ... ok
+test test_cli_config_validate ... ok
+test test_cli_env ... ok
+test test_cli_help ... ok
+test global_config_validates_without_key_and_missing_key_fails_before_import ... ok
+test offline_csv_ingest_and_network_denial ... ok
+test captured_minutes_train_fresh_model_backtest_and_simulation ... ok
+test local_csv_pipeline_training_prediction_backtest_simulation ... ok
+test persisted_pipeline_training_prediction_backtest_simulation ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 42.80s
+
+     Running tests\monitor_tests.rs (rust\target\debug\deps\monitor_tests-6a2c97944524651e.exe)
+
+running 1 test
+test monitor_cli_warns_and_exits_nonzero_on_injected_drift ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s
+
+   Doc-tests quant_api
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_backtest
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_calendar
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_config
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_data
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_execution
+
+running 1 test
+test execution\src\scratch.rs - scratch::with_f64_scratch (line 15) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.79s
+
+   Doc-tests quant_features
+
+running 1 test
+test features\src\mmap_reader.rs - mmap_reader (line 8) - compile ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+   Doc-tests quant_inference
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_instruments
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_portfolio
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_risk
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_signals
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests quant_simulation
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+.................................................................        [100%]
+============================== warnings summary ===============================
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\ml\export_onnx.py:39: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html
+    torch.onnx.export(
+
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\onnx\_internal\torchscript_exporter\utils.py:218: DeprecationWarning: The feature will be removed. Please remove usage of this function
+    setup_onnx_logging(verbose) as log_ctx,
+
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\nn\modules\rnn.py:328: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+    if self.input_size != input.size(-1):
+
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\nn\modules\rnn.py:361: TracerWarning: Converting a tensor to a Python boolean might cause the trace to be incorrect. We can't record the data flow of Python values, so this value will be treated as a constant in the future. This means that the trace might not generalize to other inputs!
+    if hx.size() != expected_hidden_size:
+
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[32-16]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-1]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-4]
+tests/test_onnx_parity.py::test_pytorch_onnx_numerical_parity[64-16]
+tests/test_walk_forward_orchestration.py::test_walk_forward_orchestrator_synthetic
+  C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\python\.venv\Lib\site-packages\torch\onnx\_internal\torchscript_exporter\symbolic_opset9.py:4496: UserWarning: Exporting a model to ONNX with a batch_size other than 1, with a variable length with LSTM can cause an error when running the ONNX model with a different batch size. Make sure to save the model with a batch size of 1, or define the initial states (h0/c0) as inputs of the model. 
+    return _generic_rnn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+65 passed, 39 warnings in 25.30s
+
+> quant-research-inspector@0.1.0 contract:check
+> node scripts/contract.mjs --check
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-11dvqwxt5ihjq\s-hogbk2x1ic-0vzo3as-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-0uzpn6vxjfrhk\s-hogbk3eqsm-1nm698v-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-2l4hxynk13udh\s-hogbk420rh-049efdz-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-013quuk99eihi\s-hogbk55p9r-0bs7987-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-1n6z5e2sjuot7\s-hogbk5bfdf-0zg0rpo-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-1vaqotv6dq1k6\s-hogbk5wlj1-08msmxp-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-3muqm1hn7ggw6\s-hogbk6k0pt-0fktybe-working`
+
+warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\openapi-1q53c02vml6s0\s-hogbkdj3pw-0m3ynwe-working`
+
+
+> quant-research-inspector@0.1.0 test:e2e
+> playwright test
+
+[WebServer] (node:45496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] vite v7.3.8 building client environment for production...
+[WebServer] transforming...
+[WebServer] ✓ 335 modules transformed.
+[WebServer] rendering chunks...
+[WebServer] computing gzip size...
+[WebServer] dist/index.html                   0.41 kB │ gzip:   0.29 kB
+[WebServer] dist/assets/worker-CHLEl2Vx.js  181.51 kB
+[WebServer] dist/assets/index-aQcv11w0.css   29.84 kB │ gzip:   7.69 kB
+[WebServer] dist/assets/index-DLeW2TS6.js   646.12 kB │ gzip: 194.29 kB
+[WebServer] ✓ built in 4.38s
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_inference-1606vmktfv6oi\s-hogbgdbpb3-02r2h5c-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_signals-1g8t18pucx4ew\s-hogbgdvmyz-1iaz8m1-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_portfolio-1i85683oevzuj\s-hogbgeakj8-1lvtanu-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_risk-1yquvuu1jshy9\s-hogbgeym9s-1gdh3ez-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_backtest-35pqnqfidehuz\s-hogbgf4lct-0wmuepg-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_simulation-2mihobsvpsk8f\s-hogbgfmv5i-0vjetpr-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quant_api-0madmse3dxd37\s-hogbkpugtv-15dl9pb-working`
+[WebServer] 
+[WebServer] warning: hard linking files in the incremental compilation cache failed. copying files instead. consider moving the cache directory to a file system which supports hard linking in session dir `\\?\C:\Users\Sahil\OneDrive\Documents\Desktop\lstm\lstm_stock_prediction\rust\target\debug\incremental\quantctl-3gc8eu159gh3y\s-hogbkvvvma-1tl1ar9-working`
+[WebServer] 
+[WebServer] Research inspector: http://127.0.0.1:8788
+
+Running 60 tests using 8 workers
+
+(node:7244) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:636) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   1 [desktop] › tests\forecast.spec.ts:3:1 › forecast page works without recorded runs and explains empty datasets (1ms)
+  x   2 [desktop] › tests\live.spec.ts:3:1 › completed minute bars reflect connection freshness (1ms)
+  x   3 [mobile] › tests\forecast.spec.ts:3:1 › forecast page works without recorded runs and explains empty datasets (2ms)
+  x   4 [desktop] › tests\terminal.spec.ts:3:1 › free forex renders daily reference analytics without fabricated candles (2ms)
+  x   5 [mobile] › tests\terminal.spec.ts:3:1 › free forex renders daily reference analytics without fabricated candles (2ms)
+  x   6 [mobile] › tests\live.spec.ts:3:1 › completed minute bars reflect connection freshness (2ms)
+(node:53040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:55236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   7 [desktop] › tests\smoke.spec.ts:8:1 › all inspector routes work with external requests blocked (2ms)
+(node:45016) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   8 [desktop] › tests\forecast.spec.ts:12:1 › rejects incompatible intervals before making a prediction request (2ms)
+(node:11416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  10 [desktop] › tests\live.spec.ts:54:1 › unconfigured Rust feed explains setup without requiring saved runs (2ms)
+  x   9 [mobile] › tests\smoke.spec.ts:8:1 › all inspector routes work with external requests blocked (3ms)
+  x  11 [mobile] › tests\forecast.spec.ts:12:1 › rejects incompatible intervals before making a prediction request (1ms)
+  x  12 [desktop] › tests\terminal.spec.ts:26:1 › terminal acquires public snapshots, streams quotes and switches products (2ms)
+  x  13 [mobile] › tests\live.spec.ts:54:1 › unconfigured Rust feed explains setup without requiring saved runs (3ms)
+  x  14 [mobile] › tests\terminal.spec.ts:26:1 › terminal acquires public snapshots, streams quotes and switches products (2ms)
+(node:45228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:53168) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38408) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  15 [desktop] › tests\forecast.spec.ts:21:1 › displays exact forecast evidence, then clears it when inputs change (1ms)
+  x  16 [desktop] › tests\live.spec.ts:66:1 › incoming prices update and old exchange timestamps remain stale (1ms)
+(node:42264) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  17 [mobile] › tests\forecast.spec.ts:21:1 › displays exact forecast evidence, then clears it when inputs change (1ms)
+  x  18 [desktop] › tests\terminal.spec.ts:56:1 › terminal shows feed failures without fabricated data (1ms)
+  x  19 [mobile] › tests\live.spec.ts:66:1 › incoming prices update and old exchange timestamps remain stale (1ms)
+  x  20 [mobile] › tests\terminal.spec.ts:56:1 › terminal shows feed failures without fabricated data (1ms)
+  x  21 [desktop] › tests\smoke.spec.ts:29:3 › A run, with its evidence renders against Rust artifacts (1ms)
+(node:43384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:53460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  22 [mobile] › tests\smoke.spec.ts:29:3 › A run, with its evidence renders against Rust artifacts (1ms)
+(node:43448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  23 [desktop] › tests\live.spec.ts:81:1 › upstream reconnect and local disconnect never display fresh prices (1ms)
+  x  24 [desktop] › tests\forecast.spec.ts:47:1 › actual Rust endpoint fails clearly for missing dataset instead of inventing a forecast (1ms)
+  x  25 [mobile] › tests\forecast.spec.ts:47:1 › actual Rust endpoint fails clearly for missing dataset instead of inventing a forecast (1ms)
+  x  26 [mobile] › tests\live.spec.ts:81:1 › upstream reconnect and local disconnect never display fresh prices (1ms)
+(node:54320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43240) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  27 [desktop] › tests\live.spec.ts:96:1 › stalled browser stream expires freshness even without an error event (1ms)
+  x  28 [desktop] › tests\forecast.spec.ts:58:1 › fresh mode explains missing credentials and refuses demo models (1ms)
+  x  29 [mobile] › tests\forecast.spec.ts:58:1 › fresh mode explains missing credentials and refuses demo models (1ms)
+  x  30 [mobile] › tests\live.spec.ts:96:1 › stalled browser stream expires freshness even without an error event (1ms)
+  x  31 [desktop] › tests\smoke.spec.ts:29:3 › Backtest inspection renders against Rust artifacts (1ms)
+  x  32 [mobile] › tests\smoke.spec.ts:29:3 › Backtest inspection renders against Rust artifacts (1ms)
+(node:51228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47304) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  33 [desktop] › tests\live.spec.ts:106:1 › missing trades, entitlement failures and test feed are explicit (1ms)
+  x  34 [desktop] › tests\forecast.spec.ts:72:1 › fresh mode carries selection, displays currency and clears stale output after provider failure (1ms)
+  x  35 [mobile] › tests\forecast.spec.ts:72:1 › fresh mode carries selection, displays currency and clears stale output after provider failure (1ms)
+  x  36 [mobile] › tests\live.spec.ts:106:1 › missing trades, entitlement failures and test feed are explicit (1ms)
+(node:46316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  37 [desktop] › tests\smoke.spec.ts:29:3 › Data and validation renders against Rust artifacts (1ms)
+  x  38 [mobile] › tests\smoke.spec.ts:29:3 › Data and validation renders against Rust artifacts (1ms)
+(node:26664) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  39 [desktop] › tests\smoke.spec.ts:29:3 › Model artifacts renders against Rust artifacts (1ms)
+  x  40 [mobile] › tests\smoke.spec.ts:29:3 › Model artifacts renders against Rust artifacts (1ms)
+(node:4508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  41 [desktop] › tests\smoke.spec.ts:29:3 › Signal inspection renders against Rust artifacts (1ms)
+  x  42 [mobile] › tests\smoke.spec.ts:29:3 › Signal inspection renders against Rust artifacts (1ms)
+(node:48940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38036) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  43 [desktop] › tests\smoke.spec.ts:29:3 › Risk and simulation renders against Rust artifacts (1ms)
+  x  44 [mobile] › tests\smoke.spec.ts:29:3 › Risk and simulation renders against Rust artifacts (1ms)
+(node:16588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13256) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  45 [desktop] › tests\smoke.spec.ts:29:3 › Run activity renders against Rust artifacts (1ms)
+  x  46 [mobile] › tests\smoke.spec.ts:29:3 › Run activity renders against Rust artifacts (1ms)
+(node:49536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48668) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  47 [desktop] › tests\smoke.spec.ts:42:1 › displays exact backend metrics and accessible chart data (1ms)
+  x  48 [mobile] › tests\smoke.spec.ts:42:1 › displays exact backend metrics and accessible chart data (1ms)
+(node:35296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  49 [desktop] › tests\smoke.spec.ts:50:1 › shows simulation after explicit unverified toggle (1ms)
+  x  50 [mobile] › tests\smoke.spec.ts:50:1 › shows simulation after explicit unverified toggle (1ms)
+(node:18812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  51 [desktop] › tests\smoke.spec.ts:57:1 › empty and API error states are actionable (1ms)
+  x  52 [mobile] › tests\smoke.spec.ts:57:1 › empty and API error states are actionable (1ms)
+(node:45880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  53 [desktop] › tests\smoke.spec.ts:66:1 › captures chart timing and workspace appearance (1ms)
+  x  54 [mobile] › tests\smoke.spec.ts:66:1 › captures chart timing and workspace appearance (1ms)
+(node:11064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  55 [desktop] › tests\smoke.spec.ts:79:1 › new runs expose benchmark, positions, signal outcomes and risk (1ms)
+  x  56 [mobile] › tests\smoke.spec.ts:79:1 › new runs expose benchmark, positions, signal outcomes and risk (1ms)
+(node:22824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:54536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  57 [desktop] › tests\smoke.spec.ts:99:1 › complete audit table navigates without skipping rows (1ms)
+  x  58 [mobile] › tests\smoke.spec.ts:99:1 › complete audit table navigates without skipping rows (1ms)
+(node:48956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  59 [desktop] › tests\smoke.spec.ts:129:1 › changing run filters and selection keeps the current research screen (1ms)
+  x  60 [mobile] › tests\smoke.spec.ts:129:1 › changing run filters and selection keeps the current research screen (1ms)
+
+
+  1) [desktop] › tests\forecast.spec.ts:3:1 › forecast page works without recorded runs and explains empty datasets 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-forecast-page-wor-f658d-and-explains-empty-datasets-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-forecast-page-wor-f658d-and-explains-empty-datasets-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-forecast-page-wor-f658d-and-explains-empty-datasets-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop] › tests\forecast.spec.ts:12:1 › rejects incompatible intervals before making a prediction request 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-rejects-incompati-4b255-making-a-prediction-request-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-rejects-incompati-4b255-making-a-prediction-request-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-rejects-incompati-4b255-making-a-prediction-request-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop] › tests\forecast.spec.ts:21:1 › displays exact forecast evidence, then clears it when inputs change 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-displays-exact-fo-d93a6-lears-it-when-inputs-change-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-displays-exact-fo-d93a6-lears-it-when-inputs-change-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-displays-exact-fo-d93a6-lears-it-when-inputs-change-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop] › tests\forecast.spec.ts:47:1 › actual Rust endpoint fails clearly for missing dataset instead of inventing a forecast 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-actual-Rust-endpo-34d83-ead-of-inventing-a-forecast-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-actual-Rust-endpo-34d83-ead-of-inventing-a-forecast-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-actual-Rust-endpo-34d83-ead-of-inventing-a-forecast-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [desktop] › tests\forecast.spec.ts:58:1 › fresh mode explains missing credentials and refuses demo models 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-fresh-mode-explai-695f6-als-and-refuses-demo-models-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-fresh-mode-explai-695f6-als-and-refuses-demo-models-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-fresh-mode-explai-695f6-als-and-refuses-demo-models-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [desktop] › tests\forecast.spec.ts:72:1 › fresh mode carries selection, displays currency and clears stale output after provider failure 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-fresh-mode-carrie-d36c0-tput-after-provider-failure-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-fresh-mode-carrie-d36c0-tput-after-provider-failure-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-fresh-mode-carrie-d36c0-tput-after-provider-failure-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [desktop] › tests\live.spec.ts:3:1 › completed minute bars reflect connection freshness ───────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-completed-minute-bars-reflect-connection-freshness-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-completed-minute-bars-reflect-connection-freshness-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-completed-minute-bars-reflect-connection-freshness-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [desktop] › tests\live.spec.ts:54:1 › unconfigured Rust feed explains setup without requiring saved runs 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-unconfigured-Rust-fee-b3bd6-ithout-requiring-saved-runs-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-unconfigured-Rust-fee-b3bd6-ithout-requiring-saved-runs-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-unconfigured-Rust-fee-b3bd6-ithout-requiring-saved-runs-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [desktop] › tests\live.spec.ts:66:1 › incoming prices update and old exchange timestamps remain stale 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-incoming-prices-updat-9285d-nge-timestamps-remain-stale-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-incoming-prices-updat-9285d-nge-timestamps-remain-stale-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-incoming-prices-updat-9285d-nge-timestamps-remain-stale-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [desktop] › tests\live.spec.ts:81:1 › upstream reconnect and local disconnect never display fresh prices 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-upstream-reconnect-an-7df58--never-display-fresh-prices-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-upstream-reconnect-an-7df58--never-display-fresh-prices-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-upstream-reconnect-an-7df58--never-display-fresh-prices-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [desktop] › tests\live.spec.ts:96:1 › stalled browser stream expires freshness even without an error event 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-stalled-browser-strea-bffce-even-without-an-error-event-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-stalled-browser-strea-bffce-even-without-an-error-event-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-stalled-browser-strea-bffce-even-without-an-error-event-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  12) [desktop] › tests\live.spec.ts:106:1 › missing trades, entitlement failures and test feed are explicit 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-missing-trades-entitl-1652e--and-test-feed-are-explicit-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-missing-trades-entitl-1652e--and-test-feed-are-explicit-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-missing-trades-entitl-1652e--and-test-feed-are-explicit-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13) [desktop] › tests\smoke.spec.ts:8:1 › all inspector routes work with external requests blocked 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-all-inspector-routes-3c00f-h-external-requests-blocked-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-all-inspector-routes-3c00f-h-external-requests-blocked-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-all-inspector-routes-3c00f-h-external-requests-blocked-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  14) [desktop] › tests\smoke.spec.ts:29:3 › A run, with its evidence renders against Rust artifacts 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-A-run-with-its-evidence-renders-against-Rust-artifacts-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-A-run-with-its-evidence-renders-against-Rust-artifacts-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-A-run-with-its-evidence-renders-against-Rust-artifacts-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  15) [desktop] › tests\smoke.spec.ts:29:3 › Backtest inspection renders against Rust artifacts ────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Backtest-inspection-renders-against-Rust-artifacts-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Backtest-inspection-renders-against-Rust-artifacts-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Backtest-inspection-renders-against-Rust-artifacts-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  16) [desktop] › tests\smoke.spec.ts:29:3 › Data and validation renders against Rust artifacts ────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Data-and-validation-renders-against-Rust-artifacts-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Data-and-validation-renders-against-Rust-artifacts-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Data-and-validation-renders-against-Rust-artifacts-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  17) [desktop] › tests\smoke.spec.ts:29:3 › Model artifacts renders against Rust artifacts ────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Model-artifacts-renders-against-Rust-artifacts-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Model-artifacts-renders-against-Rust-artifacts-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Model-artifacts-renders-against-Rust-artifacts-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  18) [desktop] › tests\smoke.spec.ts:29:3 › Signal inspection renders against Rust artifacts ──────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Signal-inspection-renders-against-Rust-artifacts-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Signal-inspection-renders-against-Rust-artifacts-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Signal-inspection-renders-against-Rust-artifacts-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  19) [desktop] › tests\smoke.spec.ts:29:3 › Risk and simulation renders against Rust artifacts ────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Risk-and-simulation-renders-against-Rust-artifacts-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Risk-and-simulation-renders-against-Rust-artifacts-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Risk-and-simulation-renders-against-Rust-artifacts-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  20) [desktop] › tests\smoke.spec.ts:29:3 › Run activity renders against Rust artifacts ───────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Run-activity-renders-against-Rust-artifacts-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Run-activity-renders-against-Rust-artifacts-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Run-activity-renders-against-Rust-artifacts-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  21) [desktop] › tests\smoke.spec.ts:42:1 › displays exact backend metrics and accessible chart data 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-displays-exact-backe-3ebaa-s-and-accessible-chart-data-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-displays-exact-backe-3ebaa-s-and-accessible-chart-data-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-displays-exact-backe-3ebaa-s-and-accessible-chart-data-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  22) [desktop] › tests\smoke.spec.ts:50:1 › shows simulation after explicit unverified toggle ─────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-shows-simulation-after-explicit-unverified-toggle-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-shows-simulation-after-explicit-unverified-toggle-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-shows-simulation-after-explicit-unverified-toggle-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  23) [desktop] › tests\smoke.spec.ts:57:1 › empty and API error states are actionable ─────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-empty-and-API-error-states-are-actionable-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-empty-and-API-error-states-are-actionable-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-empty-and-API-error-states-are-actionable-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  24) [desktop] › tests\smoke.spec.ts:66:1 › captures chart timing and workspace appearance ────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-captures-chart-timing-and-workspace-appearance-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-captures-chart-timing-and-workspace-appearance-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-captures-chart-timing-and-workspace-appearance-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  25) [desktop] › tests\smoke.spec.ts:79:1 › new runs expose benchmark, positions, signal outcomes and risk 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-new-runs-expose-benc-4d242-ns-signal-outcomes-and-risk-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-new-runs-expose-benc-4d242-ns-signal-outcomes-and-risk-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-new-runs-expose-benc-4d242-ns-signal-outcomes-and-risk-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  26) [desktop] › tests\smoke.spec.ts:99:1 › complete audit table navigates without skipping rows ──
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-complete-audit-table-navigates-without-skipping-rows-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-complete-audit-table-navigates-without-skipping-rows-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-complete-audit-table-navigates-without-skipping-rows-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  27) [desktop] › tests\smoke.spec.ts:129:1 › changing run filters and selection keeps the current research screen 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-changing-run-filters-f70f6-the-current-research-screen-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-changing-run-filters-f70f6-the-current-research-screen-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-changing-run-filters-f70f6-the-current-research-screen-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  28) [desktop] › tests\terminal.spec.ts:3:1 › free forex renders daily reference analytics without fabricated candles 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\terminal-free-forex-render-51a13--without-fabricated-candles-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\terminal-free-forex-render-51a13--without-fabricated-candles-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\terminal-free-forex-render-51a13--without-fabricated-candles-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  29) [desktop] › tests\terminal.spec.ts:26:1 › terminal acquires public snapshots, streams quotes and switches products 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\terminal-terminal-acquires-755e8-uotes-and-switches-products-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\terminal-terminal-acquires-755e8-uotes-and-switches-products-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\terminal-terminal-acquires-755e8-uotes-and-switches-products-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  30) [desktop] › tests\terminal.spec.ts:56:1 › terminal shows feed failures without fabricated data 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\terminal-terminal-shows-fe-83091-res-without-fabricated-data-desktop\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\terminal-terminal-shows-fe-83091-res-without-fabricated-data-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\terminal-terminal-shows-fe-83091-res-without-fabricated-data-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  31) [mobile] › tests\forecast.spec.ts:3:1 › forecast page works without recorded runs and explains empty datasets 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-forecast-page-wor-f658d-and-explains-empty-datasets-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-forecast-page-wor-f658d-and-explains-empty-datasets-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-forecast-page-wor-f658d-and-explains-empty-datasets-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  32) [mobile] › tests\forecast.spec.ts:12:1 › rejects incompatible intervals before making a prediction request 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-rejects-incompati-4b255-making-a-prediction-request-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-rejects-incompati-4b255-making-a-prediction-request-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-rejects-incompati-4b255-making-a-prediction-request-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  33) [mobile] › tests\forecast.spec.ts:21:1 › displays exact forecast evidence, then clears it when inputs change 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-displays-exact-fo-d93a6-lears-it-when-inputs-change-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-displays-exact-fo-d93a6-lears-it-when-inputs-change-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-displays-exact-fo-d93a6-lears-it-when-inputs-change-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  34) [mobile] › tests\forecast.spec.ts:47:1 › actual Rust endpoint fails clearly for missing dataset instead of inventing a forecast 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-actual-Rust-endpo-34d83-ead-of-inventing-a-forecast-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-actual-Rust-endpo-34d83-ead-of-inventing-a-forecast-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-actual-Rust-endpo-34d83-ead-of-inventing-a-forecast-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  35) [mobile] › tests\forecast.spec.ts:58:1 › fresh mode explains missing credentials and refuses demo models 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-fresh-mode-explai-695f6-als-and-refuses-demo-models-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-fresh-mode-explai-695f6-als-and-refuses-demo-models-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-fresh-mode-explai-695f6-als-and-refuses-demo-models-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  36) [mobile] › tests\forecast.spec.ts:72:1 › fresh mode carries selection, displays currency and clears stale output after provider failure 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\forecast-fresh-mode-carrie-d36c0-tput-after-provider-failure-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\forecast-fresh-mode-carrie-d36c0-tput-after-provider-failure-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\forecast-fresh-mode-carrie-d36c0-tput-after-provider-failure-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  37) [mobile] › tests\live.spec.ts:3:1 › completed minute bars reflect connection freshness ───────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-completed-minute-bars-reflect-connection-freshness-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-completed-minute-bars-reflect-connection-freshness-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-completed-minute-bars-reflect-connection-freshness-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  38) [mobile] › tests\live.spec.ts:54:1 › unconfigured Rust feed explains setup without requiring saved runs 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-unconfigured-Rust-fee-b3bd6-ithout-requiring-saved-runs-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-unconfigured-Rust-fee-b3bd6-ithout-requiring-saved-runs-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-unconfigured-Rust-fee-b3bd6-ithout-requiring-saved-runs-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  39) [mobile] › tests\live.spec.ts:66:1 › incoming prices update and old exchange timestamps remain stale 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-incoming-prices-updat-9285d-nge-timestamps-remain-stale-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-incoming-prices-updat-9285d-nge-timestamps-remain-stale-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-incoming-prices-updat-9285d-nge-timestamps-remain-stale-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  40) [mobile] › tests\live.spec.ts:81:1 › upstream reconnect and local disconnect never display fresh prices 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-upstream-reconnect-an-7df58--never-display-fresh-prices-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-upstream-reconnect-an-7df58--never-display-fresh-prices-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-upstream-reconnect-an-7df58--never-display-fresh-prices-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  41) [mobile] › tests\live.spec.ts:96:1 › stalled browser stream expires freshness even without an error event 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-stalled-browser-strea-bffce-even-without-an-error-event-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-stalled-browser-strea-bffce-even-without-an-error-event-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-stalled-browser-strea-bffce-even-without-an-error-event-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  42) [mobile] › tests\live.spec.ts:106:1 › missing trades, entitlement failures and test feed are explicit 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\live-missing-trades-entitl-1652e--and-test-feed-are-explicit-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\live-missing-trades-entitl-1652e--and-test-feed-are-explicit-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\live-missing-trades-entitl-1652e--and-test-feed-are-explicit-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  43) [mobile] › tests\smoke.spec.ts:8:1 › all inspector routes work with external requests blocked 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-all-inspector-routes-3c00f-h-external-requests-blocked-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-all-inspector-routes-3c00f-h-external-requests-blocked-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-all-inspector-routes-3c00f-h-external-requests-blocked-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  44) [mobile] › tests\smoke.spec.ts:29:3 › A run, with its evidence renders against Rust artifacts 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-A-run-with-its-evidence-renders-against-Rust-artifacts-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-A-run-with-its-evidence-renders-against-Rust-artifacts-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-A-run-with-its-evidence-renders-against-Rust-artifacts-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  45) [mobile] › tests\smoke.spec.ts:29:3 › Backtest inspection renders against Rust artifacts ─────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Backtest-inspection-renders-against-Rust-artifacts-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Backtest-inspection-renders-against-Rust-artifacts-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Backtest-inspection-renders-against-Rust-artifacts-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  46) [mobile] › tests\smoke.spec.ts:29:3 › Data and validation renders against Rust artifacts ─────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Data-and-validation-renders-against-Rust-artifacts-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Data-and-validation-renders-against-Rust-artifacts-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Data-and-validation-renders-against-Rust-artifacts-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  47) [mobile] › tests\smoke.spec.ts:29:3 › Model artifacts renders against Rust artifacts ─────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Model-artifacts-renders-against-Rust-artifacts-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Model-artifacts-renders-against-Rust-artifacts-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Model-artifacts-renders-against-Rust-artifacts-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  48) [mobile] › tests\smoke.spec.ts:29:3 › Signal inspection renders against Rust artifacts ───────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Signal-inspection-renders-against-Rust-artifacts-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Signal-inspection-renders-against-Rust-artifacts-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Signal-inspection-renders-against-Rust-artifacts-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  49) [mobile] › tests\smoke.spec.ts:29:3 › Risk and simulation renders against Rust artifacts ─────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Risk-and-simulation-renders-against-Rust-artifacts-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Risk-and-simulation-renders-against-Rust-artifacts-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Risk-and-simulation-renders-against-Rust-artifacts-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  50) [mobile] › tests\smoke.spec.ts:29:3 › Run activity renders against Rust artifacts ────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-Run-activity-renders-against-Rust-artifacts-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-Run-activity-renders-against-Rust-artifacts-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-Run-activity-renders-against-Rust-artifacts-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  51) [mobile] › tests\smoke.spec.ts:42:1 › displays exact backend metrics and accessible chart data 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-displays-exact-backe-3ebaa-s-and-accessible-chart-data-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-displays-exact-backe-3ebaa-s-and-accessible-chart-data-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-displays-exact-backe-3ebaa-s-and-accessible-chart-data-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  52) [mobile] › tests\smoke.spec.ts:50:1 › shows simulation after explicit unverified toggle ──────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-shows-simulation-after-explicit-unverified-toggle-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-shows-simulation-after-explicit-unverified-toggle-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-shows-simulation-after-explicit-unverified-toggle-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  53) [mobile] › tests\smoke.spec.ts:57:1 › empty and API error states are actionable ──────────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-empty-and-API-error-states-are-actionable-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-empty-and-API-error-states-are-actionable-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-empty-and-API-error-states-are-actionable-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  54) [mobile] › tests\smoke.spec.ts:66:1 › captures chart timing and workspace appearance ─────────
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-captures-chart-timing-and-workspace-appearance-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-captures-chart-timing-and-workspace-appearance-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-captures-chart-timing-and-workspace-appearance-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  55) [mobile] › tests\smoke.spec.ts:79:1 › new runs expose benchmark, positions, signal outcomes and risk 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-new-runs-expose-benc-4d242-ns-signal-outcomes-and-risk-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-new-runs-expose-benc-4d242-ns-signal-outcomes-and-risk-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-new-runs-expose-benc-4d242-ns-signal-outcomes-and-risk-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  56) [mobile] › tests\smoke.spec.ts:99:1 › complete audit table navigates without skipping rows ───
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-complete-audit-table-navigates-without-skipping-rows-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-complete-audit-table-navigates-without-skipping-rows-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-complete-audit-table-navigates-without-skipping-rows-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  57) [mobile] › tests\smoke.spec.ts:129:1 › changing run filters and selection keeps the current research screen 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\smoke-changing-run-filters-f70f6-the-current-research-screen-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\smoke-changing-run-filters-f70f6-the-current-research-screen-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\smoke-changing-run-filters-f70f6-the-current-research-screen-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  58) [mobile] › tests\terminal.spec.ts:3:1 › free forex renders daily reference analytics without fabricated candles 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\terminal-free-forex-render-51a13--without-fabricated-candles-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\terminal-free-forex-render-51a13--without-fabricated-candles-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\terminal-free-forex-render-51a13--without-fabricated-candles-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  59) [mobile] › tests\terminal.spec.ts:26:1 › terminal acquires public snapshots, streams quotes and switches products 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\terminal-terminal-acquires-755e8-uotes-and-switches-products-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\terminal-terminal-acquires-755e8-uotes-and-switches-products-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\terminal-terminal-acquires-755e8-uotes-and-switches-products-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  60) [mobile] › tests\terminal.spec.ts:56:1 › terminal shows feed failures without fabricated data 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\Sahil\AppData\Local\Packages\openai.codex_2p2nqsd0c76g0\AC\#!sandbox.{018360ec-1f59-40ac-94e1-f3e2b178f73b}\ms-playwright\chromium_headless_shell-1243\chrome-headless-shell-win64\chrome-headless-shell.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: test-results\terminal-terminal-shows-fe-83091-res-without-fabricated-data-mobile\error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\terminal-terminal-shows-fe-83091-res-without-fabricated-data-mobile\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\terminal-terminal-shows-fe-83091-res-without-fabricated-data-mobile\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  60 failed
+    [desktop] › tests\forecast.spec.ts:3:1 › forecast page works without recorded runs and explains empty datasets 
+    [desktop] › tests\forecast.spec.ts:12:1 › rejects incompatible intervals before making a prediction request 
+    [desktop] › tests\forecast.spec.ts:21:1 › displays exact forecast evidence, then clears it when inputs change 
+    [desktop] › tests\forecast.spec.ts:47:1 › actual Rust endpoint fails clearly for missing dataset instead of inventing a forecast 
+    [desktop] › tests\forecast.spec.ts:58:1 › fresh mode explains missing credentials and refuses demo models 
+    [desktop] › tests\forecast.spec.ts:72:1 › fresh mode carries selection, displays currency and clears stale output after provider failure 
+    [desktop] › tests\live.spec.ts:3:1 › completed minute bars reflect connection freshness ────────
+    [desktop] › tests\live.spec.ts:54:1 › unconfigured Rust feed explains setup without requiring saved runs 
+    [desktop] › tests\live.spec.ts:66:1 › incoming prices update and old exchange timestamps remain stale 
+    [desktop] › tests\live.spec.ts:81:1 › upstream reconnect and local disconnect never display fresh prices 
+    [desktop] › tests\live.spec.ts:96:1 › stalled browser stream expires freshness even without an error event 
+    [desktop] › tests\live.spec.ts:106:1 › missing trades, entitlement failures and test feed are explicit 
+    [desktop] › tests\smoke.spec.ts:8:1 › all inspector routes work with external requests blocked ─
+    [desktop] › tests\smoke.spec.ts:29:3 › A run, with its evidence renders against Rust artifacts ─
+    [desktop] › tests\smoke.spec.ts:29:3 › Backtest inspection renders against Rust artifacts ──────
+    [desktop] › tests\smoke.spec.ts:29:3 › Data and validation renders against Rust artifacts ──────
+    [desktop] › tests\smoke.spec.ts:29:3 › Model artifacts renders against Rust artifacts ──────────
+    [desktop] › tests\smoke.spec.ts:29:3 › Signal inspection renders against Rust artifacts ────────
+    [desktop] › tests\smoke.spec.ts:29:3 › Risk and simulation renders against Rust artifacts ──────
+    [desktop] › tests\smoke.spec.ts:29:3 › Run activity renders against Rust artifacts ─────────────
+    [desktop] › tests\smoke.spec.ts:42:1 › displays exact backend metrics and accessible chart data 
+    [desktop] › tests\smoke.spec.ts:50:1 › shows simulation after explicit unverified toggle ───────
+    [desktop] › tests\smoke.spec.ts:57:1 › empty and API error states are actionable ───────────────
+    [desktop] › tests\smoke.spec.ts:66:1 › captures chart timing and workspace appearance ──────────
+    [desktop] › tests\smoke.spec.ts:79:1 › new runs expose benchmark, positions, signal outcomes and risk 
+    [desktop] › tests\smoke.spec.ts:99:1 › complete audit table navigates without skipping rows ────
+    [desktop] › tests\smoke.spec.ts:129:1 › changing run filters and selection keeps the current research screen 
+    [desktop] › tests\terminal.spec.ts:3:1 › free forex renders daily reference analytics without fabricated candles 
+    [desktop] › tests\terminal.spec.ts:26:1 › terminal acquires public snapshots, streams quotes and switches products 
+    [desktop] › tests\terminal.spec.ts:56:1 › terminal shows feed failures without fabricated data ─
+    [mobile] › tests\forecast.spec.ts:3:1 › forecast page works without recorded runs and explains empty datasets 
+    [mobile] › tests\forecast.spec.ts:12:1 › rejects incompatible intervals before making a prediction request 
+    [mobile] › tests\forecast.spec.ts:21:1 › displays exact forecast evidence, then clears it when inputs change 
+    [mobile] › tests\forecast.spec.ts:47:1 › actual Rust endpoint fails clearly for missing dataset instead of inventing a forecast 
+    [mobile] › tests\forecast.spec.ts:58:1 › fresh mode explains missing credentials and refuses demo models 
+    [mobile] › tests\forecast.spec.ts:72:1 › fresh mode carries selection, displays currency and clears stale output after provider failure 
+    [mobile] › tests\live.spec.ts:3:1 › completed minute bars reflect connection freshness ─────────
+    [mobile] › tests\live.spec.ts:54:1 › unconfigured Rust feed explains setup without requiring saved runs 
+    [mobile] › tests\live.spec.ts:66:1 › incoming prices update and old exchange timestamps remain stale 
+    [mobile] › tests\live.spec.ts:81:1 › upstream reconnect and local disconnect never display fresh prices 
+    [mobile] › tests\live.spec.ts:96:1 › stalled browser stream expires freshness even without an error event 
+    [mobile] › tests\live.spec.ts:106:1 › missing trades, entitlement failures and test feed are explicit 
+    [mobile] › tests\smoke.spec.ts:8:1 › all inspector routes work with external requests blocked ──
+    [mobile] › tests\smoke.spec.ts:29:3 › A run, with its evidence renders against Rust artifacts ──
+    [mobile] › tests\smoke.spec.ts:29:3 › Backtest inspection renders against Rust artifacts ───────
+    [mobile] › tests\smoke.spec.ts:29:3 › Data and validation renders against Rust artifacts ───────
+    [mobile] › tests\smoke.spec.ts:29:3 › Model artifacts renders against Rust artifacts ───────────
+    [mobile] › tests\smoke.spec.ts:29:3 › Signal inspection renders against Rust artifacts ─────────
+    [mobile] › tests\smoke.spec.ts:29:3 › Risk and simulation renders against Rust artifacts ───────
+    [mobile] › tests\smoke.spec.ts:29:3 › Run activity renders against Rust artifacts ──────────────
+    [mobile] › tests\smoke.spec.ts:42:1 › displays exact backend metrics and accessible chart data ─
+    [mobile] › tests\smoke.spec.ts:50:1 › shows simulation after explicit unverified toggle ────────
+    [mobile] › tests\smoke.spec.ts:57:1 › empty and API error states are actionable ────────────────
+    [mobile] › tests\smoke.spec.ts:66:1 › captures chart timing and workspace appearance ───────────
+    [mobile] › tests\smoke.spec.ts:79:1 › new runs expose benchmark, positions, signal outcomes and risk 
+    [mobile] › tests\smoke.spec.ts:99:1 › complete audit table navigates without skipping rows ─────
+    [mobile] › tests\smoke.spec.ts:129:1 › changing run filters and selection keeps the current research screen 
+    [mobile] › tests\terminal.spec.ts:3:1 › free forex renders daily reference analytics without fabricated candles 
+    [mobile] › tests\terminal.spec.ts:26:1 › terminal acquires public snapshots, streams quotes and switches products 
+    [mobile] › tests\terminal.spec.ts:56:1 › terminal shows feed failures without fabricated data ──

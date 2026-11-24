@@ -1,0 +1,76 @@
+{
+  "ready": true,
+  "checks": [
+    {
+      "check": "offline policy",
+      "passed": true,
+      "detail": "Unset QUANTCTL_ALLOW_NETWORK or set it to 0 for offline use"
+    },
+    {
+      "check": "Python version",
+      "passed": true,
+      "detail": "3.14.4"
+    },
+    {
+      "check": "numpy",
+      "passed": true,
+      "detail": "2.5.3"
+    },
+    {
+      "check": "pandas",
+      "passed": true,
+      "detail": "3.0.6"
+    },
+    {
+      "check": "pyarrow",
+      "passed": true,
+      "detail": "25.0.1"
+    },
+    {
+      "check": "yaml",
+      "passed": true,
+      "detail": "6.0.3"
+    },
+    {
+      "check": "scipy",
+      "passed": true,
+      "detail": "1.18.1"
+    },
+    {
+      "check": "torch",
+      "passed": true,
+      "detail": "2.14.0+cpu"
+    },
+    {
+      "check": "onnx",
+      "passed": true,
+      "detail": "1.23.0"
+    },
+    {
+      "check": "onnxruntime",
+      "passed": true,
+      "detail": "1.30.0"
+    },
+    {
+      "check": "quantctl binary",
+      "passed": true,
+      "detail": "C:\\Users\\Sahil\\OneDrive\\Documents\\Desktop\\lstm\\lstm_stock_prediction\\rust\\target\\release\\quantctl.exe"
+    },
+    {
+      "check": "frontend built",
+      "passed": true,
+      "detail": "Build web before Rust to embed the inspector"
+    },
+    {
+      "check": "Git available",
+      "passed": true,
+      "detail": "Training/replay provenance requires Git and the original .git directory"
+    },
+    {
+      "check": "source provenance",
+      "passed": true,
+      "detail": "Source snapshot available"
+    }
+  ],
+  "limits": "Checks local dependencies, not firewall isolation, data quality, model validity, or embedded asset freshness. Run scripts/verify.ps1 and supply a new config/data version."
+}

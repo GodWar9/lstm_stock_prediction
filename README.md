@@ -48,7 +48,7 @@ See [Claims and evidence](Docs/CLAIMS.md) and [open blockers](Docs/BLOCKED.md) f
 | Vercel + Render free-tier deployment | ✅ Done |
 | Portable Windows app (`lstm-inspector.exe`) | ✅ Done |
 | Alpaca live price stream → forecast feature window | ✅ Connected — completed minute bars feed on-request forecasts ([guide](Docs/19-LIVE-INGESTION.md#from-capture-to-research-and-forecasts)) |
-| Multi-asset replay, full inspector datasets | ⏳ Future work |
+| Multi-asset replay | Library API available; default CLI and inspector remain single-symbol |
 | Multi-horizon, conformal, Kelly/sector-neutral, nonlinear impact, derivatives in default CLI | ⏳ Libraries exist; not all selected by default |
 
 See the [capability guide](Docs/14-CAPABILITIES.md) for exactly what is wired into the default pipeline versus available as a library, and the [verification report](Docs/16-VERIFICATION.md) for measured results.

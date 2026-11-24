@@ -7,3 +7,5 @@ pub mod stream;
 pub use engine::*;
 pub use report::*;
 pub use stream::*;
+pub mod multi_asset;
+pub use multi_asset::{AssetBars, AssetPosition, MultiAssetReport};
